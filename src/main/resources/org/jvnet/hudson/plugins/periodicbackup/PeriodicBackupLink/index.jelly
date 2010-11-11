@@ -1,7 +1,7 @@
 <!--
   - The MIT License
   -
-  - Copyright (c) 2010, Tomasz Blasczynski
+  - Copyright (c) 2010, Tomasz Blasczynski, Emanuele Zattin
   -
   - Permission is hereby granted, free of charge, to any person obtaining a copy
   - of this software and associated documentation files (the "Software"), to deal
@@ -31,26 +31,32 @@
                 <img src="${rootURL}${it.iconFileName}" alt=""/>
                 ${it.displayName}
             </h1>
-
             <table border="0">
                 <tr>
                     <td>
-                        <a href="launchBackup"><img src="${rootURL}/plugin/periodicbackup/images/save-48x48.png" alt="" /></a> <a href="launchBackup" alt="" > ${%backup.title} </a>
+                        <a href="launchBackup">
+                            <img src="${rootURL}/plugin/periodicbackup/images/save-48x48.png" alt=""/>
+                        </a>
+                        <a href="launchBackup" alt="">${%backup.title}</a>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <a href="launchrestore"><img src="${rootURL}/plugin/periodicbackup/images/restore-48x48.png" alt="" /></a> <a href="launchrestore" alt="" > ${%restore.title} </a>
+                        <a href="launchrestore">
+                            <img src="${rootURL}/plugin/periodicbackup/images/restore-48x48.png" alt=""/>
+                        </a>
+                        <a href="launchrestore" alt="">${%restore.title}</a>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <a href="backupsettings"><img src="${rootURL}/plugin/periodicbackup/images/setup-48x48.png" alt="" /></a> <a href="backupsettings" alt="" > ${%configuration.title} </a>
+                        <a href="backupsettings">
+                            <img src="${rootURL}/plugin/periodicbackup/images/setup-48x48.png" alt=""/>
+                        </a>
+                        <a href="backupsettings" alt="">${%configuration.title}</a>
                     </td>
                 </tr>
             </table>
-
-
         </l:main-panel>
     </l:layout>
 </j:jelly>

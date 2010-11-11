@@ -1,37 +1,43 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.jvnet.hudson.plugins</groupId>
-    <artifactId>plugin</artifactId>
-    <version>1.343</version>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jvnet.hudson.plugins</groupId>
+        <artifactId>plugin</artifactId>
+        <version>1.343</version>
+    </parent>
 
-  <groupId>org.jvnet.hudson.plugins.periodicbackup</groupId>
-  <artifactId>periodicbackup</artifactId>
-  <name>Periodic Backup</name>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>hpi</packaging>
+    <groupId>org.jvnet.hudson.plugins.periodicbackup</groupId>
+    <artifactId>periodicbackup</artifactId>
+    <name>Periodic Backup</name>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>hpi</packaging>
 
-  <developers>
-    <developer>
-    <name>Tomasz Blaszczynski</name>
-    <email>tomasz.blaszczynski@nokia.com</email>
-    <timezone>+1</timezone>
-    </developer>
-  </developers>
-    
-  <!-- get every artifact through maven.glassfish.org, which proxies all the artifacts that we need -->
-  <repositories>
-    <repository>
-      <id>m.g.o-public</id>
-      <url>http://maven.glassfish.org/content/groups/public/</url>
-    </repository>
-  </repositories>
+    <developers>
+        <developer>
+            <name>Tomasz Blaszczynski</name>
+            <email>tomasz.blaszczynski@nokia.com</email>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <name>Emanuele Zattin</name>
+            <email>emanuelez@gmail.com</email>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>m.g.o-public</id>
-      <url>http://maven.glassfish.org/content/groups/public/</url>
-    </pluginRepository>
-  </pluginRepositories>
+    <!-- get every artifact through maven.glassfish.org, which proxies all the artifacts that we need -->
+    <repositories>
+        <repository>
+            <id>m.g.o-public</id>
+            <url>http://maven.glassfish.org/content/groups/public/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>m.g.o-public</id>
+            <url>http://maven.glassfish.org/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

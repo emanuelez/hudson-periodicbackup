@@ -1,9 +1,9 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski
+ * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
  *
- * This plugin base on the "backup" plugin developed by: 
+ * This plugin is based on and inspired by the "backup" plugin developed by:
  * Vincent Sellier, Manufacture Française des Pneumatiques Michelin, Romain Seguy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -46,7 +46,12 @@ public class PeriodicBackupLink extends ManagementLink {
 
     @Override
     public String getIconFileName() {
-        return "/plugin/periodicbackup/images/backup-48x48.png";
+        return "/plugin/periodicbackup/images/periodicbackup.png";
+    }
+
+    @Override
+    public String getDescription() {
+        return Messages.description();
     }
 
 }
