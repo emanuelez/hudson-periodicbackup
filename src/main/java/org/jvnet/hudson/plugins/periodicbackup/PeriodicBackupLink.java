@@ -29,14 +29,22 @@
 package org.jvnet.hudson.plugins.periodicbackup;
 
 import hudson.Extension;
+import hudson.XmlFile;
+import hudson.model.Hudson;
 import hudson.model.ManagementLink;
+import hudson.model.Saveable;
+import hudson.util.DescribableList;
+
+import java.io.File;
+import java.io.IOException;
 
 @Extension
-public class PeriodicBackupLink extends ManagementLink {
+public class PeriodicBackupLink extends ManagementLink implements Saveable {
+
+    private final DescribableList<Storage, StorageDescriptor> storagePlugins = new DescribableList<Storage, StorageDescriptor>(this);
 
     public String getDisplayName() {
         return Messages.displayName();
-
     }
 
     @Override
@@ -54,4 +62,11 @@ public class PeriodicBackupLink extends ManagementLink {
         return Messages.description();
     }
 
+    public void save() throws IOException {
+        getConfigXml().write(this);
+    }
+
+    protected XmlFile getConfigXml() {
+        return new XmlFile(Hudson.XSTREAM, new File(Hudson.getInstance().getRootDir(),"periodicBackup.xml"));
+    }
 }
