@@ -24,39 +24,28 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
-import java.io.File;
+import hudson.DescriptorExtensionList;
+import hudson.model.AbstractModelObject;
+import hudson.model.Describable;
+import hudson.model.Hudson;
 
-public abstract class Storage extends PeriodicBackupPlugin {
+public abstract class PeriodicBackupPlugin extends AbstractModelObject implements Describable<PeriodicBackupPlugin> {
 
-    public String getDisplayName() {
-        return "Storage name";
+    public final String getSearchUrl() {
+        return "configuration";
     }
-    @Override
+
     public PeriodicBackupPluginDescriptor getDescriptor() {
-        return (PeriodicBackupPluginDescriptor)super.getDescriptor();
+        return (PeriodicBackupPluginDescriptor) Hudson.getInstance().getDescriptor(getClass());
     }
 
-    public static abstract class StorageDescriptor extends PeriodicBackupPluginDescriptor {}
-
-    
     /**
-     *
-     * This method compressed the files and folders that, at this point, must be already
-     * determined by a FileManager plugin
-     *
-     * @param filesToCompress The files and folders to archive
-     * @return File object of the archive
+     * This will allow to retrieve the list of plugins at runtime
      */
-    public abstract File store(Iterable<String> filesToCompress);
-
-    /**
-     *
-     * This method un-compressed the archive to a temporary location.
-     * The actual file restoring is done by the FileManager plugin
-     *
-     * @param compressedFile The archive to un-compress
-     * @return The files and folders un-compressed
-     */
-    public abstract Iterable<String> unStore(File compressedFile);
+    public static DescriptorExtensionList<PeriodicBackupPlugin, PeriodicBackupPluginDescriptor> all() {
+        return Hudson.getInstance().getDescriptorList(PeriodicBackupPlugin.class);
+    }
 
 }
+
+

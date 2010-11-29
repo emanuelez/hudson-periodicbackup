@@ -24,15 +24,17 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
-import hudson.ExtensionPoint;
-import hudson.model.Descriptor;
+public abstract class AbstractFileManager extends PeriodicBackupPlugin {
 
-public abstract class StorageDescriptor extends Descriptor<Storage> implements ExtensionPoint {
-
-    protected StorageDescriptor(Class<? extends Storage> clazz) {
-        super(clazz);
+    public String getDisplayName() {
+        return "FileManager name";
     }
 
-    protected StorageDescriptor() {
+    @Override
+    public PeriodicBackupPluginDescriptor getDescriptor() {
+        return (PeriodicBackupPluginDescriptor)super.getDescriptor();
+    }
+
+    public static abstract class AbstractFileManagerDescriptor extends PeriodicBackupPluginDescriptor {
     }
 }
