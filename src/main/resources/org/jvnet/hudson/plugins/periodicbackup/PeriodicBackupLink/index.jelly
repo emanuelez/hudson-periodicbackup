@@ -50,34 +50,13 @@
                 </tr>
                 <tr>
                     <td>
-                        <a href="backupsettings">
+                        <a href="configure">
                             <img src="${rootURL}/plugin/periodicbackup/images/setup-48x48.png" alt=""/>
                         </a>
-                        <a href="backupsettings" alt="">${%configuration.title}</a>
+                        <a href="configure" alt="">${%configuration.title}</a>
                     </td>
                 </tr>
             </table>
-
-            <f:block>
-            <f:hetero-list name="plugins" hasHeader="true"
-                           descriptors="${it.descriptors}"
-                           items="${it.periodicBackupPlugins}"
-                           addCaption="${%All the descriptors}"/>
-          </f:block>
-
-          <f:block>
-            <f:hetero-list name="storages" hasHeader="true"
-                           descriptors="${it.storageDescriptors}"
-                           items="${it.periodicBackupPlugins}"
-                           addCaption="${%Storage descriptors}"/>
-          </f:block>
-
-          <f:block>
-                <f:hetero-list name="managers" hasHeader="true"
-                           descriptors="${it.fileManagerDescriptors}"
-                           items="${it.periodicBackupPlugins}"
-                           addCaption="${%File Managers descriptors}"/>
-          </f:block>
 
         </l:main-panel>
     </l:layout>

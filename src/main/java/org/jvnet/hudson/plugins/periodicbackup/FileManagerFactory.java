@@ -24,29 +24,16 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
-import hudson.DescriptorExtensionList;
-import hudson.model.AbstractModelObject;
-import hudson.model.Describable;
-import hudson.model.Hudson;
 
-public abstract class PeriodicBackupPlugin extends AbstractModelObject implements Describable<PeriodicBackupPlugin> {
-
-    public PeriodicBackupPluginDescriptor getDescriptor() {
-        return (PeriodicBackupPluginDescriptor) Hudson.getInstance().getDescriptor(getClass());
+public class FileManagerFactory extends PeriodicBackupPluginFactory {
+    public FileManager create(PeriodicBackupPluginDescriptor descriptor) {
+        if(descriptor.getDisplayName().equals(PeriodicBackupPlugin.all().findByName("org.jvnet.hudson.plugins.periodicbackup.FullBackup").getDisplayName())) {
+            return new FullBackup();
+        }
+        else if(descriptor.getDisplayName().equals(PeriodicBackupPlugin.all().findByName("org.jvnet.hudson.plugins.periodicbackup.XmlOnly").getDisplayName())) {
+            return new XmlOnly();
+        }
+        else
+            return null;
     }
-
-    /**
-     * This will allow to retrieve the list of plugins at runtime
-     */
-    public static DescriptorExtensionList<PeriodicBackupPlugin, PeriodicBackupPluginDescriptor> all() {
-        return Hudson.getInstance().getDescriptorList(PeriodicBackupPlugin.class);
-    }
-
-    //TODO: something?
-    public String getSearchUrl() {
-        return "";
-    }
-    
 }
-
-

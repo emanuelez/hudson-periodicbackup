@@ -21,32 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package org.jvnet.hudson.plugins.periodicbackup;
 
-import hudson.DescriptorExtensionList;
-import hudson.model.AbstractModelObject;
-import hudson.model.Describable;
-import hudson.model.Hudson;
-
-public abstract class PeriodicBackupPlugin extends AbstractModelObject implements Describable<PeriodicBackupPlugin> {
-
-    public PeriodicBackupPluginDescriptor getDescriptor() {
-        return (PeriodicBackupPluginDescriptor) Hudson.getInstance().getDescriptor(getClass());
-    }
-
-    /**
-     * This will allow to retrieve the list of plugins at runtime
-     */
-    public static DescriptorExtensionList<PeriodicBackupPlugin, PeriodicBackupPluginDescriptor> all() {
-        return Hudson.getInstance().getDescriptorList(PeriodicBackupPlugin.class);
-    }
-
-    //TODO: something?
-    public String getSearchUrl() {
-        return "";
-    }
-    
+public abstract class PeriodicBackupPluginFactory {
+    public abstract PeriodicBackupPlugin create(PeriodicBackupPluginDescriptor descriptor);
 }
-
-
