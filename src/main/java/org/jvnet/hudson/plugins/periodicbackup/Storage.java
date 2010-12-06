@@ -28,17 +28,17 @@ import java.io.File;
 
 public abstract class Storage extends PeriodicBackupPlugin {
 
-    public static abstract class StorageDescriptor extends PeriodicBackupPluginDescriptor {}
+    public static abstract class StorageDescriptor extends PeriodicBackupPluginDescriptor {
+    }
 
     public abstract String getDisplayName();
 
     @Override
     public PeriodicBackupPluginDescriptor getDescriptor() {
-        return (PeriodicBackupPluginDescriptor)super.getDescriptor();
+        return (PeriodicBackupPluginDescriptor) super.getDescriptor();
     }
 
     /**
-     *
      * This method compressed the files and folders that, at this point, must be already
      * determined by a FileManager plugin
      *
@@ -48,7 +48,6 @@ public abstract class Storage extends PeriodicBackupPlugin {
     public abstract File store(Iterable<String> filesToCompress);
 
     /**
-     *
      * This method un-compressed the archive to a temporary location.
      * The actual file restoring is done by the FileManager plugin
      *
