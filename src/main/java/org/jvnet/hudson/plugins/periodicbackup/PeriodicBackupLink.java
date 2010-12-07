@@ -148,7 +148,7 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable, Desc
 
     @Override
     public String getIconFileName() {
-        return "/plugin/periodicbackup/images/periodicbackup.png";
+        return "/plugin/periodicbackup/images/48x48/periodicbackup.png";
     }
 
     @Override
