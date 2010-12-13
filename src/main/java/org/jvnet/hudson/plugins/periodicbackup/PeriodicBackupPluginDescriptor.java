@@ -32,7 +32,7 @@ public abstract class PeriodicBackupPluginDescriptor extends Descriptor<Periodic
     protected PeriodicBackupPluginDescriptor(Class<? extends PeriodicBackupPlugin> clazz) {
         super(clazz);
     }
-
+    
     protected PeriodicBackupPluginDescriptor() {
     }
 }

@@ -79,6 +79,7 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable, Desc
     }
 
     /**
+     *
      * Sets this.storageDescriptor to descriptor whose value returned by getDisplayName()
      * is the same as the value from config page, calls setStorage to set this.storage afterwards
      *
@@ -87,10 +88,10 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable, Desc
      */
     public void setStorageDescriptor(String storageDescriptorString) throws IOException {
         StorageDescriptor storageDescriptor = null;
-        for (PeriodicBackupPluginDescriptor d : getDescriptors()) {
-            if (d != null) {
-                if (d.getDisplayName().equals(storageDescriptorString)) {
-                    storageDescriptor = (Storage.StorageDescriptor) d;
+        for(PeriodicBackupPluginDescriptor d : getDescriptors()) {
+            if(d!=null) {
+                if(d.getDisplayName().equals(storageDescriptorString)) {
+                    storageDescriptor = (Storage.StorageDescriptor)d;
                 }
             }
         }
@@ -105,19 +106,21 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable, Desc
     }
 
     /**
+     *
      * Sets this.fileManagerDescriptor to descriptor whose value returned by getDisplayName()
      * is the same as the value from config page, calls setFileManager to set this.fileManager afterwards
      *
      * @param fileManagerDescriptorString String obtained from config page
      * @throws IOException
+     *
      */
     public void setFileManagerDescriptor(String fileManagerDescriptorString) throws IOException {
 
         FileManager.FileManagerDescriptor fileManagerDescriptor = null;
-        for (PeriodicBackupPluginDescriptor d : getDescriptors()) {
-            if (d != null) {
-                if (d.getDisplayName().equals(fileManagerDescriptorString)) {
-                    fileManagerDescriptor = (FileManager.FileManagerDescriptor) d;
+        for(PeriodicBackupPluginDescriptor d : getDescriptors()) {
+            if(d!=null) {
+                if(d.getDisplayName().equals(fileManagerDescriptorString)) {
+                    fileManagerDescriptor = (FileManager.FileManagerDescriptor)d;
                 }
             }
         }
@@ -156,20 +159,20 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable, Desc
         return Messages.description();
     }
 
-    protected void load() throws IOException {
+   protected void load() throws IOException {
         XmlFile xml = getConfigXml();
-        if (xml.exists())
+        if(xml.exists())
             xml.unmarshal(this);  //Loads the contents of this file into an existing object.
     }
 
-    public void save() throws IOException {
-        if (BulkChange.contains(this)) return;
-        getConfigXml().write(this);
-    }
+   public void save() throws IOException {
+       if(BulkChange.contains(this))   return;
+       getConfigXml().write(this);
+   }
 
     protected XmlFile getConfigXml() {
         return new XmlFile(Hudson.XSTREAM,
-                new File(Hudson.getInstance().getRootDir(), "periodicBackup.xml"));
+                new File(Hudson.getInstance().getRootDir(),"periodicBackup.xml"));
     }
 
     /**
@@ -186,9 +189,9 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable, Desc
     public Collection<Storage.StorageDescriptor> getStorageDescriptors() {
         Collection<PeriodicBackupPluginDescriptor> all = getDescriptors();
         ArrayList<StorageDescriptor> storages = new ArrayList<StorageDescriptor>();
-        for (PeriodicBackupPluginDescriptor descriptor : all) {
-            if (descriptor instanceof StorageDescriptor) {
-                storages.add((StorageDescriptor) descriptor);
+        for(PeriodicBackupPluginDescriptor descriptor : all){
+            if(descriptor instanceof StorageDescriptor) {
+                storages.add((StorageDescriptor)descriptor);
             }
         }
         return storages;
@@ -197,9 +200,9 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable, Desc
     public Collection<FileManager.FileManagerDescriptor> getFileManagerDescriptors() {
         Collection<PeriodicBackupPluginDescriptor> all = getDescriptors();
         ArrayList<FileManager.FileManagerDescriptor> managers = new ArrayList<FileManager.FileManagerDescriptor>();
-        for (PeriodicBackupPluginDescriptor descriptor : all) {
-            if (descriptor instanceof FileManager.FileManagerDescriptor) {
-                managers.add((FileManager.FileManagerDescriptor) descriptor);
+        for(PeriodicBackupPluginDescriptor descriptor : all){
+            if(descriptor instanceof FileManager.FileManagerDescriptor) {
+                managers.add((FileManager.FileManagerDescriptor)descriptor);
             }
         }
         return managers;
@@ -238,7 +241,7 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable, Desc
             setStorageDescriptor(form.getString("storage"));
 
         }
-        catch (Exception e) {
+        catch(Exception e) {
             e.printStackTrace();
         }
         finally {

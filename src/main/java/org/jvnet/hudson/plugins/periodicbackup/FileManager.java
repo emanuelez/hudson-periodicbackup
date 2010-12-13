@@ -33,13 +33,13 @@ public abstract class FileManager extends PeriodicBackupPlugin {
 
     @Override
     public PeriodicBackupPluginDescriptor getDescriptor() {
-        return (PeriodicBackupPluginDescriptor) super.getDescriptor();
+        return (PeriodicBackupPluginDescriptor)super.getDescriptor();
     }
 
-    public static abstract class FileManagerDescriptor extends PeriodicBackupPluginDescriptor {
-    }
+    public static abstract class FileManagerDescriptor extends PeriodicBackupPluginDescriptor {}
 
     /**
+     *
      * @return list of files to be stored/restored
      */
     public abstract List<File> getListOfFiles();

@@ -43,11 +43,10 @@ public abstract class PeriodicBackupPlugin extends AbstractModelObject implement
     }
 
     //TODO: something?
-
     public String getSearchUrl() {
         return "";
     }
-
+    
 }
 
 

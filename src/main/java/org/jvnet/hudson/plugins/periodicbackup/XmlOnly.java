@@ -35,7 +35,6 @@ public class XmlOnly extends FileManager {
         return "Hudson configuration only";
     }
 
-    //TODO: implement
     @Override
     public List<File> getListOfFiles() {
         return null;

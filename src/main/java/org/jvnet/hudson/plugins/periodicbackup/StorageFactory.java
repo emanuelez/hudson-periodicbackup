@@ -27,9 +27,10 @@ package org.jvnet.hudson.plugins.periodicbackup;
 
 public class StorageFactory extends PeriodicBackupPluginFactory {
     public Storage create(PeriodicBackupPluginDescriptor descriptor) {
-        if (descriptor.getDisplayName().equals(PeriodicBackupPlugin.all().findByName("org.jvnet.hudson.plugins.periodicbackup.ZipStorage").getDisplayName())) {
+        if(descriptor.getDisplayName().equals(PeriodicBackupPlugin.all().findByName("org.jvnet.hudson.plugins.periodicbackup.ZipStorage").getDisplayName())) {
             return new ZipStorage();
-        } else
+        }
+        else
             return null;
     }
 }

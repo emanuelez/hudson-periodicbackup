@@ -30,11 +30,6 @@ import java.io.File;
 
 public class ZipStorage extends Storage {
 
-    @Override
-    public String getDisplayName() {
-        return "Zip Storage";
-    }
-
     public File store(Iterable<String> filesToCompress) {
         // TODO: compress the files! :)
         return null;

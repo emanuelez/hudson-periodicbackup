@@ -27,11 +27,13 @@ package org.jvnet.hudson.plugins.periodicbackup;
 
 public class FileManagerFactory extends PeriodicBackupPluginFactory {
     public FileManager create(PeriodicBackupPluginDescriptor descriptor) {
-        if (descriptor.getDisplayName().equals(PeriodicBackupPlugin.all().findByName("org.jvnet.hudson.plugins.periodicbackup.FullBackup").getDisplayName())) {
+        if(descriptor.getDisplayName().equals(PeriodicBackupPlugin.all().findByName("org.jvnet.hudson.plugins.periodicbackup.FullBackup").getDisplayName())) {
             return new FullBackup();
-        } else if (descriptor.getDisplayName().equals(PeriodicBackupPlugin.all().findByName("org.jvnet.hudson.plugins.periodicbackup.XmlOnly").getDisplayName())) {
+        }
+        else if(descriptor.getDisplayName().equals(PeriodicBackupPlugin.all().findByName("org.jvnet.hudson.plugins.periodicbackup.XmlOnly").getDisplayName())) {
             return new XmlOnly();
-        } else
+        }
+        else
             return null;
     }
 }
