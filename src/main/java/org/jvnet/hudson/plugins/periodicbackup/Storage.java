@@ -34,6 +34,12 @@ import java.io.File;
 public abstract class Storage extends AbstractModelObject implements Describable<Storage> {
 
     /**
+     * TODO: do we really need id, how it will be obtained?
+     * Computed by {@link PeriodicBackupLink#doConfigSubmit(StaplerRequest, StaplerResponse)}.
+     */
+    /*package almost final*/ String id;
+
+    /**
      *
      * This method compressed the files and folders that, at this point, must be already
      * determined by a FileManager plugin
@@ -58,7 +64,11 @@ public abstract class Storage extends AbstractModelObject implements Describable
     }
 
     public final String getSearchUrl() {
-        return "configuration/"+getId();
+        return "storage/"+getId();
+    }
+
+    protected String getId() {
+        return id;
     }
 
     /**
@@ -68,5 +78,4 @@ public abstract class Storage extends AbstractModelObject implements Describable
         return Hudson.getInstance().getDescriptorList(Storage.class);
     }
 
-    public abstract String getId();
 }
