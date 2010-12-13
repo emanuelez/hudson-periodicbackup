@@ -24,8 +24,6 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
-import hudson.Extension;
-
 import java.io.File;
 
 public class ZipStorage extends Storage {
@@ -42,10 +40,12 @@ public class ZipStorage extends Storage {
         return null;
     }
 
-    @Extension
-    public static class DescriptorImpl extends StorageDescriptor {
-        public String getDisplayName() {
-            return "Zip";
-        }
+    @Override
+    public String getId() {
+        return "zip";
+    }
+
+    public String getDisplayName() {
+        return "Zip";
     }
 }

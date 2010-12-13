@@ -37,15 +37,11 @@ import hudson.util.DescribableList;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import static org.jvnet.hudson.plugins.periodicbackup.Storage.StorageDescriptor;
 
 @Extension
 public class PeriodicBackupLink extends ManagementLink implements Saveable {
 
-    private final DescribableList<PeriodicBackupPlugin, PeriodicBackupPluginDescriptor> periodicBackupPlugins = new DescribableList<PeriodicBackupPlugin, PeriodicBackupPluginDescriptor>(this);
+    private final DescribableList<Storage, StorageDescriptor> storagePlugins = new DescribableList<Storage, StorageDescriptor>(this);
 
     public String getDisplayName() {
         return Messages.displayName();
@@ -73,40 +69,5 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable {
     protected XmlFile getConfigXml() {
         return new XmlFile(Hudson.XSTREAM, new File(Hudson.getInstance().getRootDir(),"periodicBackup.xml"));
     }
-
-    /**
-     * All registered descriptors exposed for UI
-     */
-    public Collection<PeriodicBackupPluginDescriptor> getDescriptors() {
-        return PeriodicBackupPlugin.all();
-    }
-
-    public Collection<Storage.StorageDescriptor> getStorageDescriptors() {
-        Collection<PeriodicBackupPluginDescriptor> all = getDescriptors();
-        ArrayList<StorageDescriptor> storages = new ArrayList<StorageDescriptor>();
-        for(PeriodicBackupPluginDescriptor descriptor : all){
-            if(descriptor instanceof StorageDescriptor) {
-                storages.add((StorageDescriptor)descriptor);
-            }
-        }
-        return storages;
-
-
-
-    }
-
-    public Collection<AbstractFileManager.AbstractFileManagerDescriptor> getFileManagerDescriptors() {
-        Collection<PeriodicBackupPluginDescriptor> all = getDescriptors();
-        ArrayList<AbstractFileManager.AbstractFileManagerDescriptor> managers = new ArrayList<AbstractFileManager.AbstractFileManagerDescriptor>();
-        for(PeriodicBackupPluginDescriptor descriptor : all){
-            if(descriptor instanceof AbstractFileManager.AbstractFileManagerDescriptor) {
-                managers.add((AbstractFileManager.AbstractFileManagerDescriptor)descriptor);
-            }
-        }
-        return managers;
-    }
-
-    public DescribableList<PeriodicBackupPlugin, PeriodicBackupPluginDescriptor> getPeriodicBackupPlugins() {
-        return periodicBackupPlugins;
-    }
 }
+

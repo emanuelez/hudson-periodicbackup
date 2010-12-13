@@ -24,67 +24,6 @@
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-<<<<<<< HEAD
     <!-- TODO: include restore here instead, there should be information if no configuration was saved and link to config if so -->
     <st:include page="configure.jelly" />
 </j:jelly>
-=======
-    <l:layout permission="${app.ADMINISTER}" norefresh="true">
-        <st:include it="${app}" page="sidepanel.jelly"/>
-        <l:main-panel>
-            <h1>
-                <img src="${rootURL}${it.iconFileName}" alt=""/>
-                ${it.displayName}
-            </h1>
-            <table border="0">
-                <tr>
-                    <td>
-                        <a href="launchBackup">
-                            <img src="${rootURL}/plugin/periodicbackup/images/save-48x48.png" alt=""/>
-                        </a>
-                        <a href="launchBackup" alt="">${%backup.title}</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="launchrestore">
-                            <img src="${rootURL}/plugin/periodicbackup/images/restore-48x48.png" alt=""/>
-                        </a>
-                        <a href="launchrestore" alt="">${%restore.title}</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="backupsettings">
-                            <img src="${rootURL}/plugin/periodicbackup/images/setup-48x48.png" alt=""/>
-                        </a>
-                        <a href="backupsettings" alt="">${%configuration.title}</a>
-                    </td>
-                </tr>
-            </table>
-
-            <f:block>
-            <f:hetero-list name="plugins" hasHeader="true"
-                           descriptors="${it.descriptors}"
-                           items="${it.periodicBackupPlugins}"
-                           addCaption="${%All the descriptors}"/>
-          </f:block>
-
-          <f:block>
-            <f:hetero-list name="storages" hasHeader="true"
-                           descriptors="${it.storageDescriptors}"
-                           items="${it.periodicBackupPlugins}"
-                           addCaption="${%Storage descriptors}"/>
-          </f:block>
-
-          <f:block>
-                <f:hetero-list name="managers" hasHeader="true"
-                           descriptors="${it.fileManagerDescriptors}"
-                           items="${it.periodicBackupPlugins}"
-                           addCaption="${%File Managers descriptors}"/>
-          </f:block>
-
-        </l:main-panel>
-    </l:layout>
-</j:jelly>
->>>>>>> 515fbe6... * Added: configuration; factories for Plugins; few 'concrete' plugins classes
