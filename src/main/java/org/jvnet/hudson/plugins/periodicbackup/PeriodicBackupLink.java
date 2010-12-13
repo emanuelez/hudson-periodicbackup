@@ -28,13 +28,18 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import hudson.BulkChange;
 import hudson.Extension;
 import hudson.XmlFile;
 import hudson.model.Hudson;
 import hudson.model.ManagementLink;
 import hudson.model.Saveable;
 import hudson.util.DescribableList;
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
+import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 
@@ -42,6 +47,15 @@ import java.io.IOException;
 public class PeriodicBackupLink extends ManagementLink implements Saveable {
 
     private final DescribableList<Storage, StorageDescriptor> storagePlugins = new DescribableList<Storage, StorageDescriptor>(this);
+    private String targetDirectory;
+
+    public String getTargetDirectory() {
+        return targetDirectory;
+    }
+
+    public void setTargetDirectory(String targetDirectory) {
+        this.targetDirectory = targetDirectory;
+    }
 
     public String getDisplayName() {
         return Messages.displayName();
@@ -62,12 +76,41 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable {
         return Messages.description();
     }
 
+    protected void load() throws IOException {
+        XmlFile xml = getConfigXml();
+        if (xml.exists())
+            xml.unmarshal(this);  //Loads the contents of this file into an existing object.
+    }
+
     public void save() throws IOException {
+        if (BulkChange.contains(this)) return;
         getConfigXml().write(this);
     }
 
     protected XmlFile getConfigXml() {
-        return new XmlFile(Hudson.XSTREAM, new File(Hudson.getInstance().getRootDir(),"periodicBackup.xml"));
+        return new XmlFile(Hudson.XSTREAM,
+                new File(Hudson.getInstance().getRootDir(), "periodicBackup.xml"));
+    }
+
+        public String getRootDirectory() {
+        return Hudson.getInstance().getRootDir().getAbsolutePath();
+    }
+
+    public void doConfigSubmit(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException, InterruptedException {
+        JSONObject form = req.getSubmittedForm();
+
+        // persist the setting
+        BulkChange bc = new BulkChange(this);
+        try {
+            setTargetDirectory(form.getString("targetDirectory"));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            bc.commit();
+        }
+        rsp.sendRedirect(".");
     }
 }
 
