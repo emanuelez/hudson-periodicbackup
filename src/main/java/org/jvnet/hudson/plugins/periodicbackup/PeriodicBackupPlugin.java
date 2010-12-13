@@ -31,6 +31,10 @@ import hudson.model.Hudson;
 
 public abstract class PeriodicBackupPlugin extends AbstractModelObject implements Describable<PeriodicBackupPlugin> {
 
+    public final String getSearchUrl() {
+        return "configuration";
+    }
+
     public PeriodicBackupPluginDescriptor getDescriptor() {
         return (PeriodicBackupPluginDescriptor) Hudson.getInstance().getDescriptor(getClass());
     }
@@ -42,11 +46,6 @@ public abstract class PeriodicBackupPlugin extends AbstractModelObject implement
         return Hudson.getInstance().getDescriptorList(PeriodicBackupPlugin.class);
     }
 
-    //TODO: something?
-    public String getSearchUrl() {
-        return "";
-    }
-    
 }
 
 

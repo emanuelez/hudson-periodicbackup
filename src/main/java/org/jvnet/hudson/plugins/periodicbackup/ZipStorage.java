@@ -30,11 +30,13 @@ import java.io.File;
 
 public class ZipStorage extends Storage {
 
+    @Override
     public File store(Iterable<String> filesToCompress) {
         // TODO: compress the files! :)
         return null;
     }
 
+    @Override
     public Iterable<String> unStore(File compressedFile) {
         // TODO: un-compress the file to our safe location :)
         return null;

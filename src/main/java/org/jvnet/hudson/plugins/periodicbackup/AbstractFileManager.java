@@ -24,28 +24,17 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
-import hudson.Extension;
+public abstract class AbstractFileManager extends PeriodicBackupPlugin {
 
-import java.io.File;
-import java.util.List;
-
-
-public class CustomBackup extends FileManager {
-    @Override
     public String getDisplayName() {
-        return "User-customized backup";
+        return "FileManager name";
     }
 
-    //TODO: implement
     @Override
-    public List<File> getListOfFiles() {
-        return null;
+    public PeriodicBackupPluginDescriptor getDescriptor() {
+        return (PeriodicBackupPluginDescriptor)super.getDescriptor();
     }
 
-    @Extension
-    public static class DescriptorImpl extends FileManagerDescriptor {
-        public String getDisplayName() {
-            return "Custom Backup";
-        }
+    public static abstract class AbstractFileManagerDescriptor extends PeriodicBackupPluginDescriptor {
     }
 }

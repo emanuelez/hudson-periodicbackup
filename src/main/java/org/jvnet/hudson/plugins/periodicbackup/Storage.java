@@ -28,15 +28,17 @@ import java.io.File;
 
 public abstract class Storage extends PeriodicBackupPlugin {
 
-    public static abstract class StorageDescriptor extends PeriodicBackupPluginDescriptor {}
-
-    public abstract String getDisplayName();
-
+    public String getDisplayName() {
+        return "Storage name";
+    }
     @Override
     public PeriodicBackupPluginDescriptor getDescriptor() {
         return (PeriodicBackupPluginDescriptor)super.getDescriptor();
     }
 
+    public static abstract class StorageDescriptor extends PeriodicBackupPluginDescriptor {}
+
+    
     /**
      *
      * This method compressed the files and folders that, at this point, must be already
