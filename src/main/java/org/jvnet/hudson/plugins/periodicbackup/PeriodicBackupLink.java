@@ -42,11 +42,14 @@ import org.kohsuke.stapler.StaplerResponse;
 import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
 @Extension
 public class PeriodicBackupLink extends ManagementLink implements Saveable {
 
+    private final DescribableList<FileManager, FileManagerDescriptor> fileManagerPlugins = new DescribableList<FileManager, FileManagerDescriptor>(this);
     private final DescribableList<Storage, StorageDescriptor> storagePlugins = new DescribableList<Storage, StorageDescriptor>(this);
+
     private String targetDirectory;
 
     public String getTargetDirectory() {
@@ -102,7 +105,9 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable {
         // persist the setting
         BulkChange bc = new BulkChange(this);
         try {
+            //TODO: for each element of configuration file we have to have setter here
             setTargetDirectory(form.getString("targetDirectory"));
+            //TODO: if we will use ID's we need assign ID here (look into PXE doConfigSubmit
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -112,5 +117,14 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable {
         }
         rsp.sendRedirect(".");
     }
+
+    public Collection<StorageDescriptor> getStorageDescriptors() {
+        return Storage.all();
+    }
+
+    public Collection<FileManagerDescriptor> getFileManagerDescriptors() {
+        return FileManager.all();
+    }
+
 }
 
