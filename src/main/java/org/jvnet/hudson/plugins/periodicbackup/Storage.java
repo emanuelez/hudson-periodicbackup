@@ -24,10 +24,10 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import hudson.DescriptorExtensionList;
 import hudson.model.AbstractModelObject;
 import hudson.model.Describable;
 import hudson.model.Hudson;
-import hudson.DescriptorExtensionList;
 
 import java.io.File;
 
@@ -40,7 +40,6 @@ public abstract class Storage extends AbstractModelObject implements Describable
     /*package almost final*/ String id;
 
     /**
-     *
      * This method compressed the files and folders that, at this point, must be already
      * determined by a FileManager plugin
      *
@@ -50,7 +49,6 @@ public abstract class Storage extends AbstractModelObject implements Describable
     public abstract File store(Iterable<String> filesToCompress);
 
     /**
-     *
      * This method un-compressed the archive to a temporary location.
      * The actual file restoring is done by the FileManager plugin
      *
@@ -64,7 +62,7 @@ public abstract class Storage extends AbstractModelObject implements Describable
     }
 
     public final String getSearchUrl() {
-        return "storage/"+getId();
+        return "storage/" + getId();
     }
 
     protected String getId() {

@@ -25,5 +25,5 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <!-- TODO: include restore here instead, there should be information if no configuration was saved and link to config if so -->
-    <st:include page="configure.jelly" />
+    <st:include page="configure.jelly"/>
 </j:jelly>

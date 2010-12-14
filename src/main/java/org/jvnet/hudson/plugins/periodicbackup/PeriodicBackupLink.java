@@ -95,7 +95,7 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable {
                 new File(Hudson.getInstance().getRootDir(), "periodicBackup.xml"));
     }
 
-        public String getRootDirectory() {
+    public String getRootDirectory() {
         return Hudson.getInstance().getRootDir().getAbsolutePath();
     }
 
@@ -108,11 +108,9 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable {
             //TODO: for each element of configuration file we have to have setter here
             setTargetDirectory(form.getString("targetDirectory"));
             //TODO: if we will use ID's we need assign ID here (look into PXE doConfigSubmit
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             bc.commit();
         }
         rsp.sendRedirect(".");

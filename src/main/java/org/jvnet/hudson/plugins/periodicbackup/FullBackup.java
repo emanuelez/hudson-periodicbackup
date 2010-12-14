@@ -32,7 +32,9 @@ import java.util.List;
 public class FullBackup extends FileManager {
     //TODO: implement
     @Override
-    public List<File> getFileList() {return null;}
+    public List<File> getFileList() {
+        return null;
+    }
 
     public String getDisplayName() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.

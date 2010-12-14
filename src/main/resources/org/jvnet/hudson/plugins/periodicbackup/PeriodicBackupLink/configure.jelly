@@ -28,9 +28,9 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
     <l:layout norefresh="true" title="${%Periodic Backup Configuration}">
-        <st:include page="sidepanel.jelly" />
+        <st:include page="sidepanel.jelly"/>
         <l:main-panel>
-            <j:set var="instance" value="${it}" />
+            <j:set var="instance" value="${it}"/>
             <!-- TODO: do we need this descriptor? -->
             <!-- <j:set var="descriptor" value="${it.descriptor}" /> -->
             <f:form method="post" action="configSubmit" name="config">
@@ -46,27 +46,29 @@
                     <f:entry title="${%fileManagementStrategy.title}">
                         <select name="fileManagerDescriptor">
                             <j:forEach var="value" items="${it.fileManagerDescriptors}">
-                                <f:option selected="${it.fileManagerDescriptor.displayName==value.displayName}">${value.displayName}</f:option>
+                                <f:option selected="${it.fileManagerDescriptor.displayName==value.displayName}">
+                                    ${value.displayName}
+                                </f:option>
                             </j:forEach>
                         </select>
                     </f:entry>
 
                     <script>
                         Event.observe(window, 'load', function(event) {
-                            if($$('select[name=fileManagerDescriptor]')[0].value != "Custom Backup") {
-                                $$('tr[class=optional-block-start row-set-start]').each(Element.hide);
-                            }
-                            Event.observe($$('select[name=fileManagerDescriptor]')[0], 'change', checkIfCustom);
+                        if($$('select[name=fileManagerDescriptor]')[0].value != "Custom Backup") {
+                        $$('tr[class=optional-block-start row-set-start]').each(Element.hide);
+                        }
+                        Event.observe($$('select[name=fileManagerDescriptor]')[0], 'change', checkIfCustom);
 
                         });
-                        
+
                         function checkIfCustom(event) {
-                            if($$('select[name=fileManagerDescriptor]')[0].value != "Custom Backup") {
-                                $$('tr[class=optional-block-start row-set-start]').each(Element.hide);
-                            }
-                            else {
-                                $$('tr[class=optional-block-start row-set-start]').each(Element.show);    
-                            }
+                        if($$('select[name=fileManagerDescriptor]')[0].value != "Custom Backup") {
+                        $$('tr[class=optional-block-start row-set-start]').each(Element.hide);
+                        }
+                        else {
+                        $$('tr[class=optional-block-start row-set-start]').each(Element.show);
+                        }
                         }
                     </script>
                     <!-- optional stuff here -->
@@ -81,7 +83,9 @@
                     <f:entry title="${%storageType.title}">
                         <select name="storage">
                             <j:forEach var="value" items="${it.storageDescriptors}">
-                                <f:option selected="${it.storageDescriptor.displayName==value.displayName}">${value.displayName}</f:option>
+                                <f:option selected="${it.storageDescriptor.displayName==value.displayName}">
+                                    ${value.displayName}
+                                </f:option>
                             </j:forEach>
                         </select>
                     </f:entry>

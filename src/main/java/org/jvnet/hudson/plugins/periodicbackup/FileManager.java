@@ -33,14 +33,13 @@ import java.io.File;
 import java.util.List;
 
 public abstract class FileManager extends AbstractModelObject implements Describable<FileManager> {
-     /**
+    /**
      * TODO: do we really need id, how it will be obtained?
      * Computed by {@link PeriodicBackupLink#doConfigSubmit(StaplerRequest, StaplerResponse)}.
      */
     /*package almost final*/ String id;
 
     /**
-     *
      * This method determines files and folders for Storage
      *
      * @return List of files to be included in backup
@@ -49,7 +48,7 @@ public abstract class FileManager extends AbstractModelObject implements Describ
 
 
     public final String getSearchUrl() {
-        return "filemanager/"+getId();
+        return "filemanager/" + getId();
     }
 
     protected String getId() {
