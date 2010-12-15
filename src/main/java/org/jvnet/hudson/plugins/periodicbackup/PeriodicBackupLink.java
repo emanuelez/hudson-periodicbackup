@@ -48,6 +48,7 @@ import java.util.Collection;
 public class PeriodicBackupLink extends ManagementLink implements Saveable {
 
     private final DescribableList<FileManager, FileManagerDescriptor> fileManagerPlugins = new DescribableList<FileManager, FileManagerDescriptor>(this);
+    private final DescribableList<Location, LocationDescriptor> locationPlugins = new DescribableList<Location, LocationDescriptor>(this);
     private final DescribableList<Storage, StorageDescriptor> storagePlugins = new DescribableList<Storage, StorageDescriptor>(this);
 
     private String targetDirectory;
@@ -121,6 +122,10 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable {
     }
 
     public Collection<FileManagerDescriptor> getFileManagerDescriptors() {
+        return FileManager.all();
+    }
+
+    public Collection<FileManagerDescriptor> getLocationDescriptors() {
         return FileManager.all();
     }
 
