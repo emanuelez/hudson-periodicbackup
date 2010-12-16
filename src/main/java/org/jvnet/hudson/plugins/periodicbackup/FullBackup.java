@@ -24,13 +24,15 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import com.google.inject.Inject;
 import hudson.Extension;
 
 import java.io.File;
 
 public class FullBackup extends FileManager {
 
-    protected FullBackup(RestorePolicy restorePolicy) {
+    @Inject
+    protected FullBackup(@Replace RestorePolicy restorePolicy) {
         super(restorePolicy);
     }
 

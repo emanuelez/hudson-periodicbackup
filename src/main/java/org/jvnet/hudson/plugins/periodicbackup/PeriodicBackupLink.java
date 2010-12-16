@@ -28,6 +28,8 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import hudson.BulkChange;
 import hudson.Extension;
 import hudson.XmlFile;
@@ -63,6 +65,12 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable {
 
     public String getDisplayName() {
         return Messages.displayName();
+    }
+
+    void doBackup() {
+        // TODO: this will change of course!
+        Injector injector = Guice.createInjector(new PeriodicBackupModule());
+        BackupExecutor backupExecutor = injector.getInstance(BackupExecutor.class);
     }
 
     @Override
