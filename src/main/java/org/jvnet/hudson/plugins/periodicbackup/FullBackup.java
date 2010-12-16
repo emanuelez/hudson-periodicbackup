@@ -27,17 +27,23 @@ package org.jvnet.hudson.plugins.periodicbackup;
 import hudson.Extension;
 
 import java.io.File;
-import java.util.List;
 
 public class FullBackup extends FileManager {
+
+    public String getDisplayName() {
+        return "FullBackup";
+    }
+
     //TODO: implement
     @Override
-    public List<File> getFileList() {
+    public Iterable<File> getFilesToBackup() {
         return null;
     }
 
-    public String getDisplayName() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    //TODO: implement
+    @Override
+    public boolean restoreFiles(Iterable<File> filesToBeRestored) {
+        return false;
     }
 
     @Extension

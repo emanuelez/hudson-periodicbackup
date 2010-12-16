@@ -39,7 +39,7 @@
                     <f:entry title="${%rootDirectory.title}">
                         ${it.rootDirectory}
                     </f:entry>
-                    <f:entry title="${%targetDirectory.title}" field="targetDirectory">
+                    <f:entry title="${%tempDirectory.title}" field="tempDirectory">
                         <f:textbox/>
                     </f:entry>
 

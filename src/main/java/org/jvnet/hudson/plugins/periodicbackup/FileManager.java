@@ -30,33 +30,28 @@ import hudson.model.Describable;
 import hudson.model.Hudson;
 
 import java.io.File;
-import java.util.List;
 
 public abstract class FileManager extends AbstractModelObject implements Describable<FileManager> {
-    /**
-     * TODO: do we really need id, how it will be obtained?
-     * Computed by {@link PeriodicBackupLink#doConfigSubmit(StaplerRequest, StaplerResponse)}.
-     */
-    /*package almost final*/ String id;
 
     /**
      * This method determines files and folders for Storage
      *
-     * @return List of files to be included in backup
+     * @return Files to be included in the backup
      */
-    public abstract List<File> getFileList();
+    public abstract Iterable<File> getFilesToBackup();
 
-
-    public final String getSearchUrl() {
-        return "filemanager/" + getId();
-    }
-
-    protected String getId() {
-        return id;
-    }
+    /**
+     * This will restore files to their right place in the HUDSON directory
+     *
+     * @param filesToBeRestored Files from the backup, unarchived by Storage
+     * @return Result of the operation, true if success, false if fail
+     */
+    public abstract boolean restoreFiles(Iterable<File> filesToBeRestored);
 
     /**
      * This will allow to retrieve the list of plugins at runtime
+     *
+     * @return Collection of FileManager Descriptors
      */
     public static DescriptorExtensionList<FileManager, FileManagerDescriptor> all() {
         return Hudson.getInstance().getDescriptorList(FileManager.class);
@@ -64,6 +59,10 @@ public abstract class FileManager extends AbstractModelObject implements Describ
 
     public FileManagerDescriptor getDescriptor() {
         return (FileManagerDescriptor) Hudson.getInstance().getDescriptor(getClass());
+    }
+
+    public String getSearchUrl() {
+        return "FileManager";
     }
 
 }

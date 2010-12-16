@@ -34,19 +34,13 @@ import java.io.File;
 public abstract class Storage extends AbstractModelObject implements Describable<Storage> {
 
     /**
-     * TODO: do we really need id, how it will be obtained?
-     * Computed by {@link PeriodicBackupLink#doConfigSubmit(StaplerRequest, StaplerResponse)}.
-     */
-    /*package almost final*/ String id;
-
-    /**
      * This method compressed the files and folders that, at this point, must be already
      * determined by a FileManager plugin
      *
      * @param filesToCompress The files and folders to archive
-     * @return File object of the archive
+     * @return File object(s) of the archive
      */
-    public abstract File store(Iterable<String> filesToCompress);
+    public abstract Iterable<File> archiveFiles(Iterable<File> filesToCompress);
 
     /**
      * This method un-compressed the archive to a temporary location.
@@ -55,22 +49,18 @@ public abstract class Storage extends AbstractModelObject implements Describable
      * @param compressedFile The archive to un-compress
      * @return The files and folders un-compressed
      */
-    public abstract Iterable<String> unStore(File compressedFile);
+    public abstract Iterable<String> unarchiveFiles(File compressedFile);
 
     public StorageDescriptor getDescriptor() {
         return (StorageDescriptor) Hudson.getInstance().getDescriptor(getClass());
     }
 
-    public final String getSearchUrl() {
-        return "storage/" + getId();
+    public String getSearchUrl() {
+        return "Storage";
     }
-
-    protected String getId() {
-        return id;
-    }
-
     /**
      * This will allow to retrieve the list of plugins at runtime
+     * @return Collection of FileManager Descriptors
      */
     public static DescriptorExtensionList<Storage, StorageDescriptor> all() {
         return Hudson.getInstance().getDescriptorList(Storage.class);

@@ -51,14 +51,14 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable {
     private final DescribableList<Location, LocationDescriptor> locationPlugins = new DescribableList<Location, LocationDescriptor>(this);
     private final DescribableList<Storage, StorageDescriptor> storagePlugins = new DescribableList<Storage, StorageDescriptor>(this);
 
-    private String targetDirectory;
+    private String tempDirectory;
 
-    public String getTargetDirectory() {
-        return targetDirectory;
+    public String getTempDirectory() {
+        return tempDirectory;
     }
 
-    public void setTargetDirectory(String targetDirectory) {
-        this.targetDirectory = targetDirectory;
+    public void setTempDirectory(String tempDirectory) {
+        this.tempDirectory = tempDirectory;
     }
 
     public String getDisplayName() {
@@ -107,8 +107,8 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable {
         BulkChange bc = new BulkChange(this);
         try {
             //TODO: for each element of configuration file we have to have setter here
-            setTargetDirectory(form.getString("targetDirectory"));
-            //TODO: if we will use ID's we need assign ID here (look into PXE doConfigSubmit
+            setTempDirectory(form.getString("tempDirectory"));
+            //TODO: if we will use ID's we need assign ID here (look into PXE doConfigSubmit), so far we removed ID's  but I will leave this comment just in case
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

@@ -30,14 +30,8 @@ import hudson.model.Describable;
 import hudson.model.Hudson;
 
 import java.io.File;
-import java.util.List;
 
 public abstract class Location extends AbstractModelObject implements Describable<Location> {
-    /**
-     * TODO: do we really need id, how it will be obtained?
-     * Computed by {@link PeriodicBackupLink#doConfigSubmit(StaplerRequest, StaplerResponse)}.
-     */
-    /*package almost final*/ String id;
 
     /**
      * This method returns String objects with file names of all backups in this location
@@ -50,21 +44,24 @@ public abstract class Location extends AbstractModelObject implements Describabl
      * This method puts archived backup file(s) in location and returns boolean result of operation
      *
      * @param backups The backup files to be stored
-     * @return Result of operation, true if success, false if fail
+     * @return Result of the operation, true if success, false if fail
      */
     public abstract boolean storeBackupInLocation(Iterable<File> backups);
 
-
-    public final String getSearchUrl() {
-        return "location/" + getId();
-    }
-
-    protected String getId() {
-        return id;
-    }
+    /**
+     * This method retrieves archived backup file(s) from location and puts it into temporary folder
+     *
+     * @param backup BackupObject containing information about backup file
+     * @param tempDir temporary directory for archives to be unarchived
+     * @return Backup archives
+     */
+    /*TODO: define BackupObject, wouldn't the name "getBackupFromLocation" be better?
+    public abstract Iterable<File>retrieveBackupFromLocation(BackupObject backup, File tempDir);*/
 
     /**
      * This will allow to retrieve the list of plugins at runtime
+     *
+     * @return Collection of FileManager Descriptors
      */
     public static DescriptorExtensionList<Location, LocationDescriptor> all() {
         return Hudson.getInstance().getDescriptorList(Location.class);
@@ -72,6 +69,10 @@ public abstract class Location extends AbstractModelObject implements Describabl
 
     public LocationDescriptor getDescriptor() {
         return (LocationDescriptor) Hudson.getInstance().getDescriptor(getClass());
+    }
+
+    public String getSearchUrl() {
+        return "Location";
     }
 
 }
