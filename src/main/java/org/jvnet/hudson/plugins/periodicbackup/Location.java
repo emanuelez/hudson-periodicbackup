@@ -44,9 +44,8 @@ public abstract class Location extends AbstractModelObject implements Describabl
      * This method puts archived backup file(s) in location and returns boolean result of operation
      *
      * @param backups The backup files to be stored
-     * @return Result of the operation, true if success, false if fail
      */
-    public abstract boolean storeBackupInLocation(Iterable<File> backups);
+    public abstract void storeBackupInLocation(Iterable<File> backups);
 
     /**
      * This method retrieves archived backup file(s) from location and puts it into temporary folder

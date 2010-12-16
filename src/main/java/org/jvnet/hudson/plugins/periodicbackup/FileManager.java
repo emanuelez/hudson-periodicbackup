@@ -33,6 +33,12 @@ import java.io.File;
 
 public abstract class FileManager extends AbstractModelObject implements Describable<FileManager> {
 
+    RestorePolicy restorePolicy;
+
+    protected FileManager(RestorePolicy restorePolicy) {
+        this.restorePolicy = restorePolicy;
+    }
+
     /**
      * This method determines files and folders for Storage
      *
@@ -44,9 +50,10 @@ public abstract class FileManager extends AbstractModelObject implements Describ
      * This will restore files to their right place in the HUDSON directory
      *
      * @param filesToBeRestored Files from the backup, unarchived by Storage
-     * @return Result of the operation, true if success, false if fail
      */
-    public abstract boolean restoreFiles(Iterable<File> filesToBeRestored);
+    public void restoreFiles(Iterable<File> filesToBeRestored) {
+        restorePolicy.restore(filesToBeRestored);
+    }
 
     /**
      * This will allow to retrieve the list of plugins at runtime

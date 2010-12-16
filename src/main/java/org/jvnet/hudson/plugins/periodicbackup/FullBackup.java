@@ -30,6 +30,10 @@ import java.io.File;
 
 public class FullBackup extends FileManager {
 
+    protected FullBackup(RestorePolicy restorePolicy) {
+        super(restorePolicy);
+    }
+
     public String getDisplayName() {
         return "FullBackup";
     }
@@ -38,12 +42,6 @@ public class FullBackup extends FileManager {
     @Override
     public Iterable<File> getFilesToBackup() {
         return null;
-    }
-
-    //TODO: implement
-    @Override
-    public boolean restoreFiles(Iterable<File> filesToBeRestored) {
-        return false;
     }
 
     @Extension
