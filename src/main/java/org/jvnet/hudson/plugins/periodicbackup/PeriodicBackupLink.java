@@ -133,9 +133,22 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable {
         return FileManager.all();
     }
 
-    public Collection<FileManagerDescriptor> getLocationDescriptors() {
-        return FileManager.all();
+    public Collection<LocationDescriptor> getLocationDescriptors() {
+        return Location.all();
     }
+
+    public DescribableList<FileManager, FileManagerDescriptor> getFileManagers() {
+        return fileManagerPlugins;
+    }
+
+    public DescribableList<Storage, StorageDescriptor> getStorages() {
+        return storagePlugins;
+    }
+
+    public DescribableList<Location, LocationDescriptor> getLocations() {
+        return locationPlugins;
+    }
+
 
 }
 

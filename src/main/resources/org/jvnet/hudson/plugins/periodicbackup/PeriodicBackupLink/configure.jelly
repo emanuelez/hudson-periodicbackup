@@ -35,7 +35,7 @@
             <!-- <j:set var="descriptor" value="${it.descriptor}" /> -->
             <f:form method="post" action="configSubmit" name="config">
 
-                <f:section title="${%content.title}">
+                <f:section title="${%configuration.title}">
                     <f:entry title="${%rootDirectory.title}">
                         ${it.rootDirectory}
                     </f:entry>
@@ -43,52 +43,33 @@
                         <f:textbox/>
                     </f:entry>
 
-                    <f:entry title="${%fileManagementStrategy.title}">
-                        <select name="fileManagerDescriptor">
-                            <j:forEach var="value" items="${it.fileManagerDescriptors}">
-                                <f:option selected="${it.fileManagerDescriptor.displayName==value.displayName}">
-                                    ${value.displayName}
-                                </f:option>
-                            </j:forEach>
-                        </select>
-                    </f:entry>
-
-                    <script>
-                        Event.observe(window, 'load', function(event) {
-                        if($$('select[name=fileManagerDescriptor]')[0].value != "Custom Backup") {
-                        $$('tr[class=optional-block-start row-set-start]').each(Element.hide);
-                        }
-                        Event.observe($$('select[name=fileManagerDescriptor]')[0], 'change', checkIfCustom);
-
-                        });
-
-                        function checkIfCustom(event) {
-                        if($$('select[name=fileManagerDescriptor]')[0].value != "Custom Backup") {
-                        $$('tr[class=optional-block-start row-set-start]').each(Element.hide);
-                        }
-                        else {
-                        $$('tr[class=optional-block-start row-set-start]').each(Element.show);
-                        }
-                        }
-                    </script>
-                    <!-- optional stuff here -->
-                    <f:optionalBlock title="${%content.workspace.title}"
-                                     name="keepWorkspaces"
-                                     checked="${it.configuration.keepWorkspaces}">
-                    </f:optionalBlock>
+                    <f:section title="${%fileManagementStrategy.title}">
+                        <f:block>
+                            <f:hetero-list name="FileManager" hasHeader="true"
+                                           descriptors="${it.fileManagerDescriptors}"
+                                           items="${it.fileManagers}"
+                                           addCaption="${%fileManager.addCaption}"/>
+                        </f:block>
+                    </f:section>
 
                 </f:section>
 
                 <f:section title="${%storageStrategy.title}">
-                    <f:entry title="${%storageType.title}">
-                        <select name="storage">
-                            <j:forEach var="value" items="${it.storageDescriptors}">
-                                <f:option selected="${it.storageDescriptor.displayName==value.displayName}">
-                                    ${value.displayName}
-                                </f:option>
-                            </j:forEach>
-                        </select>
-                    </f:entry>
+                        <f:block>
+                            <f:hetero-list name="Storage" hasHeader="true"
+                                           descriptors="${it.storageDescriptors}"
+                                           items="${it.storages}"
+                                           addCaption="${%storage.addCaption}"/>
+                        </f:block>
+                </f:section>
+
+                <f:section title="${%location.title}">
+                        <f:block>
+                            <f:hetero-list name="Location" hasHeader="true"
+                                           descriptors="${it.locationDescriptors}"
+                                           items="${it.locations}"
+                                           addCaption="${%location.addCaption}"/>
+                        </f:block>
                 </f:section>
 
                 <f:block>
