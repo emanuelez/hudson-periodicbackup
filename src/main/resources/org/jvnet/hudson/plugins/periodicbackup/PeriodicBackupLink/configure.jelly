@@ -55,21 +55,21 @@
                 </f:section>
 
                 <f:section title="${%storageStrategy.title}">
-                        <f:block>
-                            <f:hetero-list name="Storage" hasHeader="true"
-                                           descriptors="${it.storageDescriptors}"
-                                           items="${it.storages}"
-                                           addCaption="${%storage.addCaption}"/>
-                        </f:block>
+                    <f:block>
+                        <f:hetero-list name="Storage" hasHeader="true"
+                                       descriptors="${it.storageDescriptors}"
+                                       items="${it.storages}"
+                                       addCaption="${%storage.addCaption}"/>
+                    </f:block>
                 </f:section>
 
                 <f:section title="${%location.title}">
-                        <f:block>
-                            <f:hetero-list name="Location" hasHeader="true"
-                                           descriptors="${it.locationDescriptors}"
-                                           items="${it.locations}"
-                                           addCaption="${%location.addCaption}"/>
-                        </f:block>
+                    <f:block>
+                        <f:hetero-list name="Location" hasHeader="true"
+                                       descriptors="${it.locationDescriptors}"
+                                       items="${it.locations}"
+                                       addCaption="${%location.addCaption}"/>
+                    </f:block>
                 </f:section>
 
                 <f:block>
