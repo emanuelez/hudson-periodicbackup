@@ -58,8 +58,10 @@ public abstract class Storage extends AbstractModelObject implements Describable
     public String getSearchUrl() {
         return "Storage";
     }
+
     /**
      * This will allow to retrieve the list of plugins at runtime
+     *
      * @return Collection of FileManager Descriptors
      */
     public static DescriptorExtensionList<Storage, StorageDescriptor> all() {
