@@ -1,3 +1,4 @@
+
 <!--
   - The MIT License
   -
@@ -25,8 +26,9 @@
 <!--
   Config page
 -->
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
-         xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-<!-- TODO: make it happen -->
-Test text from FullBackup/config.jelly
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:entry title="Test" field="test">
+    <f:textbox />
+	</f:entry>
 </j:jelly>

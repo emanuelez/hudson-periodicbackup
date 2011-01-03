@@ -33,9 +33,7 @@ import com.google.inject.Injector;
 import hudson.BulkChange;
 import hudson.Extension;
 import hudson.XmlFile;
-import hudson.model.Hudson;
-import hudson.model.ManagementLink;
-import hudson.model.Saveable;
+import hudson.model.*;
 import hudson.util.DescribableList;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
@@ -47,7 +45,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 @Extension
-public class PeriodicBackupLink extends ManagementLink implements Saveable {
+public class PeriodicBackupLink extends ManagementLink implements Describable<PeriodicBackupLink>, Saveable {
 
     private final DescribableList<FileManager, FileManagerDescriptor> fileManagerPlugins = new DescribableList<FileManager, FileManagerDescriptor>(this);
     private final DescribableList<Location, LocationDescriptor> locationPlugins = new DescribableList<Location, LocationDescriptor>(this);
@@ -117,12 +115,30 @@ public class PeriodicBackupLink extends ManagementLink implements Saveable {
             //TODO: for each element of configuration file we have to have setter here
             setTempDirectory(form.getString("tempDirectory"));
             //TODO: if we will use ID's we need assign ID here (look into PXE doConfigSubmit), so far we removed ID's  but I will leave this comment just in case
-        } catch (Exception e) {
+            fileManagerPlugins.rebuildHetero(req, form, getFileManagerDescriptors(), "FileManager");
+            locationPlugins.rebuildHetero(req, form, getLocationDescriptors(), "Location");
+            storagePlugins.rebuildHetero(req, form, getStorageDescriptors(), "Storage");
+
+        } catch (Descriptor.FormException e) {
             e.printStackTrace();
         } finally {
             bc.commit();
         }
         rsp.sendRedirect(".");
+    }
+
+    public DescriptorImpl getDescriptor() {
+        return Hudson.getInstance().getDescriptorByType(DescriptorImpl.class);
+    }
+
+    /**
+     * Descriptor is only used for UI form bindings
+     */
+    @Extension
+    public static final class DescriptorImpl extends Descriptor<PeriodicBackupLink> {
+        public String getDisplayName() {
+            return null; // unused
+        }
     }
 
     public Collection<StorageDescriptor> getStorageDescriptors() {

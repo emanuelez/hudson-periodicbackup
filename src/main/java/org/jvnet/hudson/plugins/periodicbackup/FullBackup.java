@@ -24,16 +24,17 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
-import com.google.inject.Inject;
 import hudson.Extension;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
 
 public class FullBackup extends FileManager {
 
-    @Inject
-    protected FullBackup(@Replace RestorePolicy restorePolicy) {
-        super(restorePolicy);
+    @DataBoundConstructor
+    public FullBackup() {
+        super();
+        this.restorePolicy = new ReplaceRestorePolicy();
     }
 
     public String getDisplayName() {
@@ -51,5 +52,7 @@ public class FullBackup extends FileManager {
         public String getDisplayName() {
             return "FullBackup";
         }
+
+
     }
 }

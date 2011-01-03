@@ -22,8 +22,18 @@
   - THE SOFTWARE.
   -->
 
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
-         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <!-- TODO: include restore here instead, there should be information if no configuration was saved and link to config if so -->
-    <st:include page="configure.jelly"/>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:layout norefresh="true" title="${%Periodic Backup Configuration}">
+    <st:include page="sidepanel.jelly"/>
+    <l:main-panel>
+        <j:choose>
+            <j:when test="${size(it.fileManagers)==0 or size(it.storages)==0 or size(locations)==0}">
+                The Periodic Backup plugin has not been configured yet. <a href="${rootURL}/periodicbackup/configure">Click here to configure it.</a>
+            </j:when>
+            <j:otherwise>
+                TODO: Show the status here.
+            </j:otherwise>
+        </j:choose>
+    </l:main-panel>
+    </l:layout>
 </j:jelly>

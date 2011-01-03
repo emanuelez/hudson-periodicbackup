@@ -35,9 +35,6 @@ public abstract class FileManager extends AbstractModelObject implements Describ
 
     RestorePolicy restorePolicy;
 
-    protected FileManager(RestorePolicy restorePolicy) {
-        this.restorePolicy = restorePolicy;
-    }
 
     /**
      * This method determines files and folders for Storage
