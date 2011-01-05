@@ -31,41 +31,41 @@
         <st:include page="sidepanel.jelly"/>
         <l:main-panel>
             <j:set var="instance" value="${it}"/>
-            <j:set var="descriptor" value="${it.descriptor}" />
+            <j:set var="descriptor" value="${it.descriptor}"/>
             <f:form method="post" action="configSubmit" name="config">
 
-                    <f:entry title="${%rootDirectory.title}">
-                        ${it.rootDirectory}
-                    </f:entry>
-                    <f:entry title="${%tempDirectory.title}" field="tempDirectory">
-                        <f:textbox/>
-                    </f:entry>
+                <f:entry title="${%rootDirectory.title}">
+                    ${it.rootDirectory}
+                </f:entry>
+                <f:entry title="${%tempDirectory.title}" field="tempDirectory">
+                    <f:textbox/>
+                </f:entry>
 
-                    <f:section title="${%fileManagementStrategy.title}">
-                        <f:block>
-                            <f:hetero-list name="FileManager" hasHeader="true"
-                                           descriptors="${it.fileManagerDescriptors}"
-                                           items="${it.fileManagers}"
-                                           addCaption="${%fileManager.addCaption}"/>
-                        </f:block>
-                    </f:section>
-                    <f:section title="${%storageStrategy.title}">
-                        <f:block>
-                            <f:hetero-list name="Storage" hasHeader="true"
-                                           descriptors="${it.storageDescriptors}"
-                                           items="${it.storages}"
-                                           addCaption="${%storage.addCaption}"/>
-                        </f:block>
-                    </f:section>
+                <f:section title="${%fileManagementStrategy.title}">
+                    <f:block>
+                        <f:hetero-list name="FileManager" hasHeader="true"
+                                       descriptors="${it.fileManagerDescriptors}"
+                                       items="${it.fileManagers}"
+                                       addCaption="${%fileManager.addCaption}"/>
+                    </f:block>
+                </f:section>
+                <f:section title="${%storageStrategy.title}">
+                    <f:block>
+                        <f:hetero-list name="Storage" hasHeader="true"
+                                       descriptors="${it.storageDescriptors}"
+                                       items="${it.storages}"
+                                       addCaption="${%storage.addCaption}"/>
+                    </f:block>
+                </f:section>
 
-                    <f:section title="${%location.title}">
-                        <f:block>
-                            <f:hetero-list name="Location" hasHeader="true"
-                                           descriptors="${it.locationDescriptors}"
-                                           items="${it.locations}"
-                                           addCaption="${%location.addCaption}"/>
-                        </f:block>
-                    </f:section>
+                <f:section title="${%location.title}">
+                    <f:block>
+                        <f:hetero-list name="Location" hasHeader="true"
+                                       descriptors="${it.locationDescriptors}"
+                                       items="${it.locations}"
+                                       addCaption="${%location.addCaption}"/>
+                    </f:block>
+                </f:section>
 
                 <f:block>
                     <f:submit value="${%submit.title}"/>

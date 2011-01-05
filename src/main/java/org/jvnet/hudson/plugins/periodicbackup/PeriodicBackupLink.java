@@ -51,6 +51,10 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
 
     private String tempDirectory;
 
+    public PeriodicBackupLink() throws IOException {
+        load();
+    }
+
     public String getTempDirectory() {
         return tempDirectory;
     }
