@@ -22,28 +22,16 @@
   - THE SOFTWARE.
   -->
 
+<!--
+  Config page
+-->
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <l:layout norefresh="true" title="${%Periodic Backup Configuration}">
-        <st:include page="sidepanel.jelly"/>
-        <l:main-panel>
-            <j:choose>
-                <j:when test="${size(it.fileManagers)==0 or size(it.storages)==0 or size(it.locations)==0}">
-                    The Periodic Backup plugin has not been configured yet.
-                    <a href="${rootURL}/periodicbackup/configure">Click here to configure it.</a>
-                </j:when>
-                <j:otherwise>
-                    <!-- TODO: it will change, so far I want to view Locations here for testing purposes -->
-                    <ul>
-                        Locations:
-                        <j:forEach var="location" items="${it.locations}">
-                            <li>
-                                <a href="${location.url}/">${location.displayName}</a>
-                            </li>
-                        </j:forEach>
-                    </ul>
-                </j:otherwise>
-            </j:choose>
-        </l:main-panel>
-    </l:layout>
+    <f:entry title="${%localDirectory.backupDirectoryPath.title}" field="path">
+        <f:textbox />
+    </f:entry>
+    <f:validateButton
+       title="${%Test path}" progress="${%Testing...}"
+       method="testPath" with="path" />
+
 </j:jelly>

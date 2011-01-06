@@ -1,3 +1,4 @@
+package org.jvnet.hudson.plugins.periodicbackup;
 /*
  * The MIT License
  *
@@ -22,35 +23,57 @@
  * THE SOFTWARE.
  */
 
-package org.jvnet.hudson.plugins.periodicbackup;
-
 import hudson.Extension;
+import hudson.util.FormValidation;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 
 import java.io.File;
 
-public class FullBackup extends FileManager {
+public class LocalDirectory extends Location {
+
+    public final File path;
 
     @DataBoundConstructor
-    public FullBackup() {
+    public LocalDirectory(File path) {
         super();
-        this.restorePolicy = new ReplaceRestorePolicy();
+        this.path = path;
     }
 
-    public String getDisplayName() {
-        return "FullBackup";
-    }
-
-    //TODO: implement
     @Override
-    public Iterable<File> getFilesToBackup() {
+    public Iterable<String> getAvailableBackups() {
+        //TODO: implement
         return null;
     }
 
+    @Override
+    public void storeBackupInLocation(Iterable<File> backups) {
+        //TODO: implement
+    }
+
+    public String getDisplayName() {
+        return "LocalDirectory: " + path;
+    }
+
     @Extension
-    public static class DescriptorImpl extends FileManagerDescriptor {
+    public static class DescriptorImpl extends LocationDescriptor {
         public String getDisplayName() {
-            return "FullBackup";
+            return "LocalDirectory";
+        }
+
+        public FormValidation doTestPath(@QueryParameter String path) {
+            try {
+                return FormValidation.ok(validatePath(path));
+            } catch (FormValidation f) {
+                return f;
+            }
+        }
+
+        public String validatePath(String path) throws FormValidation {
+            File fileFromString = new File(path);
+            if (!fileFromString.exists() || !fileFromString.isDirectory() || !fileFromString.canWrite())
+                throw FormValidation.error(path + " doesn't exists or is not a writable directory");
+            return "directory \"" + path + "\" OK";
         }
 
     }
