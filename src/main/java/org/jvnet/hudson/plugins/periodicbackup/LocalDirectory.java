@@ -35,8 +35,8 @@ public class LocalDirectory extends Location {
     public final File path;
 
     @DataBoundConstructor
-    public LocalDirectory(File path) {
-        super();
+    public LocalDirectory(File path, boolean enabled) {
+        super(enabled);
         this.path = path;
     }
 

@@ -33,6 +33,12 @@ import java.io.File;
 
 public abstract class Location extends AbstractModelObject implements Describable<Location> {
 
+    public final boolean enabled;
+
+    public Location(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     /**
      * This method returns String objects with file names of all backups in this location
      *
