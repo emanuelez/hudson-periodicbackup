@@ -38,7 +38,6 @@ public class ZipStorage extends Storage {
 
     //TODO: implement
     @Override
-
     public Iterable<File> archiveFiles(Iterable<File> filesToCompress) {
         return null;
     }

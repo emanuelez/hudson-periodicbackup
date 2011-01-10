@@ -30,7 +30,7 @@
             <l:task icon="images/24x24/up.gif" href="${rootURL}/" title="${%sidepanel.back}"/>
             <l:task icon="plugin/periodicbackup/images/24x24/restore.png" href="${rootURL}/periodicbackup"
                     title="${%sidepanel.restore}"/>
-            <l:task icon="plugin/periodicbackup/images/24x24/backup.png" href="${rootURL}/periodicbackup/backup"
+            <l:task icon="plugin/periodicbackup/images/24x24/backup.png" href="backup"
                     title="${%sidepanel.backup}"/>
             <l:task icon="images/24x24/setting.gif" href="${rootURL}/periodicbackup/configure"
                     title="${%sidepanel.configure}"/>

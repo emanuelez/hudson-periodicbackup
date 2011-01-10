@@ -24,34 +24,12 @@
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <l:layout norefresh="true" title="${%periodicBackupConfiguration.title}">
+    <l:layout norefresh="true" title="${%backup.title}">
         <st:include page="sidepanel.jelly"/>
         <l:main-panel>
-            <j:choose>
-                <j:when test="${size(it.fileManagers)==0 or size(it.storages)==0 or size(it.locations)==0}">
-                    The Periodic Backup plugin has not been configured yet.
-                    <a href="${rootURL}/periodicbackup/configure">Click here to configure it.</a>
-                </j:when>
-                <j:otherwise>
-                    <!-- TODO: it will change, so far I want to view Locations here for testing purposes -->
-                    <ul>
-                        Locations:
-                        <j:forEach var="location" items="${it.locations}">
-                            <li>
-                                <a href="${location.url}/">${location.displayName}</a>
-                                (enabled = ${location.enabled})
-                            </li>
-                        </j:forEach>
-                        Files:
-                        <j:forEach var="fm" items="${it.fileManagers}">
-                            <li>
-                                <a href="${fm.url}/">${fm.displayName}</a>
-                                ${fm.filesToBackup}
-                            </li>
-                        </j:forEach>
-                    </ul>
-                </j:otherwise>
-            </j:choose>
+            <l:isAdmin>
+            <!-- TODO: show log here -->
+            </l:isAdmin>
         </l:main-panel>
     </l:layout>
 </j:jelly>
