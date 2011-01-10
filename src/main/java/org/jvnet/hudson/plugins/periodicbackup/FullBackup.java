@@ -25,9 +25,13 @@
 package org.jvnet.hudson.plugins.periodicbackup;
 
 import hudson.Extension;
+import hudson.model.Hudson;
+import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FullBackup extends FileManager {
 
@@ -41,10 +45,18 @@ public class FullBackup extends FileManager {
         return "FullBackup";
     }
 
-    //TODO: implement
     @Override
     public Iterable<File> getFilesToBackup() {
-        return null;
+        DirectoryScanner directoryScanner = new DirectoryScanner();
+        directoryScanner.setBasedir(Hudson.getInstance().getRootDir().getAbsolutePath());
+        directoryScanner.setExcludes(null);
+        directoryScanner.scan();
+        String[] filesPaths = directoryScanner.getIncludedFiles();
+        List<File> files = new ArrayList<File>();
+        for(String s: filesPaths) {
+            files.add(new File(s));
+        }
+        return (Iterable<File>)files;
     }
 
     @Extension
