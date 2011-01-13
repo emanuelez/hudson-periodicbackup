@@ -28,6 +28,10 @@ public class BackupExecutor {
             for(Location l: locations) {
                 l.storeBackupInLocation(backup);
             }
+            for(File f: backup) {
+                System.out.println("[INFO] Deleting temporary file " + f.getAbsolutePath()); //TODO: logger instead
+                f.delete();
+            }
         }
     }
 }

@@ -25,10 +25,12 @@ package org.jvnet.hudson.plugins.periodicbackup;
 
 import hudson.Extension;
 import hudson.util.FormValidation;
+import org.apache.commons.io.FileUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 import java.io.File;
+import java.io.IOException;
 
 public class LocalDirectory extends Location {
 
@@ -48,8 +50,18 @@ public class LocalDirectory extends Location {
 
     @Override
     public void storeBackupInLocation(Iterable<File> backups) {
-        //TODO: implement
-    }
+        if (this.enabled) {
+            for (File f : backups) {
+                try {
+                    File destination = new File(path, f.getName());
+                    FileUtils.copyFile(f, destination);
+                    System.out.println("[INFO] " + f.getName() + " copied to " + destination.getAbsolutePath()); //TODO: logger instead
+                } catch (IOException e) {
+                    e.printStackTrace();  //TODO: proper exception handling
+                }
+            }
+        }
+     }
 
     public String getDisplayName() {
         return "LocalDirectory: " + path;
