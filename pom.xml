@@ -41,4 +41,12 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-archiver</artifactId>
+            <version>1.0-alpha-11</version>
+        </dependency>
+    </dependencies>
+
 </project>

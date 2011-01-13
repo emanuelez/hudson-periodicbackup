@@ -3,6 +3,7 @@ package org.jvnet.hudson.plugins.periodicbackup;
 import hudson.util.DescribableList;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +13,8 @@ public class BackupExecutor {
 
     public void backup(DescribableList<FileManager, FileManagerDescriptor> fileManagers,
                        DescribableList<Storage, StorageDescriptor> storages,
-                       DescribableList<Location, LocationDescriptor> locations) {
+                       DescribableList<Location, LocationDescriptor> locations,
+                       String tempDirectory) throws IOException {
         //collecting files for backup
         for(FileManager fm: fileManagers) {
             for(File f: fm.getFilesToBackup()) {
@@ -21,7 +23,7 @@ public class BackupExecutor {
         }
         //creating backup archives for each storage defined
         for(Storage s: storages) {
-            Set<File> backup = (Set<File>)s.archiveFiles(filesToBackup);
+            Iterable<File> backup = s.archiveFiles(filesToBackup, tempDirectory);
             //sends all backup archives to all activated locations
             for(Location l: locations) {
                 l.storeBackupInLocation(backup);

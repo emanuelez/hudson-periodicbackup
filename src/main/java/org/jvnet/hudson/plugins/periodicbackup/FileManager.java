@@ -30,6 +30,7 @@ import hudson.model.Describable;
 import hudson.model.Hudson;
 
 import java.io.File;
+import java.io.IOException;
 
 public abstract class FileManager extends AbstractModelObject implements Describable<FileManager> {
 
@@ -41,7 +42,7 @@ public abstract class FileManager extends AbstractModelObject implements Describ
      *
      * @return Files to be included in the backup
      */
-    public abstract Iterable<File> getFilesToBackup();
+    public abstract Iterable<File> getFilesToBackup() throws IOException;
 
     /**
      * This will restore files to their right place in the HUDSON directory

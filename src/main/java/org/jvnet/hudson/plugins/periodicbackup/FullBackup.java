@@ -30,6 +30,7 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,17 +47,15 @@ public class FullBackup extends FileManager {
     }
 
     @Override
-    public Iterable<File> getFilesToBackup() {
+    public Iterable<File> getFilesToBackup() throws IOException {
         DirectoryScanner directoryScanner = new DirectoryScanner();
-        directoryScanner.setBasedir(Hudson.getInstance().getRootDir().getAbsolutePath());
-        directoryScanner.setExcludes(null);
+        directoryScanner.setBasedir(Hudson.getInstance().getRootDir());
         directoryScanner.scan();
-        String[] filesPaths = directoryScanner.getIncludedFiles();
         List<File> files = new ArrayList<File>();
-        for(String s: filesPaths) {
-            files.add(new File(s));
+        for(String s: directoryScanner.getIncludedFiles()) {
+            files.add(new File(directoryScanner.getBasedir(), s));
         }
-        return (Iterable<File>)files;
+        return files;
     }
 
     @Extension

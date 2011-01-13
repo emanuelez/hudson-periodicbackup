@@ -30,6 +30,7 @@ import hudson.model.Describable;
 import hudson.model.Hudson;
 
 import java.io.File;
+import java.io.IOException;
 
 public abstract class Storage extends AbstractModelObject implements Describable<Storage> {
 
@@ -38,9 +39,12 @@ public abstract class Storage extends AbstractModelObject implements Describable
      * determined by a FileManager plugin
      *
      * @param filesToCompress The files and folders to archive
+     * @param tempDirectory String with a path to temporary directory, where the archive(s) will be created
      * @return File object(s) of the archive
+     * @throws IOException
+     *
      */
-    public abstract Iterable<File> archiveFiles(Iterable<File> filesToCompress);
+    public abstract Iterable<File> archiveFiles(Iterable<File> filesToCompress, String tempDirectory) throws IOException;
 
     /**
      * This method un-compressed the archive to a temporary location.

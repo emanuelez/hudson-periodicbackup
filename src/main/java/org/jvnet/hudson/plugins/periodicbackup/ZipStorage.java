@@ -25,9 +25,15 @@
 package org.jvnet.hudson.plugins.periodicbackup;
 
 import hudson.Extension;
+import hudson.model.Hudson;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ZipStorage extends Storage {
 
@@ -36,12 +42,30 @@ public class ZipStorage extends Storage {
         super();
     }
 
-    //TODO: implement
     @Override
-    public Iterable<File> archiveFiles(Iterable<File> filesToCompress) {
-        return null;
-    }
+    public Iterable<File> archiveFiles(Iterable<File> filesToCompress, String tempDirectoryPath) throws IOException {
+        List<File> archives = new ArrayList<File>();
+        String archiveFilePath = Util.generateArchiveFileName();
+        ZipArchiver archiver = new ZipArchiver();
+        File tempDirectory = new File(tempDirectoryPath);
 
+        archiver.setDestFile(new File(tempDirectory, archiveFilePath));
+
+        for(File f: filesToCompress) {
+            try {
+                archiver.addFile(f, Util.getRelativePath(f, Hudson.getInstance().getRootDir()));
+            } catch (ArchiverException e) {
+                e.printStackTrace();  //TODO: proper exception handling
+            }
+        }
+        try {
+            archiver.createArchive();
+        } catch (ArchiverException e) {
+            e.printStackTrace();  //TODO: proper exception handling
+        }
+        archives.add(archiver.getDestFile());
+        return archives;
+    }
     //TODO: implement
     @Override
     public Iterable<String> unarchiveFiles(File compressedFile) {
