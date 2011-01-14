@@ -38,15 +38,8 @@
                         Locations:
                         <j:forEach var="location" items="${it.locations}">
                             <li>
-                                <a href="${location.url}/">${location.displayName}</a>
-                                (enabled = ${location.enabled})
-                            </li>
-                        </j:forEach>
-                        Files:
-                        <j:forEach var="fm" items="${it.fileManagers}">
-                            <li>
-                                <a href="${fm.url}/">${fm.displayName}</a>
-                                ${fm.filesToBackup}
+                                <h3>${location.displayName}</h3>
+                                ${location.availableBackups}
                             </li>
                         </j:forEach>
                     </ul>

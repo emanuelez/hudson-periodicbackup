@@ -31,6 +31,9 @@ import org.kohsuke.stapler.QueryParameter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class LocalDirectory extends Location {
 
@@ -44,8 +47,28 @@ public class LocalDirectory extends Location {
 
     @Override
     public Iterable<String> getAvailableBackups() {
-        //TODO: implement
-        return null;
+        List<String> extensions = new ArrayList<String>();
+        for (StorageDescriptor sd : Storage.all()) {
+            extensions.add(sd.getArchiveFileExtension());
+        }
+        String extensionsArray[] = new String[extensions.size()];
+        extensionsArray = extensions.toArray(extensionsArray);
+        Collection<File> archives = FileUtils.listFiles(path, extensionsArray, false);
+        List<String> backups = new ArrayList<String>();
+        boolean valid = false;
+        for (File f : archives) {
+            for (StorageDescriptor sd : Storage.all()) {
+                if (sd.isValidArchive(f)) {
+                    valid = true;
+                    continue;
+                }
+            }
+            if (valid) {
+                valid = false;
+                backups.add(f.getAbsolutePath());
+            }
+        }
+        return backups;
     }
 
     @Override
