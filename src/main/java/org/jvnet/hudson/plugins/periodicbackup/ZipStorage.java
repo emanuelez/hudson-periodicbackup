@@ -81,5 +81,15 @@ public class ZipStorage extends Storage {
         public String getDisplayName() {
             return "ZipStorage";
         }
+
+        @Override
+        public String getArchiveFileExtension() {
+            return "zip";
+        }
+
+        @Override
+        public boolean isValidArchive(File file) {
+            return Util.isValidZip(file);
+        }
     }
 }
