@@ -30,6 +30,7 @@ import hudson.model.Describable;
 import hudson.model.Hudson;
 
 import java.io.File;
+import java.io.IOException;
 
 public abstract class Location extends AbstractModelObject implements Describable<Location> {
 
@@ -44,24 +45,23 @@ public abstract class Location extends AbstractModelObject implements Describabl
      *
      * @return file names of backups
      */
-    public abstract Iterable<String> getAvailableBackups();
+    public abstract Iterable<BackupObject> getAvailableBackups();
 
     /**
-     * This method puts archived backup file(s) in location and returns boolean result of operation
-     *
-     * @param backups The backup files to be stored
+     * This method puts archived backup file(s) in location
+     * @param archives archive file(s)
+     * @param backupObjectFile File with serialized backupObject
+     * @param baseFileName first part of the file name common to both - archive(s) and backup object file
      */
-    public abstract void storeBackupInLocation(Iterable<File> backups);
+    public abstract void storeBackupInLocation(Iterable<File> archives, File backupObjectFile, String baseFileName);
 
     /**
-     * This method retrieves archived backup file(s) from location and puts it into temporary folder
      *
-     * @param backup BackupObject containing information about backup file
-     * @param tempDir temporary directory for archives to be unarchived
-     * @return Backup archives
+     * @param backup Iterable of backup archive(s) to be retrieved from the location
+     * @param tempDir temporary directory to store archived backup file(s)
+     * @return Iterable of backup archive(s) in temporary location
      */
-    /*TODO: define BackupObject, wouldn't the name "getBackupFromLocation" be better?
-    public abstract Iterable<File>retrieveBackupFromLocation(BackupObject backup, File tempDir);*/
+    public abstract Iterable<File>retrieveBackupFromLocation(Iterable<File> backup, File tempDir) throws IOException;
 
     /**
      * This will allow to retrieve the list of plugins at runtime

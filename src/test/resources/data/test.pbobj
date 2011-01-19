@@ -1,0 +1,10 @@
+<org.jvnet.hudson.plugins.periodicbackup.BackupObject>
+  <fileManager class="org.jvnet.hudson.plugins.periodicbackup.FullBackup">
+    <restorePolicy class="org.jvnet.hudson.plugins.periodicbackup.ReplaceRestorePolicy"/>
+  </fileManager>
+  <storage class="org.jvnet.hudson.plugins.periodicbackup.ZipStorage"/>
+  <location class="org.jvnet.hudson.plugins.periodicbackup.LocalDirectory">
+    <enabled>true</enabled>
+    <path>c:\Temp</path>
+  </location>
+</org.jvnet.hudson.plugins.periodicbackup.BackupObject>

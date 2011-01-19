@@ -58,6 +58,14 @@ public class FullBackup extends FileManager {
         return files;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        FullBackup that = (FullBackup) o;
+        return this.getClass().equals(that.getClass());
+    }
+
+
     @Extension
     public static class DescriptorImpl extends FileManagerDescriptor {
         public String getDisplayName() {

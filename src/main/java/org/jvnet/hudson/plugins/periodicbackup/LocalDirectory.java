@@ -23,6 +23,8 @@ package org.jvnet.hudson.plugins.periodicbackup;
  * THE SOFTWARE.
  */
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import hudson.Extension;
 import hudson.util.FormValidation;
 import org.apache.commons.io.FileUtils;
@@ -32,8 +34,8 @@ import org.kohsuke.stapler.QueryParameter;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public class LocalDirectory extends Location {
 
@@ -46,48 +48,72 @@ public class LocalDirectory extends Location {
     }
 
     @Override
-    public Iterable<String> getAvailableBackups() {
-        List<String> extensions = new ArrayList<String>();
-        for (StorageDescriptor sd : Storage.all()) {
-            extensions.add(sd.getArchiveFileExtension());
-        }
-        String extensionsArray[] = new String[extensions.size()];
-        extensionsArray = extensions.toArray(extensionsArray);
-        Collection<File> archives = FileUtils.listFiles(path, extensionsArray, false);
-        List<String> backups = new ArrayList<String>();
-        boolean valid = false;
-        for (File f : archives) {
-            for (StorageDescriptor sd : Storage.all()) {
-                if (sd.isValidArchive(f)) {
-                    valid = true;
-                    continue;
-                }
-            }
-            if (valid) {
-                valid = false;
-                backups.add(f.getAbsolutePath());
-            }
-        }
-        return backups;
+    public Iterable<BackupObject> getAvailableBackups() {
+        File[] files = path.listFiles(Util.backupObjectFileFilter());
+        Set<File> backupObjectFiles = Sets.newHashSet(files);
+        return Iterables.transform(backupObjectFiles, BackupObject.getFromFile());
     }
 
     @Override
-    public void storeBackupInLocation(Iterable<File> backups) {
-        if (this.enabled) {
-            for (File f : backups) {
-                try {
-                    File destination = new File(path, f.getName());
-                    FileUtils.copyFile(f, destination);
-                    System.out.println("[INFO] " + f.getName() + " copied to " + destination.getAbsolutePath()); //TODO: logger instead
-                } catch (IOException e) {
-                    e.printStackTrace();  //TODO: proper exception handling
+    public void storeBackupInLocation(Iterable<File> archives, File backupObjectFile, String baseFileName) {
+        if (this.enabled && path.exists()) {
+            try {
+                File backupObjectFileDestination = new File(path, backupObjectFile.getName());
+                FileUtils.copyFile(backupObjectFile, backupObjectFileDestination);
+                System.out.println("[INFO] " + backupObjectFile.getName() + " copied to " + backupObjectFileDestination.getAbsolutePath()); //TODO: logger instead
+                for (File f : archives) {
+                    {
+                        File destination = new File(path, f.getName());
+                        FileUtils.copyFile(f, destination);
+                        System.out.println("[INFO] " + f.getName() + " copied to " + destination.getAbsolutePath()); //TODO: logger instead
+                    }
                 }
+            } catch (IOException e) {
+                e.printStackTrace();  //TODO: proper exception handling
             }
         }
-     }
+        else {
+            System.out.println("[WARNING] skipping location " + this.path + ", location is disabled or doesn't exist."); //TODO: logger instead
+        }
+
+    }
+
+    @Override
+    public Iterable<File> retrieveBackupFromLocation(Iterable<File> backup, File tempDir) throws IOException {
+        if((tempDir.exists() && !tempDir.isDirectory()) || tempDir.canWrite()) {
+            System.out.println("[ERROR] Temporary directory is not a directory or is not writable."); //TODO: logger instead
+            return null; //TODO: throw exception?
+        }
+        List<File> backupInTempDir = new ArrayList<File>();
+        for(File f : backup) {
+            FileUtils.copyFileToDirectory(tempDir, f);
+            backupInTempDir.add(new File(tempDir,f.getName()));
+        }
+        return backupInTempDir;
+    }
 
     public String getDisplayName() {
         return "LocalDirectory: " + path;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LocalDirectory that = (LocalDirectory) o;
+
+        if (path != null ? !path.equals(that.path) : that.path != null) return false;
+        if (this.enabled != that.enabled) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result =  path != null ? path.hashCode() : 0;
+        result = 43 * result + (enabled ? 1 : 0);
+        return result;
     }
 
     @Extension

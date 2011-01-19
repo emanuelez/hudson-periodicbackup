@@ -6,4 +6,9 @@ public class ReplaceRestorePolicy implements RestorePolicy {
     public void restore(Iterable<File> files) {
         // TODO: implement
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return true;
+    }
 }

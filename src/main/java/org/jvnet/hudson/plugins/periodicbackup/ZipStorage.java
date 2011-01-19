@@ -43,9 +43,9 @@ public class ZipStorage extends Storage {
     }
 
     @Override
-    public Iterable<File> archiveFiles(Iterable<File> filesToCompress, String tempDirectoryPath) throws IOException {
+    public Iterable<File> archiveFiles(Iterable<File> filesToCompress, String tempDirectoryPath, String fileNameBase) throws IOException {
         List<File> archives = new ArrayList<File>();
-        String archiveFilePath = Util.generateArchiveFileName();
+        String archiveFilePath = Util.createFileName(fileNameBase, getDescriptor().getArchiveFileExtension());
         ZipArchiver archiver = new ZipArchiver();
         File tempDirectory = new File(tempDirectoryPath);
 
@@ -74,6 +74,13 @@ public class ZipStorage extends Storage {
 
     public String getDisplayName() {
         return "Zip";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        ZipStorage that = (ZipStorage) o;
+        return this.getClass().equals(that.getClass());
     }
 
     @Extension

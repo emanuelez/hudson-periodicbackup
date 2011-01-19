@@ -34,6 +34,7 @@ import hudson.XmlFile;
 import hudson.model.*;
 import hudson.util.DescribableList;
 import net.sf.json.JSONObject;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -71,6 +72,13 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         // TODO: this will change of course!
         BackupExecutor backupExecutor = new BackupExecutor();
         backupExecutor.backup(fileManagerPlugins, storagePlugins, locationPlugins, tempDirectory);
+    }
+
+    public void doRestore(StaplerRequest req, StaplerResponse rsp, @QueryParameter("firstFilePath") String firstFilePath) throws IOException {
+
+        RestoreExecutor restoreExecutor = new RestoreExecutor();
+        restoreExecutor.restore(firstFilePath);
+
     }
 
     @Override

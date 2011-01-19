@@ -70,4 +70,21 @@ public abstract class FileManager extends AbstractModelObject implements Describ
         return "FileManager";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FileManager that = (FileManager) o;
+
+        if (restorePolicy != null ? !restorePolicy.equals(that.restorePolicy) : that.restorePolicy != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return restorePolicy != null ? restorePolicy.hashCode() : 0;
+    }
 }
