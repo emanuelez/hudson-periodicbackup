@@ -61,6 +61,7 @@ public class FullBackup extends FileManager {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         FullBackup that = (FullBackup) o;
         return this.getClass().equals(that.getClass());
     }

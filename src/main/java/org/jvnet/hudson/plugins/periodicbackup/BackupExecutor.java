@@ -23,7 +23,7 @@ public class BackupExecutor {
         }
         File backupObjectFile;
         //creating backup archives for each storage defined
-        String fileNameBase = Util.generateFileName();
+        String fileNameBase = Util.generateFileNameBase();
         for(Storage storage: storages) {
             //TODO: if we want to store serialized BackupObject File inside archive this has to be changed
             Iterable<File> archives = storage.archiveFiles(filesToBackup, tempDirectory, fileNameBase);
@@ -32,7 +32,7 @@ public class BackupExecutor {
                 //here I assumed 1 and only 1 FileManager
                 BackupObject backupObject = new BackupObject(fileManagers.iterator().next(), storage, location);
                 backupObjectFile = Util.createBackupObjectFile(backupObject, tempDirectory, fileNameBase);
-                location.storeBackupInLocation(archives, backupObjectFile, fileNameBase);
+                location.storeBackupInLocation(archives, backupObjectFile);
                 System.out.println("[INFO] Deleting temporary file " + backupObjectFile.getAbsolutePath()); //TODO: logger instead
                 if(!backupObjectFile.delete()) {
                     System.out.println("[WARNING] Could not delete " + backupObjectFile.getAbsolutePath()); //TODO: logger instead

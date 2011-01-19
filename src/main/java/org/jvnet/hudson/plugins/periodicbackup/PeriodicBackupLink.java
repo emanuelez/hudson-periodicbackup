@@ -69,7 +69,6 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     }
 
     public void doBackup(StaplerRequest req, StaplerResponse rsp) throws IOException {
-        // TODO: this will change of course!
         BackupExecutor backupExecutor = new BackupExecutor();
         backupExecutor.backup(fileManagerPlugins, storagePlugins, locationPlugins, tempDirectory);
     }

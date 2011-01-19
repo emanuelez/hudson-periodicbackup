@@ -9,6 +9,7 @@ public class ReplaceRestorePolicy implements RestorePolicy {
 
     @Override
     public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
         return true;
     }
 }

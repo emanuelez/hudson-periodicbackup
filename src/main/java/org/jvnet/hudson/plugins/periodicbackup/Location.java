@@ -51,9 +51,8 @@ public abstract class Location extends AbstractModelObject implements Describabl
      * This method puts archived backup file(s) in location
      * @param archives archive file(s)
      * @param backupObjectFile File with serialized backupObject
-     * @param baseFileName first part of the file name common to both - archive(s) and backup object file
      */
-    public abstract void storeBackupInLocation(Iterable<File> archives, File backupObjectFile, String baseFileName);
+    public abstract void storeBackupInLocation(Iterable<File> archives, File backupObjectFile);
 
     /**
      *

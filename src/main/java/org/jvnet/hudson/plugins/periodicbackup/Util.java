@@ -30,9 +30,8 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
@@ -45,8 +44,7 @@ public class Util {
      * @return String with relative @file path with respect to its @baseDir
      */
     public static String getRelativePath(final File file, final File baseDir) {
-        String relativeFilePath = baseDir.toURI().relativize(file.toURI()).getPath();
-        return relativeFilePath;
+        return baseDir.toURI().relativize(file.toURI()).getPath();
     }
 
     /**
@@ -54,14 +52,10 @@ public class Util {
      * This generates unique file name without extension
      * @return unique filename
      */
-    public static String generateFileName() {
-        // create a GregorianCalendar and the current date and time
-        Calendar calendar = new GregorianCalendar();
+    public static String generateFileNameBase() {
         Date now = new Date();
-        calendar.setTime(now);
-        String timestamp = calendar.get(Calendar.YEAR) + "_" + (calendar.get(Calendar.MONTH) + 1) + "_" +
-                calendar.get(Calendar.DAY_OF_MONTH) + "_" + calendar.get(Calendar.HOUR_OF_DAY) + "_" +
-                calendar.get(Calendar.MINUTE) + "_" + calendar.get(Calendar.SECOND);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS");
+        String timestamp = dateFormat.format(now);
         return "backup_" + timestamp;
     }
 
@@ -106,6 +100,7 @@ public class Util {
                     zipfile = null;
                 }
             } catch (IOException e) {
+                e.printStackTrace(); //TODO: proper exception
             }
         }
     }
@@ -125,9 +120,28 @@ public class Util {
         return backupObjectFile;
     }
 
+    /**
+     *
+     * This test if given file is a valid serialized BackupObject file
+     * @param backupObjectFile File to test
+     * @return true if valid, false otherwise
+     * @throws IOException
+     */
+    public static boolean isValidBackupObjectFile(File backupObjectFile) throws IOException {
+        if(!backupObjectFile.exists() || !(backupObjectFile.getUsableSpace() > 0)) return false;
+        else {
+            String fileAsString = FileUtils.readFileToString(backupObjectFile);
+            return (fileAsString.indexOf("fileManager class=\"org.jvnet.hudson.plugins.periodicbackup") != -1) &&
+                    (fileAsString.indexOf("storage class=\"org.jvnet.hudson.plugins.periodicbackup") != -1) &&
+                    (fileAsString.indexOf("location class=\"org.jvnet.hudson.plugins.periodicbackup")) != -1;
+        }
+    }
+
     public static FileFilter backupObjectFileFilter() {
         return new FileFilter() {
             public boolean accept(File pathname) {
+                if(getExtension(pathname) == null && BackupObject.getBackupObjectFileExtension() != null) return false;
+                if(getExtension(pathname) == null && BackupObject.getBackupObjectFileExtension() == null) return true;
                 return getExtension(pathname).equals(BackupObject.getBackupObjectFileExtension());
             }
         };
