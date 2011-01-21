@@ -79,6 +79,7 @@ public class ZipStorage extends Storage {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         ZipStorage that = (ZipStorage) o;
         return this.getClass().equals(that.getClass());
     }

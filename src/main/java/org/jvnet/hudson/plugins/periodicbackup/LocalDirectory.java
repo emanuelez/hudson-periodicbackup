@@ -33,8 +33,6 @@ import org.kohsuke.stapler.QueryParameter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class LocalDirectory extends Location {
@@ -63,7 +61,7 @@ public class LocalDirectory extends Location {
     }
 
     @Override
-    public void storeBackupInLocation(Iterable<File> archives, File backupObjectFile, String baseFileName) {
+    public void storeBackupInLocation(Iterable<File> archives, File backupObjectFile) {
         if (this.enabled && path.exists()) {
             try {
                 File backupObjectFileDestination = new File(path, backupObjectFile.getName());
@@ -88,7 +86,9 @@ public class LocalDirectory extends Location {
 
     @Override
     public Iterable<File> retrieveBackupFromLocation(Iterable<File> backup, File tempDir) throws IOException {
-        if((tempDir.exists() && !tempDir.isDirectory()) || tempDir.canWrite()) {
+        //TODO: implement with BackupObject file
+        return null;
+        /*if((tempDir.exists() && !tempDir.isDirectory()) || tempDir.canWrite()) {
             System.out.println("[ERROR] Temporary directory is not a directory or is not writable."); //TODO: logger instead
             return null; //TODO: throw exception?
         }
@@ -97,7 +97,7 @@ public class LocalDirectory extends Location {
             FileUtils.copyFileToDirectory(tempDir, f);
             backupInTempDir.add(new File(tempDir,f.getName()));
         }
-        return backupInTempDir;
+        return backupInTempDir;*/
     }
 
     public String getDisplayName() {
