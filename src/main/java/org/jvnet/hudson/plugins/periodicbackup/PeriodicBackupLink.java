@@ -74,10 +74,10 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         backupExecutor.backup(fileManagerPlugins, storagePlugins, locationPlugins, tempDirectory);
     }
 
-    public void doRestore(StaplerRequest req, StaplerResponse rsp, @QueryParameter("firstFilePath") String firstFilePath) throws IOException {
+    public void doRestore(StaplerRequest req, StaplerResponse rsp, @QueryParameter("file") String backupObjectFilePath) throws IOException {
 
         RestoreExecutor restoreExecutor = new RestoreExecutor();
-        restoreExecutor.restore(firstFilePath);
+        restoreExecutor.restore(backupObjectFilePath);
 
     }
 

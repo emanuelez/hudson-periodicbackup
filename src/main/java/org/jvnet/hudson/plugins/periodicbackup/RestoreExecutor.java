@@ -26,7 +26,7 @@ package org.jvnet.hudson.plugins.periodicbackup;
 
 public class RestoreExecutor {
 
-    public void restore(String firstArchivePath) {
+    public void restore(String backupObjectFilePath) {
 
     }
 

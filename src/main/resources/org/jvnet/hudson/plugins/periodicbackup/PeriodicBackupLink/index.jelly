@@ -36,12 +36,17 @@
                     <!-- TODO: it will change, so far I want to view Locations here for testing purposes -->
                     <ul>
                         Locations:
+                        <f:form method="post" action="restoreFile">
                         <j:forEach var="location" items="${it.locations}">
                             <li>
                                 <h3>${location.displayName}</h3>
-                                ${location.availableBackups}
-                            </li>
+                                <j:forEach var="backup" items="${location.availableBackups}">
+                                    <f:radio name="file" value="${backup.name}"/>${backup.name}
+                                </j:forEach>
+                             </li>
                         </j:forEach>
+                        <f:submit value="${%restore.launch}"/>
+                        </f:form>
                     </ul>
                 </j:otherwise>
             </j:choose>

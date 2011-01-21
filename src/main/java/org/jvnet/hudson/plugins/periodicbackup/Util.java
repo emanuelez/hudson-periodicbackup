@@ -121,6 +121,7 @@ public class Util {
     public static File createBackupObjectFile(BackupObject backupObject, String destinationDir, String fileNameBase) throws IOException {
         File backupObjectFile = new File(destinationDir, createFileName(fileNameBase, BackupObject.getBackupObjectFileExtension()));
         String xml = Hudson.XSTREAM.toXML(backupObject);
+        System.out.println("[INFO] Building BackupObject file: " + backupObjectFile.getAbsolutePath());
         FileUtils.writeStringToFile(backupObjectFile, xml);
         return backupObjectFile;
     }
@@ -128,7 +129,11 @@ public class Util {
     public static FileFilter backupObjectFileFilter() {
         return new FileFilter() {
             public boolean accept(File pathname) {
-                return getExtension(pathname).equals(BackupObject.getBackupObjectFileExtension());
+                String extension = getExtension(pathname);
+                if(extension == null) {
+                    return false;
+                }
+                return extension.equals(BackupObject.getBackupObjectFileExtension());
             }
         };
      }
@@ -140,11 +145,17 @@ public class Util {
         String ext = null;
         String s = f.getName();
         int i = s.lastIndexOf('.');
-
+        if(i == -1) {
+            return null;
+        }
         if (i > 0 && i < s.length() - 1) {
             ext = s.substring(i + 1).toLowerCase();
         }
         return ext;
+    }
+
+    public static boolean isWritableDirectory(File directory) {
+        return (directory.exists() && directory.isDirectory() && directory.canWrite());
     }
 }
 

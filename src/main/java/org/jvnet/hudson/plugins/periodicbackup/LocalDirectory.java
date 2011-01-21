@@ -49,6 +49,14 @@ public class LocalDirectory extends Location {
 
     @Override
     public Iterable<BackupObject> getAvailableBackups() {
+        if( ! Util.isWritableDirectory(path)) {
+            System.out.println("[ERROR] " + path.getAbsolutePath() + " is not a existing/writable directory.");  //TODO: logger instead
+            return null;
+        }
+        if(path.listFiles().length == 0) {
+            System.out.println("[WARRNING] Directory " + path.getAbsolutePath() + " is empty.");    //TODO: logger instead
+            return null;
+        }
         File[] files = path.listFiles(Util.backupObjectFileFilter());
         Set<File> backupObjectFiles = Sets.newHashSet(files);
         return Iterables.transform(backupObjectFiles, BackupObject.getFromFile());
@@ -132,7 +140,7 @@ public class LocalDirectory extends Location {
 
         public String validatePath(String path) throws FormValidation {
             File fileFromString = new File(path);
-            if (!fileFromString.exists() || !fileFromString.isDirectory() || !fileFromString.canWrite())
+            if ( ! Util.isWritableDirectory(fileFromString))
                 throw FormValidation.error(path + " doesn't exists or is not a writable directory");
             return "directory \"" + path + "\" OK";
         }
