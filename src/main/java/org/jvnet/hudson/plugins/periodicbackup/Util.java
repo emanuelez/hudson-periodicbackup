@@ -24,8 +24,9 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import hudson.model.Hudson;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -116,7 +117,7 @@ public class Util {
     public static File createBackupObjectFile(BackupObject backupObject, String destinationDir, String fileNameBase) throws IOException {
         File backupObjectFile = new File(destinationDir, createFileName(fileNameBase, BackupObject.getBackupObjectFileExtension()));
         String xml = Hudson.XSTREAM.toXML(backupObject);
-        FileUtils.writeStringToFile(backupObjectFile, xml);
+        Files.write(xml, backupObjectFile, Charsets.UTF_8);
         return backupObjectFile;
     }
 
@@ -130,10 +131,10 @@ public class Util {
     public static boolean isValidBackupObjectFile(File backupObjectFile) throws IOException {
         if(!backupObjectFile.exists() || !(backupObjectFile.getUsableSpace() > 0)) return false;
         else {
-            String fileAsString = FileUtils.readFileToString(backupObjectFile);
-            return (fileAsString.indexOf("fileManager class=\"org.jvnet.hudson.plugins.periodicbackup") != -1) &&
-                    (fileAsString.indexOf("storage class=\"org.jvnet.hudson.plugins.periodicbackup") != -1) &&
-                    (fileAsString.indexOf("location class=\"org.jvnet.hudson.plugins.periodicbackup")) != -1;
+            String fileAsString = Files.toString(backupObjectFile, Charsets.UTF_8);
+            return fileAsString.contains("fileManager class=\"org.jvnet.hudson.plugins.periodicbackup") &&
+                   fileAsString.contains("storage class=\"org.jvnet.hudson.plugins.periodicbackup") &&
+                   fileAsString.contains("location class=\"org.jvnet.hudson.plugins.periodicbackup");
         }
     }
 
