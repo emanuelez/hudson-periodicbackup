@@ -25,9 +25,9 @@ package org.jvnet.hudson.plugins.periodicbackup;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.io.Files;
 import hudson.Extension;
 import hudson.util.FormValidation;
-import org.apache.commons.io.FileUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -65,12 +65,13 @@ public class LocalDirectory extends Location {
         if (this.enabled && path.exists()) {
             try {
                 File backupObjectFileDestination = new File(path, backupObjectFile.getName());
-                FileUtils.copyFile(backupObjectFile, backupObjectFileDestination);
+
+                Files.copy(backupObjectFile, backupObjectFileDestination);
                 System.out.println("[INFO] " + backupObjectFile.getName() + " copied to " + backupObjectFileDestination.getAbsolutePath()); //TODO: logger instead
                 for (File f : archives) {
                     {
                         File destination = new File(path, f.getName());
-                        FileUtils.copyFile(f, destination);
+                        Files.copy(f, destination);
                         System.out.println("[INFO] " + f.getName() + " copied to " + destination.getAbsolutePath()); //TODO: logger instead
                     }
                 }
