@@ -24,9 +24,19 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import java.io.File;
+import java.io.IOException;
+
 public class RestoreExecutor {
 
-    public void restore(String backupObjectFilePath) {
+    public void restore(BackupObject backupObject, String tempDirectoryPath) throws IOException {
+        File tempDir = new File(tempDirectoryPath);
+        if(!Util.isWritableDirectory(tempDir)) {
+            System.out.println("[ERROR] Temporary directory unreachable!"); //TODO: logger instead
+            return;
+        }
+        Iterable<File> archives = backupObject.getLocation().retrieveBackupFromLocation(backupObject, tempDir);
+        //TODO: finish
 
     }
 

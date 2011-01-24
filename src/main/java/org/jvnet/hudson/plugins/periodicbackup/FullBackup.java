@@ -66,6 +66,11 @@ public class FullBackup extends FileManager {
         return this.getClass().equals(that.getClass());
     }
 
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
 
     @Extension
     public static class DescriptorImpl extends FileManagerDescriptor {

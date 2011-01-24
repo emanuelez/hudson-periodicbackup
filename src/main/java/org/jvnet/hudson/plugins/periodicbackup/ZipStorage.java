@@ -84,6 +84,11 @@ public class ZipStorage extends Storage {
         return this.getClass().equals(that.getClass());
     }
 
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
     @Extension
     public static class DescriptorImpl extends StorageDescriptor {
         public String getDisplayName() {

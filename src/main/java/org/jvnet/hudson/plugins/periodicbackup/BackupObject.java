@@ -31,17 +31,23 @@ import hudson.model.Hudson;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Date;
 
 public class BackupObject {
 
     private FileManager fileManager;
     private Storage storage;
     private Location location;
+    private Date timestamp;
 
-    public BackupObject(FileManager fileManager, Storage storage, Location location) {
+    public final static String EXTENSION = "pbobj";
+    public final static String FILE_TIMESTAMP_PATTERN = "yyyy_MM_dd_HH_mm_ss_SSS";
+
+    public BackupObject(FileManager fileManager, Storage storage, Location location, Date timestamp) {
         this.fileManager = fileManager;
         this.storage = storage;
         this.location = location;
+        this.timestamp = timestamp;
     }
 
     public FileManager getFileManager() {
@@ -54,10 +60,6 @@ public class BackupObject {
 
     public Location getLocation() {
         return location;
-    }
-
-    public static String getBackupObjectFileExtension() {
-        return "pbobj";
     }
 
     public static Function<File, BackupObject> getFromFile() {
@@ -76,6 +78,18 @@ public class BackupObject {
         };
     }
 
+    public Date getTimestamp() {
+        return this.timestamp;
+    }
+
+    public String getDisplayName() {
+        return fileManager.getDisplayName() + " created on " + timestamp.toString();
+    }
+
+    public String getAsString() {
+        return Hudson.XSTREAM.toXML(this);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,6 +100,7 @@ public class BackupObject {
         if (fileManager != null ? !fileManager.equals(that.fileManager) : that.fileManager != null) return false;
         if (location != null ? !location.equals(that.location) : that.location != null) return false;
         if (storage != null ? !storage.equals(that.storage) : that.storage != null) return false;
+        if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
 
         return true;
     }
@@ -95,6 +110,7 @@ public class BackupObject {
         int result = fileManager != null ? fileManager.hashCode() : 0;
         result = 31 * result + (storage != null ? storage.hashCode() : 0);
         result = 31 * result + (location != null ? location.hashCode() : 0);
+        result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
         return result;
     }
 }

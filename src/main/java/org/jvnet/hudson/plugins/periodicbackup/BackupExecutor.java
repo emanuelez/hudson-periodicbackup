@@ -4,6 +4,7 @@ import hudson.util.DescribableList;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,14 +24,15 @@ public class BackupExecutor {
         }
         File backupObjectFile;
         //creating backup archives for each storage defined
-        String fileNameBase = Util.generateFileNameBase();
+        Date timestamp = new Date();
+        String fileNameBase = Util.generateFileNameBase(timestamp);
         for(Storage storage: storages) {
             //TODO: if we want to store serialized BackupObject File inside archive this has to be changed
             Iterable<File> archives = storage.archiveFiles(filesToBackup, tempDirectory, fileNameBase);
             //sends all backup archives and backup files to all activated locations
             for(Location location: locations) {
                 //here I assumed 1 and only 1 FileManager
-                BackupObject backupObject = new BackupObject(fileManagers.iterator().next(), storage, location);
+                BackupObject backupObject = new BackupObject(fileManagers.iterator().next(), storage, location, timestamp);
                 backupObjectFile = Util.createBackupObjectFile(backupObject, tempDirectory, fileNameBase);
                 location.storeBackupInLocation(archives, backupObjectFile);
                 System.out.println("[INFO] Deleting temporary file " + backupObjectFile.getAbsolutePath()); //TODO: logger instead

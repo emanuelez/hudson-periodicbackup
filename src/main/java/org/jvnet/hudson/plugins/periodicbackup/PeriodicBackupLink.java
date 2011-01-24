@@ -28,6 +28,7 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import com.google.common.collect.Maps;
 import hudson.BulkChange;
 import hudson.Extension;
 import hudson.XmlFile;
@@ -42,6 +43,7 @@ import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
 @Extension
 public class PeriodicBackupLink extends ManagementLink implements Describable<PeriodicBackupLink>, Saveable {
@@ -73,11 +75,20 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         backupExecutor.backup(fileManagerPlugins, storagePlugins, locationPlugins, tempDirectory);
     }
 
-    public void doRestore(StaplerRequest req, StaplerResponse rsp, @QueryParameter("file") String backupObjectFilePath) throws IOException {
-
+    public void doRestore(StaplerRequest req, StaplerResponse rsp, @QueryParameter("backupHash") int backupHash) throws IOException {
+        Map<Integer, BackupObject> backupObjectMap = Maps.newHashMap();
+        for (Location location : locationPlugins) {
+            if (location.getAvailableBackups() != null) {
+                for (BackupObject backupObject : location.getAvailableBackups()) {
+                    backupObjectMap.put(backupObject.hashCode(), backupObject);
+                }
+            }
+        }
+        if(!backupObjectMap.keySet().contains(backupHash)) {
+            System.out.println("[ERROR] Could not find a match for given hash code.");// TODO: logger + throw exception
+        }
         RestoreExecutor restoreExecutor = new RestoreExecutor();
-        restoreExecutor.restore(backupObjectFilePath);
-
+        restoreExecutor.restore(backupObjectMap.get(backupHash), tempDirectory);
     }
 
     @Override

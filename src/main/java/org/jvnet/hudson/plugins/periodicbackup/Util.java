@@ -26,7 +26,6 @@ package org.jvnet.hudson.plugins.periodicbackup;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import hudson.model.Hudson;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -51,13 +50,17 @@ public class Util {
     /**
      *
      * This generates unique file name without extension
+     * @param date Date object to create timestamp
      * @return unique filename
      */
-    public static String generateFileNameBase() {
-        Date now = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS");
-        String timestamp = dateFormat.format(now);
-        return "backup_" + timestamp;
+    public static String generateFileNameBase(Date date) {
+        return "backup_" + getFormattedDate(BackupObject.FILE_TIMESTAMP_PATTERN, date);
+    }
+
+
+    public static String getFormattedDate(String pattern, Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+        return dateFormat.format(date);
     }
 
     public static String createFileName(String fileName, String extension){
@@ -115,8 +118,8 @@ public class Util {
      * @throws IOException
      */
     public static File createBackupObjectFile(BackupObject backupObject, String destinationDir, String fileNameBase) throws IOException {
-        File backupObjectFile = new File(destinationDir, createFileName(fileNameBase, BackupObject.getBackupObjectFileExtension()));
-        String xml = Hudson.XSTREAM.toXML(backupObject);
+        File backupObjectFile = new File(destinationDir, createFileName(fileNameBase, BackupObject.EXTENSION));
+        String xml = backupObject.getAsString();
         System.out.println("[INFO] Building BackupObject file: " + backupObjectFile.getAbsolutePath());
         Files.write(xml, backupObjectFile, Charsets.UTF_8);
         return backupObjectFile;
@@ -143,10 +146,10 @@ public class Util {
         return new FileFilter() {
             public boolean accept(File pathname) {
                 String extension = getExtension(pathname);
-                if(extension == null && BackupObject.getBackupObjectFileExtension() != null) return false;
-                if(extension == null && BackupObject.getBackupObjectFileExtension() == null) return true;
-                assert extension != null;
-                return extension.equals(BackupObject.getBackupObjectFileExtension());
+                if(extension == null && BackupObject.EXTENSION != null) return false;
+                if(extension == null && BackupObject.EXTENSION == null) return true;
+                if(extension != null && BackupObject.EXTENSION == null) return false;
+                return extension.equals(BackupObject.EXTENSION);
             }
         };
      }

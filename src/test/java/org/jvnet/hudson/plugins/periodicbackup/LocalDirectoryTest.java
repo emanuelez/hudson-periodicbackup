@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,10 +19,13 @@ public class LocalDirectoryTest extends TestCase {
     public void testGetAvailableBackups() throws Exception {
         File path = new File(Thread.currentThread().getContextClassLoader().getResource("data/").getFile());
         LocalDirectory localDirectory = new LocalDirectory(path, true);
+        Date expectedDate = new Date(123);
         BackupObject expected = new BackupObject(
                 new FullBackup(),
                 new ZipStorage(),
-                new LocalDirectory(new File("c:\\Temp"), true));
+                new LocalDirectory(new File("c:\\Temp"), true),
+                expectedDate);
+
         Iterable<BackupObject> obtainedResult = localDirectory.getAvailableBackups();
         List<BackupObject> listFromResult = Lists.newArrayList(obtainedResult);
         assertEquals(listFromResult.size(), 1);

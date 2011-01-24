@@ -1,10 +1,11 @@
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import com.google.common.collect.Lists;
 import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ public class UtilTest extends TestCase {
 
     @Test
     public void testGenerateFileName() throws Exception {
-        String filenameBase = Util.generateFileNameBase();
+        String filenameBase = Util.generateFileNameBase(new Date());
 
         assertTrue(filenameBase.length() > 0);
     }
@@ -45,7 +46,7 @@ public class UtilTest extends TestCase {
         String filenameBase = "backup";
         String extension = "pbobj";
         String filename = null;
-        List<String> filenames = new ArrayList<String>();
+        List<String> filenames = Lists.newArrayList();
         long totalNumberOfArchives = 4;
 
         for(long archiveNo = 1; archiveNo <= totalNumberOfArchives; archiveNo++) {
@@ -69,11 +70,11 @@ public class UtilTest extends TestCase {
     @Test
     public void testCreateBackupObjectFile() throws Exception {
         File tempDirectory = new File(Thread.currentThread().getContextClassLoader().getResource("data/temp").getFile());
-        BackupObject backupObject = new BackupObject(new FullBackup(), new ZipStorage(), new LocalDirectory(tempDirectory, true));
+        BackupObject backupObject = new BackupObject(new FullBackup(), new ZipStorage(), new LocalDirectory(tempDirectory, true), new Date());
         String fileNameBase = "backupfile";
 
         File result = Util.createBackupObjectFile(backupObject, tempDirectory.getAbsolutePath(), fileNameBase);
-        String expectedFileName = fileNameBase + "." + BackupObject.getBackupObjectFileExtension();
+        String expectedFileName = fileNameBase + "." + BackupObject.EXTENSION;
 
         assertTrue(result.exists());
         assertEquals(result.getName(), expectedFileName);

@@ -41,9 +41,9 @@ public abstract class Location extends AbstractModelObject implements Describabl
     }
 
     /**
-     * This method returns String objects with file names of all backups in this location
+     * This method returns Iterable of BackupObject(s) in this location
      *
-     * @return file names of backups
+     * @return BackupObject(s) in location
      */
     public abstract Iterable<BackupObject> getAvailableBackups();
 
@@ -56,11 +56,12 @@ public abstract class Location extends AbstractModelObject implements Describabl
 
     /**
      *
-     * @param backup Iterable of backup archive(s) to be retrieved from the location
+     * @param backup BackupObject related to the backup
      * @param tempDir temporary directory to store archived backup file(s)
      * @return Iterable of backup archive(s) in temporary location
+     * @throws java.io.IOException
      */
-    public abstract Iterable<File>retrieveBackupFromLocation(Iterable<File> backup, File tempDir) throws IOException;
+    public abstract Iterable<File>retrieveBackupFromLocation(BackupObject backup, File tempDir) throws IOException;
 
     /**
      * This will allow to retrieve the list of plugins at runtime

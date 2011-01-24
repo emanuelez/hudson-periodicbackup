@@ -32,6 +32,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Set;
 
@@ -48,12 +49,11 @@ public class LocalDirectory extends Location {
     @Override
     public Iterable<BackupObject> getAvailableBackups() {
         if( ! Util.isWritableDirectory(path)) {
-            System.out.println("[ERROR] " + path.getAbsolutePath() + " is not a existing/writable directory.");  //TODO: logger instead
-            return null;
+            System.out.println("[WARNING] " + path.getAbsolutePath() + " is not a existing/writable directory.");  //TODO: logger instead
+            return Sets.newHashSet();
         }
         if(path.listFiles().length == 0) {
-            System.out.println("[WARRNING] Directory " + path.getAbsolutePath() + " is empty.");    //TODO: logger instead
-            return null;
+            return Sets.newHashSet();
         }
         File[] files = path.listFiles(Util.backupObjectFileFilter());
         Set<File> backupObjectFiles = Sets.newHashSet(files);
@@ -86,19 +86,14 @@ public class LocalDirectory extends Location {
     }
 
     @Override
-    public Iterable<File> retrieveBackupFromLocation(Iterable<File> backup, File tempDir) throws IOException {
-        //TODO: implement with BackupObject file
-        return null;
-        /*if((tempDir.exists() && !tempDir.isDirectory()) || tempDir.canWrite()) {
-            System.out.println("[ERROR] Temporary directory is not a directory or is not writable."); //TODO: logger instead
-            return null; //TODO: throw exception?
-        }
-        List<File> backupInTempDir = new ArrayList<File>();
-        for(File f : backup) {
-            FileUtils.copyFileToDirectory(tempDir, f);
-            backupInTempDir.add(new File(tempDir,f.getName()));
-        }
-        return backupInTempDir;*/
+    public Iterable<File> retrieveBackupFromLocation(final BackupObject backup, File tempDir) throws IOException {
+        File[] files = path.listFiles(new FileFilter() {
+            public boolean accept(File pathname) {
+                return pathname.getName().contains( Util.getFormattedDate(BackupObject.FILE_TIMESTAMP_PATTERN, backup.getTimestamp()));
+            }
+        });
+        return Sets.newHashSet(files);
+        //TODO: finish
     }
 
     public String getDisplayName() {
@@ -121,7 +116,7 @@ public class LocalDirectory extends Location {
     @Override
     public int hashCode() {
         int result =  path != null ? path.hashCode() : 0;
-        result = 43 * result + (enabled ? 1 : 0);
+        result = 11 * result + (enabled ? 1 : 0);
         return result;
     }
 

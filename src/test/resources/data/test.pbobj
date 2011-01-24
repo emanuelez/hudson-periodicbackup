@@ -7,4 +7,5 @@
     <enabled>true</enabled>
     <path>c:\Temp</path>
   </location>
+  <timestamp>1970-01-01 01:00:00.123 CET</timestamp>
 </org.jvnet.hudson.plugins.periodicbackup.BackupObject>
