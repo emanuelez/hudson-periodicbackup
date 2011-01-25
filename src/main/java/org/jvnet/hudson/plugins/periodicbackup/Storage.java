@@ -28,6 +28,7 @@ import hudson.DescriptorExtensionList;
 import hudson.model.AbstractModelObject;
 import hudson.model.Describable;
 import hudson.model.Hudson;
+import org.codehaus.plexus.archiver.ArchiverException;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,9 +43,9 @@ public abstract class Storage extends AbstractModelObject implements Describable
      * @param fileNameBase first part of the file name common to both - archive(s) and backup object file
      * @return File object(s) of the archive
      * @throws IOException  IO Error
-     *
+     * @throws org.codehaus.plexus.archiver.ArchiverException  Archiver Error
      */
-    public abstract Iterable<File> archiveFiles(Iterable<File> filesToCompress, String tempDirectory, String fileNameBase) throws IOException;
+    public abstract Iterable<File> archiveFiles(Iterable<File> filesToCompress, String tempDirectory, String fileNameBase) throws IOException, ArchiverException;
 
     /**
      * This method un-compressed the archive to a temporary location.

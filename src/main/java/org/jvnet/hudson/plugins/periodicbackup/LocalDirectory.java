@@ -1,4 +1,3 @@
-package org.jvnet.hudson.plugins.periodicbackup;
 /*
  * The MIT License
  *
@@ -22,6 +21,8 @@ package org.jvnet.hudson.plugins.periodicbackup;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+package org.jvnet.hudson.plugins.periodicbackup;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;

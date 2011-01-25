@@ -25,7 +25,6 @@
  * THE SOFTWARE.
  */
 
-
 package org.jvnet.hudson.plugins.periodicbackup;
 
 import com.google.common.collect.Maps;
@@ -35,6 +34,7 @@ import hudson.XmlFile;
 import hudson.model.*;
 import hudson.util.DescribableList;
 import net.sf.json.JSONObject;
+import org.codehaus.plexus.archiver.ArchiverException;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -73,7 +73,7 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     }
 
     @SuppressWarnings("unused")
-    public void doBackup(StaplerRequest req, StaplerResponse rsp) throws IOException {
+    public void doBackup(StaplerRequest req, StaplerResponse rsp) throws IOException, ArchiverException {
         BackupExecutor backupExecutor = new BackupExecutor();
         backupExecutor.backup(fileManagerPlugins, storagePlugins, locationPlugins, tempDirectory);
     }
@@ -89,7 +89,6 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
             }
         }
         if(!backupObjectMap.keySet().contains(backupHash)) {
-            System.out.println("[ERROR] Could not find a match for given hash code.");// TODO: logger
             throw new PeriodicBackupException("The provided hash code was not found in the map");
         }
         RestoreExecutor restoreExecutor = new RestoreExecutor();
@@ -139,9 +138,7 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         // persist the setting
         BulkChange bc = new BulkChange(this);
         try {
-            //TODO: for each element of configuration file we have to have setter here
-            setTempDirectory(form.getString("tempDirectory"));
-            //TODO: if we will use ID's we need assign ID here (look into PXE doConfigSubmit), so far we removed ID's  but I will leave this comment just in case
+            tempDirectory = form.getString("tempDirectory");
             fileManagerPlugins.rebuildHetero(req, form, getFileManagerDescriptors(), "FileManager");
             locationPlugins.rebuildHetero(req, form, getLocationDescriptors(), "Location");
             storagePlugins.rebuildHetero(req, form, getStorageDescriptors(), "Storage");

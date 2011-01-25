@@ -43,7 +43,7 @@ public class ZipStorage extends Storage {
     }
 
     @Override
-    public Iterable<File> archiveFiles(Iterable<File> filesToCompress, String tempDirectoryPath, String fileNameBase) throws IOException {
+    public Iterable<File> archiveFiles(Iterable<File> filesToCompress, String tempDirectoryPath, String fileNameBase) throws IOException, ArchiverException {
         List<File> archives = Lists.newArrayList();
         String archiveFilePath = Util.createFileName(fileNameBase, getDescriptor().getArchiveFileExtension());
         ZipArchiver archiver = new ZipArchiver();
@@ -52,20 +52,15 @@ public class ZipStorage extends Storage {
         archiver.setDestFile(new File(tempDirectory, archiveFilePath));
 
         for(File f: filesToCompress) {
-            try {
-                archiver.addFile(f, Util.getRelativePath(f, Hudson.getInstance().getRootDir()));
-            } catch (ArchiverException e) {
-                e.printStackTrace();  //TODO: proper exception handling
-            }
+            archiver.addFile(f, Util.getRelativePath(f, Hudson.getInstance().getRootDir()));
         }
-        try {
-            archiver.createArchive();
-        } catch (ArchiverException e) {
-            e.printStackTrace();  //TODO: proper exception handling
-        }
+
+        archiver.createArchive();
+
         archives.add(archiver.getDestFile());
         return archives;
     }
+
     //TODO: implement
     @Override
     public Iterable<String> unarchiveFiles(File compressedFile) {
