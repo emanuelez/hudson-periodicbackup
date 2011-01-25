@@ -62,22 +62,18 @@ public class LocalDirectory extends Location {
     }
 
     @Override
-    public void storeBackupInLocation(Iterable<File> archives, File backupObjectFile) {
+    public void storeBackupInLocation(Iterable<File> archives, File backupObjectFile) throws IOException {
         if (this.enabled && path.exists()) {
-            try {
-                File backupObjectFileDestination = new File(path, backupObjectFile.getName());
+            File backupObjectFileDestination = new File(path, backupObjectFile.getName());
 
-                Files.copy(backupObjectFile, backupObjectFileDestination);
-                System.out.println("[INFO] " + backupObjectFile.getName() + " copied to " + backupObjectFileDestination.getAbsolutePath()); //TODO: logger instead
-                for (File f : archives) {
-                    {
-                        File destination = new File(path, f.getName());
-                        Files.copy(f, destination);
-                        System.out.println("[INFO] " + f.getName() + " copied to " + destination.getAbsolutePath()); //TODO: logger instead
-                    }
+            Files.copy(backupObjectFile, backupObjectFileDestination);
+            System.out.println("[INFO] " + backupObjectFile.getName() + " copied to " + backupObjectFileDestination.getAbsolutePath()); //TODO: logger instead
+            for (File f : archives) {
+                {
+                    File destination = new File(path, f.getName());
+                    Files.copy(f, destination);
+                    System.out.println("[INFO] " + f.getName() + " copied to " + destination.getAbsolutePath()); //TODO: logger instead
                 }
-            } catch (IOException e) {
-                e.printStackTrace();  //TODO: proper exception handling
             }
         }
         else {

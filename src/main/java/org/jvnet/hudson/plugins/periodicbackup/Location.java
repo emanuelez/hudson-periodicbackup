@@ -52,7 +52,7 @@ public abstract class Location extends AbstractModelObject implements Describabl
      * @param archives archive file(s)
      * @param backupObjectFile File with serialized backupObject
      */
-    public abstract void storeBackupInLocation(Iterable<File> archives, File backupObjectFile);
+    public abstract void storeBackupInLocation(Iterable<File> archives, File backupObjectFile) throws IOException;
 
     /**
      *

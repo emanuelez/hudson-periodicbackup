@@ -4,7 +4,7 @@
  * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
  *
  * This plugin is based on and inspired by the "backup" plugin developed by:
- * Vincent Sellier, Manufacture Française des Pneumatiques Michelin, Romain Seguy
+ * Vincent Sellier, Manufacture Franï¿½aise des Pneumatiques Michelin, Romain Seguy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -75,7 +75,7 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         backupExecutor.backup(fileManagerPlugins, storagePlugins, locationPlugins, tempDirectory);
     }
 
-    public void doRestore(StaplerRequest req, StaplerResponse rsp, @QueryParameter("backupHash") int backupHash) throws IOException {
+    public void doRestore(StaplerRequest req, StaplerResponse rsp, @QueryParameter("backupHash") int backupHash) throws IOException, PeriodicBackupException {
         Map<Integer, BackupObject> backupObjectMap = Maps.newHashMap();
         for (Location location : locationPlugins) {
             if (location.getAvailableBackups() != null) {
@@ -85,7 +85,8 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
             }
         }
         if(!backupObjectMap.keySet().contains(backupHash)) {
-            System.out.println("[ERROR] Could not find a match for given hash code.");// TODO: logger + throw exception
+            System.out.println("[ERROR] Could not find a match for given hash code.");// TODO: logger
+            throw new PeriodicBackupException("The provided hash code was not found in the map");
         }
         RestoreExecutor restoreExecutor = new RestoreExecutor();
         restoreExecutor.restore(backupObjectMap.get(backupHash), tempDirectory);
