@@ -58,14 +58,6 @@ public class UtilTest extends TestCase {
         assertEquals(filename,"backup_4OF4.pbobj");
     }
 
-    @Test
-    public void testIsValidZip() throws Exception {
-        File corrupted = new File(Thread.currentThread().getContextClassLoader().getResource("data/ziptest/corrupted.zip").getFile());
-        File valid = new File(Thread.currentThread().getContextClassLoader().getResource("data/ziptest/validzip").getFile());
-
-        assertFalse(Util.isValidZip(corrupted));
-        assertTrue(Util.isValidZip(valid));
-    }
 
     @Test
     public void testCreateBackupObjectFile() throws Exception {

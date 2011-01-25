@@ -37,7 +37,6 @@ public class ZipStorageTest extends HudsonTestCase {
         File expectedResult = new File(tempDirectory, baseFileName + "." + zipStorage.getDescriptor().getArchiveFileExtension());
         assertTrue(expectedResult.exists());
         assertTrue(expectedResult.getUsableSpace() > 0);
-        assertTrue(Util.isValidZip(expectedResult));
 
         if(!expectedResult.delete()) {
                 throw new IOException("Could not delete file " + expectedResult.getAbsolutePath());

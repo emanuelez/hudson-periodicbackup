@@ -27,8 +27,6 @@ package org.jvnet.hudson.plugins.periodicbackup;
 import hudson.ExtensionPoint;
 import hudson.model.Descriptor;
 
-import java.io.File;
-
 public abstract class StorageDescriptor extends Descriptor<Storage> implements ExtensionPoint {
 
     @SuppressWarnings("unused")
@@ -41,5 +39,4 @@ public abstract class StorageDescriptor extends Descriptor<Storage> implements E
 
     public abstract String getArchiveFileExtension();
 
-    public abstract boolean isValidArchive(File file);
 }

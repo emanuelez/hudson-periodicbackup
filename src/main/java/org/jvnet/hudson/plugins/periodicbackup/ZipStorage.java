@@ -81,6 +81,7 @@ public class ZipStorage extends Storage {
         return 93;
     }
 
+    @SuppressWarnings("unused")
     @Extension
     public static class DescriptorImpl extends StorageDescriptor {
         public String getDisplayName() {
@@ -92,9 +93,5 @@ public class ZipStorage extends Storage {
             return "zip";
         }
 
-        @Override
-        public boolean isValidArchive(File file) {
-            return Util.isValidZip(file);
-        }
     }
 }

@@ -32,8 +32,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 
 public class Util {
     /**
@@ -81,31 +79,6 @@ public class Util {
         return createFileName(fileName, extension);
     }
 
-    /**
-     *
-     * This checks if given file is a valid zip file
-     * @param file file to validate
-     * @return true if zip, false if not
-     */
-    public static boolean isValidZip(final File file) {
-        ZipFile zipfile = null;
-        try {
-            zipfile = new ZipFile(file);
-            return true;
-        } catch (ZipException e) {
-            return false;
-        } catch (IOException e) {
-            return false;
-        } finally {
-            try {
-                if (zipfile != null) {
-                    zipfile.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace(); //TODO: proper exception
-            }
-        }
-    }
 
     /**
      *
