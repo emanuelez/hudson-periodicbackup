@@ -29,11 +29,10 @@ import java.io.IOException;
 
 public class RestoreExecutor {
 
-    public void restore(BackupObject backupObject, String tempDirectoryPath) throws IOException {
+    public void restore(BackupObject backupObject, String tempDirectoryPath) throws IOException, PeriodicBackupException {
         File tempDir = new File(tempDirectoryPath);
         if(!Util.isWritableDirectory(tempDir)) {
-            System.out.println("[ERROR] Temporary directory unreachable!"); //TODO: logger instead
-            return;
+            throw new PeriodicBackupException("The temp folder is not writable.");
         }
         Iterable<File> archives = backupObject.getLocation().retrieveBackupFromLocation(backupObject, tempDir);
         //TODO: finish

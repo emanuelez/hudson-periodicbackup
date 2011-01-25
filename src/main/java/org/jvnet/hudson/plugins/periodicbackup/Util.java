@@ -77,7 +77,6 @@ public class Util {
      * @return full file name of current archive
      */
     public static String createFileName(String fileName, String extension, long archiveNumber, long totalNumberOfArchives) {
-        //TODO: test
         fileName =  fileName + "_" + archiveNumber + "OF" + totalNumberOfArchives;
         return createFileName(fileName, extension);
     }

@@ -32,16 +32,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class BackupExecutor {
 
     private Set<File> filesToBackup = Sets.newHashSet();
+    private static final Logger LOGGER = Logger.getLogger(BackupExecutor.class.getName());
 
     public void backup(DescribableList<FileManager, FileManagerDescriptor> fileManagers,
                        DescribableList<Storage, StorageDescriptor> storages,
                        DescribableList<Location, LocationDescriptor> locations,
                        String tempDirectory) throws IOException, ArchiverException {
-        //collecting files for backup  TODO: if we specify that there can be only one FileManager it's redundant
+        //collecting files for backup
         for(FileManager fm: fileManagers) {
             for(File f: fm.getFilesToBackup()) {
                 filesToBackup.add(f);
@@ -60,15 +62,15 @@ public class BackupExecutor {
                 BackupObject backupObject = new BackupObject(fileManagers.iterator().next(), storage, location, timestamp);
                 backupObjectFile = Util.createBackupObjectFile(backupObject, tempDirectory, fileNameBase);
                 location.storeBackupInLocation(archives, backupObjectFile);
-                System.out.println("[INFO] Deleting temporary file " + backupObjectFile.getAbsolutePath()); //TODO: logger instead
+                LOGGER.info("Deleting the temporary file " + backupObjectFile.getAbsolutePath());
                 if(!backupObjectFile.delete()) {
-                    System.out.println("[WARNING] Could not delete " + backupObjectFile.getAbsolutePath()); //TODO: logger instead
+                    LOGGER.warning("Could not delete " + backupObjectFile.getAbsolutePath());
                 }
             }
             for(File f: archives) {
-                System.out.println("[INFO] Deleting temporary file " + f.getAbsolutePath()); //TODO: logger instead
+                LOGGER.info("Deleting temporary file " + f.getAbsolutePath());
                 if(!f.delete()) {
-                    System.out.println("[WARNING] Could not delete " + f.getAbsolutePath()); //TODO: logger instead
+                    LOGGER.warning("Could not delete " + f.getAbsolutePath());
                 }
             }
         }

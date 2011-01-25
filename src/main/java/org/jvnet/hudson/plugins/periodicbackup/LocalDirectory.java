@@ -37,10 +37,13 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class LocalDirectory extends Location {
 
-    public final File path;
+
+    private File path;
+    private static final Logger LOGGER = Logger.getLogger(LocalDirectory.class.getName());
 
     @DataBoundConstructor
     public LocalDirectory(File path, boolean enabled) {
@@ -51,7 +54,7 @@ public class LocalDirectory extends Location {
     @Override
     public Iterable<BackupObject> getAvailableBackups() {
         if( ! Util.isWritableDirectory(path)) {
-            System.out.println("[WARNING] " + path.getAbsolutePath() + " is not a existing/writable directory.");  //TODO: logger instead
+            LOGGER.warning(path.getAbsolutePath() + " is not a existing/writable directory.");
             return Sets.newHashSet();
         }
         if(path.listFiles().length == 0) {
@@ -68,17 +71,15 @@ public class LocalDirectory extends Location {
             File backupObjectFileDestination = new File(path, backupObjectFile.getName());
 
             Files.copy(backupObjectFile, backupObjectFileDestination);
-            System.out.println("[INFO] " + backupObjectFile.getName() + " copied to " + backupObjectFileDestination.getAbsolutePath()); //TODO: logger instead
+            LOGGER.info(backupObjectFile.getName() + " copied to " + backupObjectFileDestination.getAbsolutePath());
             for (File f : archives) {
-                {
-                    File destination = new File(path, f.getName());
-                    Files.copy(f, destination);
-                    System.out.println("[INFO] " + f.getName() + " copied to " + destination.getAbsolutePath()); //TODO: logger instead
-                }
+                File destination = new File(path, f.getName());
+                Files.copy(f, destination);
+                LOGGER.info(f.getName() + " copied to " + destination.getAbsolutePath());
             }
         }
         else {
-            System.out.println("[WARNING] skipping location " + this.path + ", location is disabled or doesn't exist."); //TODO: logger instead
+            LOGGER.warning("skipping location " + this.path + " since it is disabled or it doesn't exist.");
         }
 
     }
@@ -96,6 +97,14 @@ public class LocalDirectory extends Location {
 
     public String getDisplayName() {
         return "LocalDirectory: " + path;
+    }
+
+    public File getPath() {
+        return path;
+    }
+
+    public void setPath(File path) {
+        this.path = path;
     }
 
     @Override
