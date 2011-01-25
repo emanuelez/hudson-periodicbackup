@@ -101,7 +101,6 @@ public class Util {
             try {
                 if (zipfile != null) {
                     zipfile.close();
-                    zipfile = null;
                 }
             } catch (IOException e) {
                 e.printStackTrace(); //TODO: proper exception
@@ -146,10 +145,7 @@ public class Util {
         return new FileFilter() {
             public boolean accept(File pathname) {
                 String extension = getExtension(pathname);
-                if(extension == null && BackupObject.EXTENSION != null) return false;
-                if(extension == null && BackupObject.EXTENSION == null) return true;
-                if(extension != null && BackupObject.EXTENSION == null) return false;
-                return extension.equals(BackupObject.EXTENSION);
+                return extension != null && extension.equals(BackupObject.EXTENSION);
             }
         };
      }

@@ -59,7 +59,7 @@ public abstract class Location extends AbstractModelObject implements Describabl
      * @param backup BackupObject related to the backup
      * @param tempDir temporary directory to store archived backup file(s)
      * @return Iterable of backup archive(s) in temporary location
-     * @throws java.io.IOException
+     * @throws java.io.IOException is anything goes wrong
      */
     public abstract Iterable<File>retrieveBackupFromLocation(BackupObject backup, File tempDir) throws IOException;
 

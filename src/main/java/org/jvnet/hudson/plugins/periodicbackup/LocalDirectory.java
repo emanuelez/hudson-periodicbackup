@@ -23,6 +23,7 @@ package org.jvnet.hudson.plugins.periodicbackup;
  * THE SOFTWARE.
  */
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
@@ -102,22 +103,17 @@ public class LocalDirectory extends Location {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        LocalDirectory that = (LocalDirectory) o;
-
-        if (path != null ? !path.equals(that.path) : that.path != null) return false;
-        if (this.enabled != that.enabled) return false;
-
-        return true;
+        if (o instanceof LocalDirectory) {
+            LocalDirectory that = (LocalDirectory) o;
+            return Objects.equal(this.path, that.path)
+                && Objects.equal(this.enabled, that.enabled);
+        }
+        return false;
     }
 
     @Override
     public int hashCode() {
-        int result =  path != null ? path.hashCode() : 0;
-        result = 11 * result + (enabled ? 1 : 0);
-        return result;
+        return Objects.hashCode(path, enabled);
     }
 
     @Extension

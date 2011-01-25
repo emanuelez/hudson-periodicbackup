@@ -1,16 +1,16 @@
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import com.google.common.collect.Sets;
 import hudson.util.DescribableList;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 public class BackupExecutor {
 
-    public Set<File> filesToBackup = new HashSet<File>();
+    private Set<File> filesToBackup = Sets.newHashSet();
 
     public void backup(DescribableList<FileManager, FileManagerDescriptor> fileManagers,
                        DescribableList<Storage, StorageDescriptor> storages,

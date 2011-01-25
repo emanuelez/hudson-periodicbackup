@@ -25,6 +25,7 @@
 package org.jvnet.hudson.plugins.periodicbackup;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.io.Files;
 import hudson.model.Hudson;
 
@@ -92,25 +93,18 @@ public class BackupObject {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        BackupObject that = (BackupObject) o;
-
-        if (fileManager != null ? !fileManager.equals(that.fileManager) : that.fileManager != null) return false;
-        if (location != null ? !location.equals(that.location) : that.location != null) return false;
-        if (storage != null ? !storage.equals(that.storage) : that.storage != null) return false;
-        if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
-
-        return true;
+        if (o instanceof BackupObject) {
+            BackupObject that = (BackupObject) o;
+            return Objects.equal(this.fileManager, that.fileManager)
+                && Objects.equal(this.location,    that.location)
+                && Objects.equal(this.storage,     that.storage)
+                && Objects.equal(this.timestamp,   that.timestamp);
+        }
+        return false;
     }
 
     @Override
     public int hashCode() {
-        int result = fileManager != null ? fileManager.hashCode() : 0;
-        result = 31 * result + (storage != null ? storage.hashCode() : 0);
-        result = 31 * result + (location != null ? location.hashCode() : 0);
-        result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
-        return result;
+        return Objects.hashCode(fileManager, storage, location, timestamp);
     }
 }

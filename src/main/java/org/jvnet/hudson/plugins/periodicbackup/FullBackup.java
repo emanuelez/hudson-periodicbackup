@@ -24,6 +24,8 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import hudson.Extension;
 import hudson.model.Hudson;
 import org.apache.tools.ant.DirectoryScanner;
@@ -31,7 +33,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FullBackup extends FileManager {
@@ -51,7 +52,7 @@ public class FullBackup extends FileManager {
         DirectoryScanner directoryScanner = new DirectoryScanner();
         directoryScanner.setBasedir(Hudson.getInstance().getRootDir());
         directoryScanner.scan();
-        List<File> files = new ArrayList<File>();
+        List<File> files = Lists.newArrayList();
         for(String s: directoryScanner.getIncludedFiles()) {
             files.add(new File(directoryScanner.getBasedir(), s));
         }
@@ -60,15 +61,17 @@ public class FullBackup extends FileManager {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FullBackup that = (FullBackup) o;
-        return this.getClass().equals(that.getClass());
+        if (o instanceof FullBackup) {
+            FullBackup that = (FullBackup) o;
+            return Objects.equal(this.restorePolicy, that.restorePolicy);
+        }
+        return false;
+
     }
 
     @Override
     public int hashCode() {
-        return 0;
+        return 73;
     }
 
 
@@ -77,6 +80,5 @@ public class FullBackup extends FileManager {
         public String getDisplayName() {
             return "FullBackup";
         }
-
     }
 }

@@ -24,6 +24,7 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import com.google.common.base.Objects;
 import hudson.DescriptorExtensionList;
 import hudson.model.AbstractModelObject;
 import hudson.model.Describable;
@@ -41,6 +42,7 @@ public abstract class FileManager extends AbstractModelObject implements Describ
      * This method determines files and folders for Storage
      *
      * @return Files to be included in the backup
+     * @throws java.io.IOException if anything bad happens
      */
     public abstract Iterable<File> getFilesToBackup() throws IOException;
 
@@ -72,19 +74,15 @@ public abstract class FileManager extends AbstractModelObject implements Describ
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        FileManager that = (FileManager) o;
-
-        if (restorePolicy != null ? !restorePolicy.equals(that.restorePolicy) : that.restorePolicy != null)
-            return false;
-
-        return true;
+        if (o instanceof FileManager) {
+            FileManager that = (FileManager) o;
+            return Objects.equal(this.restorePolicy, that.restorePolicy);
+        }
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return restorePolicy != null ? restorePolicy.hashCode() : 0;
+        return Objects.hashCode(restorePolicy);
     }
 }

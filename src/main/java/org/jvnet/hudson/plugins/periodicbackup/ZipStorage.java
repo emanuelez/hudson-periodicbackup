@@ -24,6 +24,7 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import com.google.common.collect.Lists;
 import hudson.Extension;
 import hudson.model.Hudson;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -32,7 +33,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ZipStorage extends Storage {
@@ -44,7 +44,7 @@ public class ZipStorage extends Storage {
 
     @Override
     public Iterable<File> archiveFiles(Iterable<File> filesToCompress, String tempDirectoryPath, String fileNameBase) throws IOException {
-        List<File> archives = new ArrayList<File>();
+        List<File> archives = Lists.newArrayList();
         String archiveFilePath = Util.createFileName(fileNameBase, getDescriptor().getArchiveFileExtension());
         ZipArchiver archiver = new ZipArchiver();
         File tempDirectory = new File(tempDirectoryPath);
@@ -78,15 +78,12 @@ public class ZipStorage extends Storage {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ZipStorage that = (ZipStorage) o;
-        return this.getClass().equals(that.getClass());
+        return o instanceof ZipStorage;
     }
 
     @Override
     public int hashCode() {
-        return 0;
+        return 93;
     }
 
     @Extension
