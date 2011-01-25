@@ -1,6 +1,7 @@
 package org.jvnet.hudson.plugins.periodicbackup;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.Resources;
 import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
@@ -25,9 +26,9 @@ public class ZipStorageTest extends HudsonTestCase {
     @Test
     public void testArchiveFiles() throws Exception {
         ZipStorage zipStorage = new ZipStorage();
-        File tempDirectory = new File(Thread.currentThread().getContextClassLoader().getResource("data/temp/").getFile());
-        File archive1 = new File(Thread.currentThread().getContextClassLoader().getResource("data/archive1").getFile());
-        File archive2 = new File(Thread.currentThread().getContextClassLoader().getResource("data/archive2").getFile());
+        File tempDirectory = new File(Resources.getResource("data/temp/").getFile());
+        File archive1 = new File(Resources.getResource("data/archive1").getFile());
+        File archive2 = new File(Resources.getResource("data/archive2").getFile());
         List<File> archives = Lists.newArrayList(archive1, archive2);
         String baseFileName = "baseFileName";
         assertTrue(archives != null);

@@ -1,6 +1,7 @@
 package org.jvnet.hudson.plugins.periodicbackup;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.Resources;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -16,8 +17,8 @@ import java.util.List;
 public class UtilTest extends TestCase {
     @Test
     public void testGetRelativePath() throws Exception {
-        File file = new File(Thread.currentThread().getContextClassLoader().getResource("data/temp/dummy").getFile());
-        File baseDirectory = new File(Thread.currentThread().getContextClassLoader().getResource("data/").getFile());
+        File file = new File(Resources.getResource("data/temp/dummy").getFile());
+        File baseDirectory = new File(Resources.getResource("data/").getFile());
 
         String result = Util.getRelativePath(file, baseDirectory);
         String expectedResult = "temp/dummy";
@@ -58,10 +59,9 @@ public class UtilTest extends TestCase {
         assertEquals(filename,"backup_4OF4.pbobj");
     }
 
-
     @Test
     public void testCreateBackupObjectFile() throws Exception {
-        File tempDirectory = new File(Thread.currentThread().getContextClassLoader().getResource("data/temp").getFile());
+        File tempDirectory = new File(Resources.getResource("data/temp").getFile());
         BackupObject backupObject = new BackupObject(new FullBackup(), new ZipStorage(), new LocalDirectory(tempDirectory, true), new Date());
         String fileNameBase = "backupfile";
 
@@ -74,8 +74,8 @@ public class UtilTest extends TestCase {
 
     @Test
     public void testIsValidBackupObjectFile() throws Exception {
-        File backupObjectFile = new File(Thread.currentThread().getContextClassLoader().getResource("data/test.pbobj").getFile());
-        File notBackupObjectFile = new File(Thread.currentThread().getContextClassLoader().getResource("data/archive1").getFile());
+        File backupObjectFile = new File(Resources.getResource("data/test.pbobj").getFile());
+        File notBackupObjectFile = new File(Resources.getResource("data/archive1").getFile());
         assertFalse(Util.isValidBackupObjectFile(notBackupObjectFile));
         assertTrue(Util.isValidBackupObjectFile(backupObjectFile));
     }
