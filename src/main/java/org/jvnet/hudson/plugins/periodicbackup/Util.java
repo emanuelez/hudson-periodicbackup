@@ -114,7 +114,7 @@ public class Util {
      * @param destinationDir Path to the directory where file will be created
      * @param fileNameBase first part of the filename
      * @return serialized BackupObject File
-     * @throws IOException
+     * @throws IOException IO Error
      */
     public static File createBackupObjectFile(BackupObject backupObject, String destinationDir, String fileNameBase) throws IOException {
         File backupObjectFile = new File(destinationDir, createFileName(fileNameBase, BackupObject.EXTENSION));
@@ -129,7 +129,7 @@ public class Util {
      * This test if given file is a valid serialized BackupObject file
      * @param backupObjectFile File to test
      * @return true if valid, false otherwise
-     * @throws IOException
+     * @throws IOException IO Error
      */
     public static boolean isValidBackupObjectFile(File backupObjectFile) throws IOException {
         if(!backupObjectFile.exists() || !(backupObjectFile.getUsableSpace() > 0)) return false;

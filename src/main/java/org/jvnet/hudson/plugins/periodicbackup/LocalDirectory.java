@@ -118,6 +118,7 @@ public class LocalDirectory extends Location {
             return "LocalDirectory";
         }
 
+        @SuppressWarnings("unused")
         public FormValidation doTestPath(@QueryParameter String path) {
             try {
                 return FormValidation.ok(validatePath(path));

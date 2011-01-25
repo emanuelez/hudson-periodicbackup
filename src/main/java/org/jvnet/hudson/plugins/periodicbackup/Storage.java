@@ -41,7 +41,7 @@ public abstract class Storage extends AbstractModelObject implements Describable
      * @param tempDirectory String with a path to temporary directory, where the archive(s) will be created
      * @param fileNameBase first part of the file name common to both - archive(s) and backup object file
      * @return File object(s) of the archive
-     * @throws IOException
+     * @throws IOException  IO Error
      *
      */
     public abstract Iterable<File> archiveFiles(Iterable<File> filesToCompress, String tempDirectory, String fileNameBase) throws IOException;

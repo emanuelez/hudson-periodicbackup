@@ -29,6 +29,7 @@ import hudson.model.Descriptor;
 
 public abstract class LocationDescriptor extends Descriptor<Location> implements ExtensionPoint {
 
+    @SuppressWarnings("unused")
     protected LocationDescriptor(Class<? extends Location> clazz) {
         super(clazz);
     }

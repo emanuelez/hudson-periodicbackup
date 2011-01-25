@@ -29,6 +29,7 @@ import hudson.model.Descriptor;
 
 public abstract class FileManagerDescriptor extends Descriptor<FileManager> implements ExtensionPoint {
 
+    @SuppressWarnings("unused")
     protected FileManagerDescriptor(Class<? extends FileManager> clazz) {
         super(clazz);
     }

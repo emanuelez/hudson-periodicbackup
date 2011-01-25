@@ -51,14 +51,17 @@ public class BackupObject {
         this.timestamp = timestamp;
     }
 
+    @SuppressWarnings("unused")
     public FileManager getFileManager() {
         return fileManager;
     }
 
+    @SuppressWarnings("unused")
     public Storage getStorage() {
         return storage;
     }
 
+    @SuppressWarnings("unused")
     public Location getLocation() {
         return location;
     }
@@ -79,10 +82,12 @@ public class BackupObject {
         };
     }
 
+    @SuppressWarnings("unused")
     public Date getTimestamp() {
         return this.timestamp;
     }
 
+    @SuppressWarnings("unused")
     public String getDisplayName() {
         return fileManager.getDisplayName() + " created on " + timestamp.toString();
     }

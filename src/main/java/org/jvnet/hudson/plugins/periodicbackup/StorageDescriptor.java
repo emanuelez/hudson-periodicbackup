@@ -31,6 +31,7 @@ import java.io.File;
 
 public abstract class StorageDescriptor extends Descriptor<Storage> implements ExtensionPoint {
 
+    @SuppressWarnings("unused")
     protected StorageDescriptor(Class<? extends Storage> clazz) {
         super(clazz);
     }

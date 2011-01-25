@@ -58,10 +58,12 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         load();
     }
 
+    @SuppressWarnings("unused")
     public String getTempDirectory() {
         return tempDirectory;
     }
 
+    @SuppressWarnings("unused")
     public void setTempDirectory(String tempDirectory) {
         this.tempDirectory = tempDirectory;
     }
@@ -70,11 +72,13 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         return Messages.displayName();
     }
 
+    @SuppressWarnings("unused")
     public void doBackup(StaplerRequest req, StaplerResponse rsp) throws IOException {
         BackupExecutor backupExecutor = new BackupExecutor();
         backupExecutor.backup(fileManagerPlugins, storagePlugins, locationPlugins, tempDirectory);
     }
 
+    @SuppressWarnings("unused")
     public void doRestore(StaplerRequest req, StaplerResponse rsp, @QueryParameter("backupHash") int backupHash) throws IOException, PeriodicBackupException {
         Map<Integer, BackupObject> backupObjectMap = Maps.newHashMap();
         for (Location location : locationPlugins) {
@@ -123,10 +127,12 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
                 new File(Hudson.getInstance().getRootDir(), "periodicBackup.xml"));
     }
 
+    @SuppressWarnings("unused")
     public String getRootDirectory() {
         return Hudson.getInstance().getRootDir().getAbsolutePath();
     }
 
+    @SuppressWarnings("unused")
     public void doConfigSubmit(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException, InterruptedException {
         JSONObject form = req.getSubmittedForm();
 
@@ -174,14 +180,17 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         return Location.all();
     }
 
+    @SuppressWarnings("unused")
     public DescribableList<FileManager, FileManagerDescriptor> getFileManagers() {
         return fileManagerPlugins;
     }
 
+    @SuppressWarnings("unused")
     public DescribableList<Storage, StorageDescriptor> getStorages() {
         return storagePlugins;
     }
 
+    @SuppressWarnings("unused")
     public DescribableList<Location, LocationDescriptor> getLocations() {
         return locationPlugins;
     }
