@@ -2,8 +2,9 @@ package org.jvnet.hudson.plugins.periodicbackup;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
-import junit.framework.TestCase;
+
 import org.junit.Test;
+import org.jvnet.hudson.test.HudsonTestCase;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.util.List;
  * Author: tblaszcz
  * Date: 17-01-11
  */
-public class LocalDirectoryTest extends TestCase {
+public class LocalDirectoryTest extends HudsonTestCase {
     @Test
     public void testGetAvailableBackups() throws Exception {
         File path = new File(Resources.getResource("data/").getFile());
@@ -54,6 +55,21 @@ public class LocalDirectoryTest extends TestCase {
                 throw new IOException("Could not delete file " + f.getAbsolutePath());
             }
         }
+    }
+
+    @Test
+    public void testRetrieveBackupFromLocation() throws Exception {
+        File sourceDir = new File(Thread.currentThread().getContextClassLoader().getResource("data/").getFile());
+        File tempDirectory = new File(Thread.currentThread().getContextClassLoader().getResource("data/temp").getFile());
+        Date testDate = new Date(123);
+        LocalDirectory localDirectory = new LocalDirectory(sourceDir, true);
+        BackupObject backupObject = new BackupObject(new FullBackup(), new ZipStorage(), localDirectory, testDate);
+
+        Iterable<File> result = localDirectory.retrieveBackupFromLocation(backupObject, tempDirectory);
+        File expectedResult = new File(tempDirectory, Util.createFileName(Util.generateFileNameBase(testDate), "zip"));
+
+         assertEquals(result.iterator().next(), expectedResult );
+        assertTrue(expectedResult.exists());
 
     }
 }

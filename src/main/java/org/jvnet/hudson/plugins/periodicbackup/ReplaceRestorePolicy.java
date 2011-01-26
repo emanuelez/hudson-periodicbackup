@@ -24,14 +24,89 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import com.google.common.collect.Lists;
+import hudson.model.Hudson;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class ReplaceRestorePolicy implements RestorePolicy {
-    public void restore(Iterable<File> files) {
-        // TODO: implement
+
+    private static final Logger LOGGER = Logger.getLogger(LocalDirectory.class.getName());
+    private static List<String> autoExclusionList = Lists.newArrayList();
+    private static final File hudsonRoot = Hudson.getInstance().getRootDir();
+    private static int filesDeleted = 0, filesReplaced = 0, filesKept = 0;
+
+    public void restore(Iterable<File> files, File tempDir) throws IOException, PeriodicBackupException {
+        deleteAccessible(hudsonRoot.listFiles());
+        LOGGER.info(filesDeleted + " files have been deleted from " + hudsonRoot.getAbsolutePath());
+        replaceAccessible(files, tempDir);
+        LOGGER.info("Replacing of files finished.\nAfter deleting " + filesDeleted + " files from " +
+                hudsonRoot.getAbsolutePath() + "\n" + filesReplaced + " files have been restored from backup and "
+                + filesKept + " files have been kept.");
+        filesDeleted = 0;
+        filesReplaced = 0;
+        filesKept = 0;
+
     }
 
-    @Override
+    public void deleteAccessible(File[] files) throws PeriodicBackupException {
+        String relativePath;
+        for(File file : files) {
+            if(!file.isDirectory()) {
+                if(!file.canWrite()) {
+                    LOGGER.warning("Access denied to " + file.getAbsolutePath() + ", file will not be replaced");
+                    relativePath = Util.getRelativePath(file, hudsonRoot);
+                    autoExclusionList.add(relativePath);
+                }
+                else {
+                    if(!file.delete()) {
+                        LOGGER.warning("Access denied to " + file.getAbsolutePath() + ", file will not be replaced");
+                        relativePath = Util.getRelativePath(file, hudsonRoot);
+                        autoExclusionList.add(relativePath);
+                    }
+                    else {
+                        filesDeleted++;
+                    }
+                }
+            }
+            else {
+                deleteAccessible(file.listFiles());
+            }
+        }
+    }
+
+    public void replaceAccessible(Iterable<File> files, File tempDir) throws IOException {
+        String relativePath;
+        File destinationFile;
+        for(File file : files) {
+            //empty directories will not be created
+            if(!file.isDirectory()) {
+                relativePath = Util.getRelativePath(file, tempDir);
+                if(     autoExclusionList.size() == 0 ||
+                        autoExclusionList == null ||
+                        (autoExclusionList.size() > 0 && !autoExclusionList.contains(relativePath))) {
+                    LOGGER.info("Copying " + file.getAbsolutePath() + " to " + hudsonRoot.getAbsolutePath());
+                    destinationFile = new File(hudsonRoot, relativePath);
+                    FileUtils.copyFile(file, destinationFile);
+                    filesReplaced++;
+                }
+                else if(autoExclusionList != null && autoExclusionList.contains(relativePath)) {
+                        LOGGER.warning("File " + file.getAbsolutePath() + " is excluded from the restore process, original file will be kept");
+                        filesKept++;
+                }
+            }
+            else {
+                replaceAccessible(Arrays.asList(file.listFiles()), tempDir);
+            }
+        }
+    }
+
+   @Override
     public boolean equals(Object o) {
         return o instanceof ReplaceRestorePolicy;
     }

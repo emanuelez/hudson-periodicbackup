@@ -25,9 +25,10 @@
 package org.jvnet.hudson.plugins.periodicbackup;
 
 import java.io.File;
+import java.io.IOException;
 
 public interface RestorePolicy {
 
-    void restore(Iterable<File> files);
+    void restore(Iterable<File> files, File tempDir) throws IOException, PeriodicBackupException;
 
 }

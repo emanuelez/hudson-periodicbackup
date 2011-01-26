@@ -51,10 +51,11 @@ public abstract class Storage extends AbstractModelObject implements Describable
      * This method un-compressed the archive to a temporary location.
      * The actual file restoring is done by the FileManager plugin
      *
-     * @param compressedFile The archive to un-compress
+     * @param archives The archive(s) to un-compress
+     * @param tempDir The temporary directory for extracting files
      * @return The files and folders un-compressed
      */
-    public abstract Iterable<String> unarchiveFiles(File compressedFile);
+    public abstract void unarchiveFiles(Iterable<File> archives, File tempDir);
 
     public StorageDescriptor getDescriptor() {
         return (StorageDescriptor) Hudson.getInstance().getDescriptor(getClass());

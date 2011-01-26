@@ -88,11 +88,19 @@ public class LocalDirectory extends Location {
     public Iterable<File> retrieveBackupFromLocation(final BackupObject backup, File tempDir) throws IOException {
         File[] files = path.listFiles(new FileFilter() {
             public boolean accept(File pathname) {
-                return pathname.getName().contains( Util.getFormattedDate(BackupObject.FILE_TIMESTAMP_PATTERN, backup.getTimestamp()));
+                return (pathname.getName().contains( Util.getFormattedDate(BackupObject.FILE_TIMESTAMP_PATTERN, backup.getTimestamp())) &&
+                        !pathname.getName().endsWith(BackupObject.EXTENSION));
             }
         });
-        return Sets.newHashSet(files);
-        //TODO: finish
+
+        Set<File> archivesInTemp = Sets.newHashSet();
+        for(File file : files) {
+            File copiedFile = new File(tempDir, file.getName());
+            Files.copy(file, copiedFile);
+            LOGGER.info("Archive " + file.getAbsolutePath() + " copied to " + copiedFile.getAbsolutePath());
+            archivesInTemp.add(copiedFile);
+        }
+        return archivesInTemp;
     }
 
     public String getDisplayName() {

@@ -29,13 +29,18 @@ import hudson.Extension;
 import hudson.model.Hudson;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
+import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class ZipStorage extends Storage {
+
+    private static final Logger LOGGER = Logger.getLogger(LocalDirectory.class.getName());
 
     @DataBoundConstructor
     public ZipStorage() {
@@ -61,10 +66,24 @@ public class ZipStorage extends Storage {
         return archives;
     }
 
-    //TODO: implement
     @Override
-    public Iterable<String> unarchiveFiles(File compressedFile) {
-        return null;
+    public void unarchiveFiles(Iterable<File> archives, File tempDir) {
+        ZipUnArchiver unarchiver = new ZipUnArchiver();
+        unarchiver.setDestDirectory(tempDir);
+        unarchiver.enableLogging(new ConsoleLogger(org.codehaus.plexus.logging.Logger.LEVEL_INFO, "UnArchiver"));
+        for(File archive : archives) {
+            unarchiver.setSourceFile(archive);
+            LOGGER.info("Extracting files from " + archive.getAbsolutePath() + " to " + tempDir.getAbsolutePath());
+            try {
+                unarchiver.extract();
+            } catch (ArchiverException e) {
+                LOGGER.warning("Could not extract from " + archive.getAbsolutePath() + e.getMessage());
+            }
+            LOGGER.info("Deleting " + archive.getAbsolutePath());
+            if(!archive.delete()) {
+                LOGGER.warning("Could not delete " + archive.getAbsolutePath());
+            }
+        }
     }
 
     public String getDisplayName() {

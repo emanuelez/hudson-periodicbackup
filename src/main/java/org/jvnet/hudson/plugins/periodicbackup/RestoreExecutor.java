@@ -24,19 +24,43 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import com.google.common.collect.Lists;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class RestoreExecutor {
+
+    private static final Logger LOGGER = Logger.getLogger(LocalDirectory.class.getName());
 
     public void restore(BackupObject backupObject, String tempDirectoryPath) throws IOException, PeriodicBackupException {
         File tempDir = new File(tempDirectoryPath);
         if(!Util.isWritableDirectory(tempDir)) {
-            throw new PeriodicBackupException("The temp folder is not writable.");
+            throw new PeriodicBackupException("The temporary folder " + tempDir.getAbsolutePath() + " is not writable.");
         }
-        Iterable<File> archives = backupObject.getLocation().retrieveBackupFromLocation(backupObject, tempDir);
-        //TODO: finish
+        File[] tempDirFileList = tempDir.listFiles();
+        if(tempDirFileList.length > 0) {
+            LOGGER.warning("The temporary directory " + tempDir.getAbsolutePath() + " is not empty, deleting...");
+            FileUtils.deleteDirectory(tempDir);
+            LOGGER.info(tempDir.getAbsolutePath() + " deleted, making new directory");
+            if(!tempDir.mkdir()) {
+                LOGGER.warning("Could not create " + tempDir.getAbsolutePath());
+                throw new PeriodicBackupException("Could not create " + tempDir.getAbsolutePath());
+            }
+        }
 
+        Iterable<File> archives = backupObject.getLocation().retrieveBackupFromLocation(backupObject, tempDir);
+
+        backupObject.getStorage().unarchiveFiles(archives, tempDir);
+
+        List<File> filesToRestore = Lists.newArrayList(tempDir.listFiles());
+
+        backupObject.getFileManager().restoreFiles(filesToRestore, tempDir);
+
+        LOGGER.info("Restoration successful!");
     }
 
 }
