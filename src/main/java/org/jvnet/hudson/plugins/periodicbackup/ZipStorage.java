@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 
 public class ZipStorage extends Storage {
 
-    private static final Logger LOGGER = Logger.getLogger(LocalDirectory.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ZipStorage.class.getName());
 
     @DataBoundConstructor
     public ZipStorage() {

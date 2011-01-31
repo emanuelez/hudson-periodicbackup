@@ -53,7 +53,6 @@ public abstract class Storage extends AbstractModelObject implements Describable
      *
      * @param archives The archive(s) to un-compress
      * @param tempDir The temporary directory for extracting files
-     * @return The files and folders un-compressed
      */
     public abstract void unarchiveFiles(Iterable<File> archives, File tempDir);
 

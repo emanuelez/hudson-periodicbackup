@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 
 public class BackupExecutor {
 
-    private Set<File> filesToBackup = Sets.newHashSet();
+    private final Set<File> filesToBackup = Sets.newHashSet();
     private static final Logger LOGGER = Logger.getLogger(BackupExecutor.class.getName());
 
     public void backup(DescribableList<FileManager, FileManagerDescriptor> fileManagers,

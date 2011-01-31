@@ -32,7 +32,6 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class FullBackup extends FileManager {
@@ -48,7 +47,7 @@ public class FullBackup extends FileManager {
     }
 
     @Override
-    public Iterable<File> getFilesToBackup() throws IOException {
+    public Iterable<File> getFilesToBackup() {
         DirectoryScanner directoryScanner = new DirectoryScanner();
         directoryScanner.setBasedir(Hudson.getInstance().getRootDir());
         directoryScanner.scan();

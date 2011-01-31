@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 
 public class RestoreExecutor {
 
-    private static final Logger LOGGER = Logger.getLogger(LocalDirectory.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RestoreExecutor.class.getName());
 
     public void restore(BackupObject backupObject, String tempDirectoryPath) throws IOException, PeriodicBackupException {
         File tempDir = new File(tempDirectoryPath);

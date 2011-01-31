@@ -132,7 +132,7 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     }
 
     @SuppressWarnings("unused")
-    public void doConfigSubmit(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException, InterruptedException {
+    public void doConfigSubmit(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {
         JSONObject form = req.getSubmittedForm();
 
         // persist the setting

@@ -41,9 +41,8 @@ public abstract class FileManager extends AbstractModelObject implements Describ
      * This method determines files and folders for Storage
      *
      * @return Files to be included in the backup
-     * @throws java.io.IOException if anything bad happens
      */
-    public abstract Iterable<File> getFilesToBackup() throws IOException;
+    public abstract Iterable<File> getFilesToBackup();
 
     /**
      * This will restore files to their right place in the HUDSON directory

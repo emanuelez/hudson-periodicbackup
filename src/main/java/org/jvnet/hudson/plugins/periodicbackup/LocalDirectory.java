@@ -32,6 +32,7 @@ import hudson.Extension;
 import hudson.util.FormValidation;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import sun.security.util.PendingException;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -85,17 +86,27 @@ public class LocalDirectory extends Location {
     }
 
     @Override
-    public Iterable<File> retrieveBackupFromLocation(final BackupObject backup, File tempDir) throws IOException {
+    public Iterable<File> retrieveBackupFromLocation(final BackupObject backup, File tempDir) throws IOException, PeriodicBackupException {
         File[] files = path.listFiles(new FileFilter() {
             public boolean accept(File pathname) {
                 return (pathname.getName().contains( Util.getFormattedDate(BackupObject.FILE_TIMESTAMP_PATTERN, backup.getTimestamp())) &&
-                        !pathname.getName().endsWith(BackupObject.EXTENSION));
+                        !pathname.getName().endsWith(BackupObject.EXTENSION) &&
+                        pathname.isFile());
             }
         });
-
+        if(files.length <= 0) {
+            throw new PeriodicBackupException("Archive files do not exists in " + path.getAbsolutePath());
+        }
         Set<File> archivesInTemp = Sets.newHashSet();
+
         for(File file : files) {
             File copiedFile = new File(tempDir, file.getName());
+            if(copiedFile.exists()) {
+                LOGGER.warning(copiedFile.getAbsolutePath() + " already exists, deleting... ");
+                if(!copiedFile.delete()) {
+                    throw new PendingException("Could not delete " + copiedFile.getAbsolutePath());
+                }
+            }
             Files.copy(file, copiedFile);
             LOGGER.info("Archive " + file.getAbsolutePath() + " copied to " + copiedFile.getAbsolutePath());
             archivesInTemp.add(copiedFile);
@@ -107,10 +118,12 @@ public class LocalDirectory extends Location {
         return "LocalDirectory: " + path;
     }
 
+    @SuppressWarnings("unused")
     public File getPath() {
         return path;
     }
 
+    @SuppressWarnings("unused")
     public void setPath(File path) {
         this.path = path;
     }
@@ -130,6 +143,7 @@ public class LocalDirectory extends Location {
         return Objects.hashCode(path, enabled);
     }
 
+    @SuppressWarnings("unused")
     @Extension
     public static class DescriptorImpl extends LocationDescriptor {
         public String getDisplayName() {

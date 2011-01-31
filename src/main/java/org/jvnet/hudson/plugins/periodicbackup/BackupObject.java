@@ -36,10 +36,10 @@ import java.util.Date;
 
 public class BackupObject {
 
-    private FileManager fileManager;
-    private Storage storage;
-    private Location location;
-    private Date timestamp;
+    private final FileManager fileManager;
+    private final Storage storage;
+    private final Location location;
+    private final Date timestamp;
 
     public final static String EXTENSION = "pbobj";
     public final static String FILE_TIMESTAMP_PATTERN = "yyyy_MM_dd_HH_mm_ss_SSS";

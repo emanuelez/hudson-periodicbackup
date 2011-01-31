@@ -36,22 +36,27 @@ import java.util.logging.Logger;
 
 public class ReplaceRestorePolicy implements RestorePolicy {
 
-    private static final Logger LOGGER = Logger.getLogger(LocalDirectory.class.getName());
-    private static List<String> autoExclusionList = Lists.newArrayList();
-    private static final File hudsonRoot = Hudson.getInstance().getRootDir();
-    private static int filesDeleted = 0, filesReplaced = 0, filesKept = 0;
+    private static final Logger LOGGER = Logger.getLogger(ReplaceRestorePolicy.class.getName());
+    private File hudsonRoot;
+    private List<String> autoExclusionList;
+    private int filesDeleted, filesReplaced, filesKept;
 
     public void restore(Iterable<File> files, File tempDir) throws IOException, PeriodicBackupException {
+        hudsonRoot = Hudson.getInstance().getRootDir();
+        if(hudsonRoot == null) {
+            throw new PeriodicBackupException("HOME directory is unidentified.");
+        }
+        autoExclusionList = Lists.newArrayList();
+        filesDeleted = 0;
+        filesReplaced = 0;
+        filesKept = 0;
+
         deleteAccessible(hudsonRoot.listFiles());
         LOGGER.info(filesDeleted + " files have been deleted from " + hudsonRoot.getAbsolutePath());
         replaceAccessible(files, tempDir);
         LOGGER.info("Replacing of files finished.\nAfter deleting " + filesDeleted + " files from " +
                 hudsonRoot.getAbsolutePath() + "\n" + filesReplaced + " files have been restored from backup and "
                 + filesKept + " files have been kept.");
-        filesDeleted = 0;
-        filesReplaced = 0;
-        filesKept = 0;
-
     }
 
     public void deleteAccessible(File[] files) throws PeriodicBackupException {

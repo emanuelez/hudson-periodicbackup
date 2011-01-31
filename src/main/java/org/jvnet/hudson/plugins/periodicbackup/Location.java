@@ -60,9 +60,10 @@ public abstract class Location extends AbstractModelObject implements Describabl
      * @param backup BackupObject related to the backup
      * @param tempDir temporary directory to store archived backup file(s)
      * @return Iterable of backup archive(s) in temporary location
-     * @throws java.io.IOException is anything goes wrong
+     * @throws java.io.IOException if anything goes wrong with IO
+     * @throws PeriodicBackupException if anything else goes wrong
      */
-    public abstract Iterable<File>retrieveBackupFromLocation(BackupObject backup, File tempDir) throws IOException;
+    public abstract Iterable<File>retrieveBackupFromLocation(BackupObject backup, File tempDir) throws IOException, PeriodicBackupException;
 
     /**
      * This will allow to retrieve the list of plugins at runtime

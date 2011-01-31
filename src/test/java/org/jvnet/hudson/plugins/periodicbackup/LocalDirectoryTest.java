@@ -68,7 +68,7 @@ public class LocalDirectoryTest extends HudsonTestCase {
         Iterable<File> result = localDirectory.retrieveBackupFromLocation(backupObject, tempDirectory);
         File expectedResult = new File(tempDirectory, Util.createFileName(Util.generateFileNameBase(testDate), "zip"));
 
-         assertEquals(result.iterator().next(), expectedResult );
+        assertEquals(result.iterator().next(), expectedResult );
         assertTrue(expectedResult.exists());
 
     }
