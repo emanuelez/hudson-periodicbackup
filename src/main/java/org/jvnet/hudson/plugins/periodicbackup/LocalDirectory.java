@@ -26,6 +26,7 @@ package org.jvnet.hudson.plugins.periodicbackup;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import hudson.Extension;
@@ -37,6 +38,8 @@ import sun.security.util.PendingException;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -62,22 +65,23 @@ public class LocalDirectory extends Location {
             return Sets.newHashSet();
         }
         File[] files = path.listFiles(Util.backupObjectFileFilter());
-        Set<File> backupObjectFiles = Sets.newHashSet(files);
+        List<File> backupObjectFiles = Lists.newArrayList(files);
+        Collections.sort(backupObjectFiles);
+
         return Iterables.transform(backupObjectFiles, BackupObject.getFromFile());
     }
 
     @Override
     public void storeBackupInLocation(Iterable<File> archives, File backupObjectFile) throws IOException {
         if (this.enabled && path.exists()) {
-            File backupObjectFileDestination = new File(path, backupObjectFile.getName());
-
-            Files.copy(backupObjectFile, backupObjectFileDestination);
-            LOGGER.info(backupObjectFile.getName() + " copied to " + backupObjectFileDestination.getAbsolutePath());
             for (File f : archives) {
                 File destination = new File(path, f.getName());
                 Files.copy(f, destination);
                 LOGGER.info(f.getName() + " copied to " + destination.getAbsolutePath());
             }
+            File backupObjectFileDestination = new File(path, backupObjectFile.getName());
+            Files.copy(backupObjectFile, backupObjectFileDestination);
+            LOGGER.info(backupObjectFile.getName() + " copied to " + backupObjectFileDestination.getAbsolutePath());
         }
         else {
             LOGGER.warning("skipping location " + this.path + " since it is disabled or it doesn't exist.");
@@ -95,7 +99,7 @@ public class LocalDirectory extends Location {
             }
         });
         if(files.length <= 0) {
-            throw new PeriodicBackupException("Archive files do not exists in " + path.getAbsolutePath());
+            throw new PeriodicBackupException("Archive files do not exist in " + path.getAbsolutePath());
         }
         Set<File> archivesInTemp = Sets.newHashSet();
 

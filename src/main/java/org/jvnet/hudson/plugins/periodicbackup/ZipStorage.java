@@ -24,7 +24,7 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import hudson.Extension;
 import hudson.model.Hudson;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -35,34 +35,89 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class ZipStorage extends Storage {
 
+    public final static int MAX_FILES_PER_ARCHIVE = 65534;     //max allowed amount of files in zip archive is 65535
+    public final static long MAX_SIZE_OF_FILES_PER_ARCHIVE = 3999999999l; //max allowed size of uncompressed/compressed size of files in zip archive is 4GiB
+
     private static final Logger LOGGER = Logger.getLogger(ZipStorage.class.getName());
+    private long currentArchiveTotalFilesSize;
+    private ZipArchiver archiver;
+    private File tempDirectory;
+    private String archiveFilePathBase;
+    private int currentArchiveFilesCount;
+    private int archivesNumber;
+    private Set<File> archives;
 
     @DataBoundConstructor
     public ZipStorage() {
         super();
     }
 
+    public long getCurrentArchiveTotalFilesSize() {
+        return currentArchiveTotalFilesSize;
+    }
+
+    public ZipArchiver getArchiver() {
+        return archiver;
+    }
+
+    public int getCurrentArchiveFilesCount() {
+        return currentArchiveFilesCount;
+    }
+
+    public int getArchivesNumber() {
+        return archivesNumber;
+    }
+
     @Override
-    public Iterable<File> archiveFiles(Iterable<File> filesToCompress, String tempDirectoryPath, String fileNameBase) throws IOException, ArchiverException {
-        List<File> archives = Lists.newArrayList();
-        String archiveFilePath = Util.createFileName(fileNameBase, getDescriptor().getArchiveFileExtension());
-        ZipArchiver archiver = new ZipArchiver();
-        File tempDirectory = new File(tempDirectoryPath);
+    public void backupStart(String tempDirectoryPath, String archiveFilenameBase) {
+        archiver = new ZipArchiver();
+        archives = Sets.newHashSet();
+        archivesNumber = 1;
+        currentArchiveFilesCount = 0;
+        currentArchiveTotalFilesSize = 0;
+        tempDirectory = new File(tempDirectoryPath);
+        this.archiveFilePathBase = archiveFilenameBase;
+        String currentArchiveFilePath = archiveFilePathBase + "_" + archivesNumber;
+        currentArchiveFilePath = Util.createFileName(currentArchiveFilePath, getDescriptor().getArchiveFileExtension());
+        archiver.setDestFile(new File(tempDirectory, currentArchiveFilePath));
+    }
 
-        archiver.setDestFile(new File(tempDirectory, archiveFilePath));
-
-        for(File f: filesToCompress) {
-            archiver.addFile(f, Util.getRelativePath(f, Hudson.getInstance().getRootDir()));
+    @Override
+    public void backupAddFile(File fileToStore) throws ArchiverException, IOException, PeriodicBackupException {
+        if(fileToStore.length() > MAX_SIZE_OF_FILES_PER_ARCHIVE) {
+            throw new PeriodicBackupException("Size of file " + fileToStore.getAbsolutePath() + " is bigger then maximum allowed size (" + MAX_SIZE_OF_FILES_PER_ARCHIVE/(1024l) + "kB). Cannot create archive.");
         }
+        if((currentArchiveFilesCount + 1) >= MAX_FILES_PER_ARCHIVE || (currentArchiveTotalFilesSize + fileToStore.length()) >= MAX_SIZE_OF_FILES_PER_ARCHIVE) {
+            LOGGER.info("Number of files in archive " + archiver.getDestFile().getAbsolutePath() + " exceeded " + MAX_FILES_PER_ARCHIVE + " or total size of file for this archive exceeded " + MAX_SIZE_OF_FILES_PER_ARCHIVE/(1024l) + " kB");
+            archiver.createArchive();
+            archives.add(archiver.getDestFile());
+            archivesNumber++;
+            currentArchiveFilesCount = 0;
+            currentArchiveTotalFilesSize = 0;
+            LOGGER.info("Creating new archive");
+            archiver = new ZipArchiver();
+            String currentArchiveFilePath = archiveFilePathBase + "_" + archivesNumber;
+            currentArchiveFilePath = Util.createFileName(currentArchiveFilePath, getDescriptor().getArchiveFileExtension());
+            archiver.setDestFile(new File(tempDirectory, currentArchiveFilePath));
+        }
+        else {
+            archiver.addFile(fileToStore, Util.getRelativePath(fileToStore, Hudson.getInstance().getRootDir()));
+            currentArchiveFilesCount++;
+            currentArchiveTotalFilesSize += fileToStore.length();
+        }
+    }
 
-        archiver.createArchive();
-
-        archives.add(archiver.getDestFile());
+    @Override
+    public Iterable<File> backupStop() throws IOException, ArchiverException {
+        if(!archiver.getFiles().isEmpty()) {
+            archiver.createArchive();
+            archives.add(archiver.getDestFile());
+        }
         return archives;
     }
 

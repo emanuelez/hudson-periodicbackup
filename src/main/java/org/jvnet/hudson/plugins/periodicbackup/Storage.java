@@ -28,31 +28,42 @@ import hudson.DescriptorExtensionList;
 import hudson.model.AbstractModelObject;
 import hudson.model.Describable;
 import hudson.model.Hudson;
-import org.codehaus.plexus.archiver.ArchiverException;
 
 import java.io.File;
-import java.io.IOException;
 
 public abstract class Storage extends AbstractModelObject implements Describable<Storage> {
     /**
-     * This method compressed the files and folders that, at this point, must be already
-     * determined by a FileManager plugin
      *
-     * @param filesToCompress The files and folders to archive
-     * @param tempDirectory String with a path to temporary directory, where the archive(s) will be created
-     * @param fileNameBase first part of the file name common to both - archive(s) and backup object file
-     * @return File object(s) of the archive
-     * @throws IOException  IO Error
-     * @throws org.codehaus.plexus.archiver.ArchiverException  Archiver Error
+     * This method initialize Storage for archiving process, it must be called before calling backupAddFile()
+     *
+     * @param tempDirectoryPath String with a path to temporary directory, where the archive(s) will be created
+     * @param archiveFilenameBase first part of the archive filename
+     * @throws PeriodicBackupException if something goes wrong
      */
-    public abstract Iterable<File> archiveFiles(Iterable<File> filesToCompress, String tempDirectory, String fileNameBase) throws IOException, ArchiverException;
+    public abstract void backupStart(String tempDirectoryPath, String archiveFilenameBase) throws PeriodicBackupException;
 
     /**
-     * This method un-compressed the archive to a temporary location.
-     * The actual file restoring is done by the FileManager plugin
      *
-     * @param archives The archive(s) to un-compress
-     * @param tempDir The temporary directory for extracting files
+     * This method adds a file to an archive.
+     *
+     * @param fileToStore The file that will be added to the archive
+     * @throws Exception If something goes wrong
+     */
+    public abstract void backupAddFile(File fileToStore) throws Exception;
+
+    /**
+     *
+     * This method finalize process of archiving, it must be called after backupAddFile() is called
+     *
+     * @return all archive files
+     * @throws Exception if something goes wrong
+     */
+    public abstract Iterable<File> backupStop() throws Exception;
+
+    /**
+     * This method is extracts backup files from given archives into temporary directory
+     * @param archives Archive files with backup files, after succesfull extraction archives will be deleted
+     * @param tempDir Directory where files will be extracted to, it should be empty before calling the method
      */
     public abstract void unarchiveFiles(Iterable<File> archives, File tempDir);
 

@@ -34,7 +34,6 @@ import hudson.XmlFile;
 import hudson.model.*;
 import hudson.util.DescribableList;
 import net.sf.json.JSONObject;
-import org.codehaus.plexus.archiver.ArchiverException;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -73,7 +72,7 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     }
 
     @SuppressWarnings("unused")
-    public void doBackup(StaplerRequest req, StaplerResponse rsp) throws IOException, ArchiverException {
+    public void doBackup(StaplerRequest req, StaplerResponse rsp) throws Exception {
         BackupExecutor backupExecutor = new BackupExecutor();
         backupExecutor.backup(fileManagerPlugins, storagePlugins, locationPlugins, tempDirectory);
     }

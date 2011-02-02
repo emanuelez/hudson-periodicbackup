@@ -2,6 +2,7 @@ package org.jvnet.hudson.plugins.periodicbackup;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
+import org.codehaus.plexus.archiver.ArchiverException;
 import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
@@ -17,31 +18,94 @@ import java.util.List;
  */
 public class ZipStorageTest extends HudsonTestCase {
 
+    private String baseFileName;
+    private ZipStorage zipStorage;
+    private File tempDirectory;
+    private File archive1;
+    private File archive2;
+
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
         super.recipeLoadCurrentPlugin();
+        baseFileName = "baseFileName";
+        zipStorage = new ZipStorage();
+        tempDirectory = new File(Resources.getResource("data/temp/").getFile());
+        archive1 = new File(Resources.getResource("data/archive1").getFile());
+        archive2 = new File(Resources.getResource("data/archive2").getFile());
+        assertTrue(tempDirectory.getAbsolutePath() != null);
     }
 
     @Test
-    public void testArchiveFiles() throws Exception {
-        ZipStorage zipStorage = new ZipStorage();
-        File tempDirectory = new File(Resources.getResource("data/temp/").getFile());
-        File archive1 = new File(Resources.getResource("data/archive1").getFile());
-        File archive2 = new File(Resources.getResource("data/archive2").getFile());
-        List<File> archives = Lists.newArrayList(archive1, archive2);
-        String baseFileName = "baseFileName";
-        assertTrue(archives != null);
+    public void testBackupStart() throws IOException, ArchiverException {
         assertTrue(tempDirectory.getAbsolutePath() != null);
-        zipStorage.archiveFiles(archives, tempDirectory.getAbsolutePath(), baseFileName);
+        zipStorage.backupStart(tempDirectory.getAbsolutePath(), baseFileName);
 
-        File expectedResult = new File(tempDirectory, baseFileName + "." + zipStorage.getDescriptor().getArchiveFileExtension());
+        assertEquals(zipStorage.getArchivesNumber(), 1);
+        assertEquals(zipStorage.getCurrentArchiveFilesCount(), 0);
+        assertEquals(zipStorage.getCurrentArchiveTotalFilesSize(), 0l);
+
+        zipStorage.backupStop();
+    }
+
+    @Test
+    public void testBackupAddFile() throws IOException, ArchiverException, PeriodicBackupException {
+        zipStorage.backupStart(tempDirectory.getAbsolutePath(), baseFileName);
+        int sizeBefore = zipStorage.getArchiver().getFiles().size();
+        int filesInArchiveBefore = zipStorage.getCurrentArchiveFilesCount();
+        long sizeOfFilesInArchiveBefore = zipStorage.getCurrentArchiveTotalFilesSize();
+        long sizeOfTheFile = archive1.length();
+
+        zipStorage.backupAddFile(archive1);
+        int sizeAfter = zipStorage.getArchiver().getFiles().size();
+        int filesInArchiveAfter = zipStorage.getCurrentArchiveFilesCount();
+        long sizeOfFilesInArchiveAfter = zipStorage.getCurrentArchiveTotalFilesSize();
+
+        assertEquals(sizeBefore + 1, sizeAfter);
+        assertEquals(filesInArchiveBefore + 1, filesInArchiveAfter);
+        assertEquals (sizeOfFilesInArchiveBefore + sizeOfTheFile, sizeOfFilesInArchiveAfter);
+
+        zipStorage.backupStop();
+    }
+
+    @Test
+    public void testBackupStop() throws Exception {
+        File expectedResult = new File(tempDirectory, baseFileName + "_1." + zipStorage.getDescriptor().getArchiveFileExtension());
+
+        zipStorage.backupStart(tempDirectory.getAbsolutePath(), baseFileName);
+        zipStorage.backupAddFile(archive1);
+        zipStorage.backupAddFile(archive2);
+        zipStorage.backupStop();
+
         assertTrue(expectedResult.exists());
-        assertTrue(expectedResult.getUsableSpace() > 0);
 
         if(!expectedResult.delete()) {
-                throw new IOException("Could not delete file " + expectedResult.getAbsolutePath());
+            throw new IOException("Could not delete file " + expectedResult.getAbsolutePath());
         }
+    }
+
+    @Test
+    public void testUnarchiveFiles() throws IOException {
+        File zipArchive1 = new File(Resources.getResource("data/zipfile1.zip").getFile());
+        File zipArchive2 = new File(Resources.getResource("data/zipfile2.zip").getFile());
+        File file1 = new File(Resources.getResource("data/temp/file1").getFile());
+        File file2 = new File(Resources.getResource("data/temp/file2").getFile());
+        if(file1.exists() && (!file1.delete())) {
+            throw new IOException("Could not delete " + file1.getAbsolutePath());
+        }
+        if(file2.exists() && (!file2.delete())) {
+            throw new IOException("Could not delete " + file2.getAbsolutePath());
+        }
+        assertTrue(zipArchive1.exists() && zipArchive2.exists());
+        List<File> archives = Lists.newArrayList(zipArchive1, zipArchive2);
+        int filesCountBefore = tempDirectory.listFiles().length;
+        int expectedFilesCount = filesCountBefore + 2;
+
+        zipStorage.unarchiveFiles(archives, tempDirectory);
+        assertEquals(filesCountBefore + 2, expectedFilesCount);
+
+
 
     }
 }

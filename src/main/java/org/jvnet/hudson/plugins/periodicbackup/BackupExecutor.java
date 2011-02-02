@@ -29,7 +29,6 @@ import hudson.util.DescribableList;
 import org.codehaus.plexus.archiver.ArchiverException;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -42,7 +41,10 @@ public class BackupExecutor {
     public void backup(DescribableList<FileManager, FileManagerDescriptor> fileManagers,
                        DescribableList<Storage, StorageDescriptor> storages,
                        DescribableList<Location, LocationDescriptor> locations,
-                       String tempDirectory) throws IOException, ArchiverException {
+                       String tempDirectory) throws Exception, ArchiverException, PeriodicBackupException {
+        if(fileManagers.size() > 1) {
+            throw new PeriodicBackupException("More then one file manager is defined.");
+        }
         //collecting files for backup
         for(FileManager fm: fileManagers) {
             for(File f: fm.getFilesToBackup()) {
@@ -53,26 +55,32 @@ public class BackupExecutor {
         //creating backup archives for each storage defined
         Date timestamp = new Date();
         String fileNameBase = Util.generateFileNameBase(timestamp);
-        for(Storage storage: storages) {
-            //TODO: if we want to store serialized BackupObject File inside archive this has to be changed
-            Iterable<File> archives = storage.archiveFiles(filesToBackup, tempDirectory, fileNameBase);
-            //sends all backup archives and backup files to all activated locations
-            for(Location location: locations) {
-                //here I assumed 1 and only 1 FileManager
-                BackupObject backupObject = new BackupObject(fileManagers.iterator().next(), storage, location, timestamp);
-                backupObjectFile = Util.createBackupObjectFile(backupObject, tempDirectory, fileNameBase);
-                location.storeBackupInLocation(archives, backupObjectFile);
-                LOGGER.info("Deleting the temporary file " + backupObjectFile.getAbsolutePath());
-                if(!backupObjectFile.delete()) {
-                    LOGGER.warning("Could not delete " + backupObjectFile.getAbsolutePath());
+
+        for (Storage storage : storages) {
+            storage.backupStart(tempDirectory, fileNameBase);
+            for (File fileToBackup : filesToBackup) {
+                storage.backupAddFile(fileToBackup);
+            }
+            Iterable<File> archives = storage.backupStop();
+            for (Location location : locations) {
+                //sends all backup archives and backup files to all activated locations
+                if(location.enabled) {
+                    BackupObject backupObject = new BackupObject(fileManagers.iterator().next(), storage, location, timestamp);
+                    backupObjectFile = Util.createBackupObjectFile(backupObject, tempDirectory, fileNameBase);
+                    location.storeBackupInLocation(archives, backupObjectFile);
+                    LOGGER.info("Deleting the temporary file " + backupObjectFile.getAbsolutePath());
+                    if (!backupObjectFile.delete()) {
+                        LOGGER.warning("Could not delete " + backupObjectFile.getAbsolutePath());
+                    }
                 }
             }
-            for(File f: archives) {
+            for (File f : archives) {
                 LOGGER.info("Deleting temporary file " + f.getAbsolutePath());
-                if(!f.delete()) {
+                if (!f.delete()) {
                     LOGGER.warning("Could not delete " + f.getAbsolutePath());
                 }
             }
         }
+        LOGGER.info("Backup finished successfully!");
     }
 }
