@@ -24,115 +24,85 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import hudson.Extension;
-import hudson.model.Hudson;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.zip.ZipArchiver;
-import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.util.Zip4jConstants;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class ZipStorage extends Storage {
 
-    public final static int MAX_FILES_PER_ARCHIVE = 65534;     //max allowed amount of files in zip archive is 65535
-    public final static long MAX_SIZE_OF_FILES_PER_ARCHIVE = 3999999999l; //max allowed size of uncompressed/compressed size of files in zip archive is 4GiB
-
     private static final Logger LOGGER = Logger.getLogger(ZipStorage.class.getName());
-    private long currentArchiveTotalFilesSize;
-    private ZipArchiver archiver;
-    private File tempDirectory;
-    private String archiveFilePathBase;
-    private int currentArchiveFilesCount;
-    private int archivesNumber;
-    private Set<File> archives;
+
+    private transient ZipFile zipFile;
+    private transient File firstArchiveFile;
+    private transient ZipParameters parameters;
+    private transient int filesCounter;
+    private transient List<File> archives;
 
     @DataBoundConstructor
     public ZipStorage() {
         super();
     }
 
-    public long getCurrentArchiveTotalFilesSize() {
-        return currentArchiveTotalFilesSize;
-    }
-
-    public ZipArchiver getArchiver() {
-        return archiver;
-    }
-
-    public int getCurrentArchiveFilesCount() {
-        return currentArchiveFilesCount;
-    }
-
-    public int getArchivesNumber() {
-        return archivesNumber;
+    @Override
+    public void backupStart(String tempDirectoryPath, String archiveFilenameBase) throws PeriodicBackupException {
+        filesCounter = 0;
+        archives = Lists.newArrayList();
+        File tempDirectory = new File(tempDirectoryPath);
+        String archiveFilePathBase = Util.createFileName(archiveFilenameBase, getDescriptor().getArchiveFileExtension());
+        try {
+            firstArchiveFile = new File(tempDirectory, archiveFilePathBase);
+            zipFile= new ZipFile(firstArchiveFile);
+        } catch (ZipException e) {
+            LOGGER.warning("There was a problem with creating zip object. " + e.getMessage());
+        }
+        parameters = new ZipParameters();
+        // set compression method to store compression
+        parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+        // Set the compression level. This value has to be in between 0 to 9
+        parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
     }
 
     @Override
-    public void backupStart(String tempDirectoryPath, String archiveFilenameBase) {
-        archiver = new ZipArchiver();
-        archives = Sets.newHashSet();
-        archivesNumber = 1;
-        currentArchiveFilesCount = 0;
-        currentArchiveTotalFilesSize = 0;
-        tempDirectory = new File(tempDirectoryPath);
-        this.archiveFilePathBase = archiveFilenameBase;
-        String currentArchiveFilePath = archiveFilePathBase + "_" + archivesNumber;
-        currentArchiveFilePath = Util.createFileName(currentArchiveFilePath, getDescriptor().getArchiveFileExtension());
-        archiver.setDestFile(new File(tempDirectory, currentArchiveFilePath));
+    public void backupAddFile(File fileToStore) throws PeriodicBackupException {
+        try {
+            if(filesCounter == 0) {
+                zipFile.createZipFile(fileToStore, parameters);
+            }
+            else {
+                zipFile.addFile(fileToStore, parameters);
+            }
+            filesCounter++;
+        } catch(ZipException e) {
+            throw new PeriodicBackupException("There was a problem with adding file to the zip archive. " + e.getMessage());
+        }
+
     }
 
     @Override
-    public void backupAddFile(File fileToStore) throws ArchiverException, IOException, PeriodicBackupException {
-        if(fileToStore.length() > MAX_SIZE_OF_FILES_PER_ARCHIVE) {
-            throw new PeriodicBackupException("Size of file " + fileToStore.getAbsolutePath() + " is bigger then maximum allowed size (" + MAX_SIZE_OF_FILES_PER_ARCHIVE/(1024l) + "kB). Cannot create archive.");
-        }
-        if((currentArchiveFilesCount + 1) >= MAX_FILES_PER_ARCHIVE || (currentArchiveTotalFilesSize + fileToStore.length()) >= MAX_SIZE_OF_FILES_PER_ARCHIVE) {
-            LOGGER.info("Number of files in archive " + archiver.getDestFile().getAbsolutePath() + " exceeded " + MAX_FILES_PER_ARCHIVE + " or total size of file for this archive exceeded " + MAX_SIZE_OF_FILES_PER_ARCHIVE/(1024l) + " kB");
-            archiver.createArchive();
-            archives.add(archiver.getDestFile());
-            archivesNumber++;
-            currentArchiveFilesCount = 0;
-            currentArchiveTotalFilesSize = 0;
-            LOGGER.info("Creating new archive");
-            archiver = new ZipArchiver();
-            String currentArchiveFilePath = archiveFilePathBase + "_" + archivesNumber;
-            currentArchiveFilePath = Util.createFileName(currentArchiveFilePath, getDescriptor().getArchiveFileExtension());
-            archiver.setDestFile(new File(tempDirectory, currentArchiveFilePath));
-        }
-        else {
-            archiver.addFile(fileToStore, Util.getRelativePath(fileToStore, Hudson.getInstance().getRootDir()));
-            currentArchiveFilesCount++;
-            currentArchiveTotalFilesSize += fileToStore.length();
-        }
-    }
-
-    @Override
-    public Iterable<File> backupStop() throws IOException, ArchiverException {
-        if(!archiver.getFiles().isEmpty()) {
-            archiver.createArchive();
-            archives.add(archiver.getDestFile());
-        }
+    public Iterable<File> backupStop() {
+        archives.add(firstArchiveFile);
         return archives;
     }
 
     @Override
     public void unarchiveFiles(Iterable<File> archives, File tempDir) {
-        ZipUnArchiver unarchiver = new ZipUnArchiver();
-        unarchiver.setDestDirectory(tempDir);
-        unarchiver.enableLogging(new ConsoleLogger(org.codehaus.plexus.logging.Logger.LEVEL_INFO, "UnArchiver"));
         for(File archive : archives) {
-            unarchiver.setSourceFile(archive);
-            LOGGER.info("Extracting files from " + archive.getAbsolutePath() + " to " + tempDir.getAbsolutePath());
-            try {
-                unarchiver.extract();
-            } catch (ArchiverException e) {
-                LOGGER.warning("Could not extract from " + archive.getAbsolutePath() + e.getMessage());
+            if(Util.getExtension(archive) != null && Util.getExtension(archive).equals(this.getDescriptor().getArchiveFileExtension())) {
+                try {
+                    zipFile = new ZipFile(archive);
+                    LOGGER.info("Extracting files from " + archive.getAbsolutePath() + " to " + tempDir.getAbsolutePath());
+                    zipFile.extractAll(tempDir.getAbsolutePath());
+                } catch (ZipException e) {
+                    LOGGER.warning("Could not extract from " + archive.getAbsolutePath() + e.getMessage());
+                }
             }
             LOGGER.info("Deleting " + archive.getAbsolutePath());
             if(!archive.delete()) {
