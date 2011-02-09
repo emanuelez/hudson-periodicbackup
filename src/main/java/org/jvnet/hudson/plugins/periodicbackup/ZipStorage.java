@@ -44,13 +44,13 @@ public class ZipStorage extends Storage {
     public final static long MAX_SIZE_OF_FILES_PER_ARCHIVE = 3999999999l; //max allowed size of uncompressed/compressed size of files in zip archive is 4GiB
 
     private static final Logger LOGGER = Logger.getLogger(ZipStorage.class.getName());
-    private long currentArchiveTotalFilesSize;
-    private ZipArchiver archiver;
-    private File tempDirectory;
-    private String archiveFilePathBase;
-    private int currentArchiveFilesCount;
-    private int archivesNumber;
-    private Set<File> archives;
+    private transient long currentArchiveTotalFilesSize;
+    private transient ZipArchiver archiver;
+    private transient File tempDirectory;
+    private transient String archiveFilePathBase;
+    private transient int currentArchiveFilesCount;
+    private transient int archivesNumber;
+    private transient Set<File> archives;
 
     @DataBoundConstructor
     public ZipStorage() {

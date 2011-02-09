@@ -42,6 +42,7 @@ public class BackupExecutor {
                        DescribableList<Storage, StorageDescriptor> storages,
                        DescribableList<Location, LocationDescriptor> locations,
                        String tempDirectory) throws Exception, ArchiverException, PeriodicBackupException {
+        long start = System.currentTimeMillis();
         if(fileManagers.size() > 1) {
             throw new PeriodicBackupException("More then one file manager is defined.");
         }
@@ -81,6 +82,6 @@ public class BackupExecutor {
                 }
             }
         }
-        LOGGER.info("Backup finished successfully!");
+        LOGGER.info("Backup finished successfully after " + (System.currentTimeMillis() - start) + " ms" );
     }
 }

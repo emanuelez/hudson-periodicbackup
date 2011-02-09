@@ -37,6 +37,7 @@ public class RestoreExecutor {
     private static final Logger LOGGER = Logger.getLogger(RestoreExecutor.class.getName());
 
     public void restore(BackupObject backupObject, String tempDirectoryPath) throws IOException, PeriodicBackupException {
+        long start = System.currentTimeMillis();
         File tempDir = new File(tempDirectoryPath);
         if(!Util.isWritableDirectory(tempDir)) {
             throw new PeriodicBackupException("The temporary folder " + tempDir.getAbsolutePath() + " is not writable.");
@@ -60,7 +61,7 @@ public class RestoreExecutor {
 
         backupObject.getFileManager().restoreFiles(filesToRestore, tempDir);
 
-        LOGGER.info("Restoration successful!");
+        LOGGER.info("Restoration finished successfully after " + (System.currentTimeMillis() - start) + " ms");
     }
 
 }

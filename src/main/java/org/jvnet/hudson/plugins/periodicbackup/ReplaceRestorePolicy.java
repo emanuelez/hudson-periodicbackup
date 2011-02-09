@@ -39,7 +39,7 @@ public class ReplaceRestorePolicy implements RestorePolicy {
     private static final Logger LOGGER = Logger.getLogger(ReplaceRestorePolicy.class.getName());
     private File hudsonRoot;
     private List<String> autoExclusionList;
-    private int filesDeleted, filesReplaced, filesKept;
+    private transient int filesDeleted, filesReplaced, filesKept;
 
     public void restore(Iterable<File> files, File tempDir) throws IOException, PeriodicBackupException {
         hudsonRoot = Hudson.getInstance().getRootDir();

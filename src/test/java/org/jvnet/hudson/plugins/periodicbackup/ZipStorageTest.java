@@ -89,14 +89,6 @@ public class ZipStorageTest extends HudsonTestCase {
     public void testUnarchiveFiles() throws IOException {
         File zipArchive1 = new File(Resources.getResource("data/zipfile1.zip").getFile());
         File zipArchive2 = new File(Resources.getResource("data/zipfile2.zip").getFile());
-        File file1 = new File(Resources.getResource("data/temp/file1").getFile());
-        File file2 = new File(Resources.getResource("data/temp/file2").getFile());
-        if(file1.exists() && (!file1.delete())) {
-            throw new IOException("Could not delete " + file1.getAbsolutePath());
-        }
-        if(file2.exists() && (!file2.delete())) {
-            throw new IOException("Could not delete " + file2.getAbsolutePath());
-        }
         assertTrue(zipArchive1.exists() && zipArchive2.exists());
         List<File> archives = Lists.newArrayList(zipArchive1, zipArchive2);
         int filesCountBefore = tempDirectory.listFiles().length;
