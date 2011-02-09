@@ -64,7 +64,7 @@ public class LocalDirectory extends Location {
         if(path.listFiles().length == 0) {
             return Sets.newHashSet();
         }
-        File[] files = path.listFiles(Util.backupObjectFileFilter());
+        File[] files = path.listFiles(Util.extensionFileFilter(BackupObject.EXTENSION));
         List<File> backupObjectFiles = Lists.newArrayList(files);
         Collections.sort(backupObjectFiles);
 

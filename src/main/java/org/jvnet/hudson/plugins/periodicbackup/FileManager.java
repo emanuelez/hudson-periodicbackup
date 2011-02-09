@@ -41,19 +41,19 @@ public abstract class FileManager extends AbstractModelObject implements Describ
      * This method determines files and folders for Storage
      *
      * @return Files to be included in the backup
+     * @throws PeriodicBackupException if anything else bad happens
      */
-    public abstract Iterable<File> getFilesToBackup();
+    public abstract Iterable<File> getFilesToBackup() throws PeriodicBackupException;
 
     /**
      * This will restore files to their right place in the HUDSON directory
      *
-     * @param filesToBeRestored Files from the backup, unarchived by Storage
-     * @param tempDir The temporary directory where the files for restoring are
+     * @param tempDir The temporary directory where the files for restoring are (and ONLY those files at this point)
      * @throws java.io.IOException IOException when IO problem
      * @throws PeriodicBackupException if anything else bad happens
      */
-    public void restoreFiles(Iterable<File> filesToBeRestored, File tempDir) throws IOException, PeriodicBackupException {
-        restorePolicy.restore(filesToBeRestored, tempDir);
+    public void restoreFiles(File tempDir) throws IOException, PeriodicBackupException {
+        restorePolicy.restore(tempDir);
     }
 
     /**

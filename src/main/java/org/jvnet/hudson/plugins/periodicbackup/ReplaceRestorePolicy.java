@@ -30,7 +30,6 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -41,7 +40,7 @@ public class ReplaceRestorePolicy implements RestorePolicy {
     private List<String> autoExclusionList;
     private transient int filesDeleted, filesReplaced, filesKept;
 
-    public void restore(Iterable<File> files, File tempDir) throws IOException, PeriodicBackupException {
+    public void restore(File tempDir) throws IOException, PeriodicBackupException {
         hudsonRoot = Hudson.getInstance().getRootDir();
         if(hudsonRoot == null) {
             throw new PeriodicBackupException("HOME directory is unidentified.");
@@ -53,7 +52,7 @@ public class ReplaceRestorePolicy implements RestorePolicy {
 
         deleteAccessible(hudsonRoot.listFiles());
         LOGGER.info(filesDeleted + " files have been deleted from " + hudsonRoot.getAbsolutePath());
-        replaceAccessible(files, tempDir);
+        replaceAccessible(tempDir.listFiles(), tempDir);
         LOGGER.info("Replacing of files finished.\nAfter deleting " + filesDeleted + " files from " +
                 hudsonRoot.getAbsolutePath() + "\n" + filesReplaced + " files have been restored from backup and "
                 + filesKept + " files have been kept.");
@@ -85,7 +84,7 @@ public class ReplaceRestorePolicy implements RestorePolicy {
         }
     }
 
-    public void replaceAccessible(Iterable<File> files, File tempDir) throws IOException {
+    public void replaceAccessible(File[] files, File tempDir) throws IOException {
         String relativePath;
         File destinationFile;
         for(File file : files) {
@@ -106,7 +105,7 @@ public class ReplaceRestorePolicy implements RestorePolicy {
                 }
             }
             else {
-                replaceAccessible(Arrays.asList(file.listFiles()), tempDir);
+                replaceAccessible(file.listFiles(), tempDir);
             }
         }
     }

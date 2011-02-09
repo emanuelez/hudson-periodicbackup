@@ -29,6 +29,6 @@ import java.io.IOException;
 
 public interface RestorePolicy {
 
-    void restore(Iterable<File> files, File tempDir) throws IOException, PeriodicBackupException;
+    void restore(File tempDir) throws IOException, PeriodicBackupException;
 
 }

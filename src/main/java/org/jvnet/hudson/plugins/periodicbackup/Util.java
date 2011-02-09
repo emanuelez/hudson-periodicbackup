@@ -113,14 +113,14 @@ public class Util {
         }
     }
 
-    public static FileFilter backupObjectFileFilter() {
+    public static FileFilter extensionFileFilter(final String extension) {
         return new FileFilter() {
-            public boolean accept(File pathname) {
-                String extension = getExtension(pathname);
-                return extension != null && extension.equals(BackupObject.EXTENSION);
+            public boolean accept(File file) {
+                String fileExtension = getExtension(file);
+                return fileExtension != null && fileExtension.equals(extension);
             }
         };
-     }
+    }
 
     /*
     * Get the extension of a file.

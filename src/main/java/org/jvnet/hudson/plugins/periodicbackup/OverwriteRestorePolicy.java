@@ -24,10 +24,22 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import hudson.model.Hudson;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Logger;
 
 public class OverwriteRestorePolicy implements RestorePolicy {
-    public void restore(Iterable<File> files, File tempDir) {
-        // TODO: implement
+
+    private static final Logger LOGGER = Logger.getLogger(ReplaceRestorePolicy.class.getName());
+
+    public void restore(File tempDir) throws IOException {
+        File hudsonRoot = Hudson.getInstance().getRootDir();
+
+        FileUtils.copyDirectory(tempDir, hudsonRoot);
+        LOGGER.info("Restoring of files finished");
     }
+
 }

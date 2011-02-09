@@ -56,10 +56,8 @@ public class RestoreExecutor {
         Iterable<File> archives = backupObject.getLocation().retrieveBackupFromLocation(backupObject, tempDir);
 
         backupObject.getStorage().unarchiveFiles(archives, tempDir);
-
-        List<File> filesToRestore = Lists.newArrayList(tempDir.listFiles());
-
-        backupObject.getFileManager().restoreFiles(filesToRestore, tempDir);
+        //assuming that now all the files in temp directory are the files to be restored
+        backupObject.getFileManager().restoreFiles(tempDir);
 
         LOGGER.info("Restoration finished successfully after " + (System.currentTimeMillis() - start) + " ms");
     }

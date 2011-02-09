@@ -74,6 +74,9 @@ public class BackupExecutor {
                         LOGGER.warning("Could not delete " + backupObjectFile.getAbsolutePath());
                     }
                 }
+                else {
+                    LOGGER.info(location.getDisplayName() + " is disabled, ignoring.");
+                }
             }
             for (File f : archives) {
                 LOGGER.info("Deleting temporary file " + f.getAbsolutePath());
