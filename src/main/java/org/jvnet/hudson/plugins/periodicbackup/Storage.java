@@ -47,26 +47,25 @@ public abstract class Storage extends AbstractModelObject implements Describable
      * This method adds a file to an archive.
      *
      * @param fileToStore The file that will be added to the archive
-     * @throws PeriodicBackupException If something goes wrong
+     * @throws Exception If something goes wrong
      */
-    public abstract void backupAddFile(File fileToStore) throws PeriodicBackupException;
+    public abstract void backupAddFile(File fileToStore) throws Exception;
 
     /**
      *
      * This method finalize process of archiving, it must be called after backupAddFile() is called
      *
      * @return all archive files
-     * @throws PeriodicBackupException if something goes wrong
+     * @throws Exception if something goes wrong
      */
-    public abstract Iterable<File> backupStop() throws PeriodicBackupException;
+    public abstract Iterable<File> backupStop() throws Exception;
 
     /**
      * This method is extracts backup files from given archives into temporary directory
      * @param archives Archive files with backup files, after succesfull extraction archives will be deleted
      * @param tempDir Directory where files will be extracted to, it should be empty before calling the method
-     * @throws PeriodicBackupException if something goes wrong
      */
-    public abstract void unarchiveFiles(Iterable<File> archives, File tempDir) throws PeriodicBackupException;
+    public abstract void unarchiveFiles(Iterable<File> archives, File tempDir);
 
     public StorageDescriptor getDescriptor() {
         return (StorageDescriptor) Hudson.getInstance().getDescriptor(getClass());

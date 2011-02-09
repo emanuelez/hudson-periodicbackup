@@ -26,9 +26,9 @@ package org.jvnet.hudson.plugins.periodicbackup;
 
 import com.google.common.collect.Sets;
 import hudson.util.DescribableList;
+import org.codehaus.plexus.archiver.ArchiverException;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -41,7 +41,7 @@ public class BackupExecutor {
     public void backup(DescribableList<FileManager, FileManagerDescriptor> fileManagers,
                        DescribableList<Storage, StorageDescriptor> storages,
                        DescribableList<Location, LocationDescriptor> locations,
-                       String tempDirectory) throws PeriodicBackupException, IOException {
+                       String tempDirectory) throws Exception, ArchiverException, PeriodicBackupException {
         if(fileManagers.size() > 1) {
             throw new PeriodicBackupException("More then one file manager is defined.");
         }
