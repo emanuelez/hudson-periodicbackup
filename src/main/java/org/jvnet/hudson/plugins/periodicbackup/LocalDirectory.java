@@ -44,7 +44,6 @@ import java.util.logging.Logger;
 
 public class LocalDirectory extends Location {
 
-
     private File path;
     private static final Logger LOGGER = Logger.getLogger(LocalDirectory.class.getName());
 

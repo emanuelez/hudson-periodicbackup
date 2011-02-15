@@ -47,18 +47,18 @@ public abstract class Storage extends AbstractModelObject implements Describable
      * This method adds a file to an archive.
      *
      * @param fileToStore The file that will be added to the archive
-     * @throws Exception If something goes wrong
+     * @throws PeriodicBackupException If something goes wrong
      */
-    public abstract void backupAddFile(File fileToStore) throws Exception;
+    public abstract void backupAddFile(File fileToStore) throws PeriodicBackupException;
 
     /**
      *
      * This method finalize process of archiving, it must be called after backupAddFile() is called
      *
      * @return all archive files
-     * @throws Exception if something goes wrong
+     * @throws PeriodicBackupException if something goes wrong
      */
-    public abstract Iterable<File> backupStop() throws Exception;
+    public abstract Iterable<File> backupStop() throws PeriodicBackupException;
 
     /**
      * This method is extracts backup files from given archives into temporary directory

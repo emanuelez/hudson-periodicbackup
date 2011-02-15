@@ -34,7 +34,6 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -88,13 +87,17 @@ public class ZipStorage extends Storage {
     }
 
     @Override
-    public void backupAddFile(File fileToStore) throws ArchiverException, IOException, PeriodicBackupException {
+    public void backupAddFile(File fileToStore) throws PeriodicBackupException {
         if(fileToStore.length() > MAX_SIZE_OF_FILES_PER_ARCHIVE) {
             throw new PeriodicBackupException("Size of file " + fileToStore.getAbsolutePath() + " is bigger then maximum allowed size (" + MAX_SIZE_OF_FILES_PER_ARCHIVE/(1024l) + "kB). Cannot create archive.");
         }
         if((currentArchiveFilesCount + 1) >= MAX_FILES_PER_ARCHIVE || (currentArchiveTotalFilesSize + fileToStore.length()) >= MAX_SIZE_OF_FILES_PER_ARCHIVE) {
             LOGGER.info("Number of files in archive " + archiver.getDestFile().getAbsolutePath() + " exceeded " + MAX_FILES_PER_ARCHIVE + " or total size of file for this archive exceeded " + MAX_SIZE_OF_FILES_PER_ARCHIVE/(1024l) + " kB");
-            archiver.createArchive();
+            try {
+                archiver.createArchive();
+            } catch (Exception e) {
+                LOGGER.warning("Could not create archive " + archiver.getDestFile() + " " + e.getMessage());
+            }
             archives.add(archiver.getDestFile());
             archivesNumber++;
             currentArchiveFilesCount = 0;
@@ -106,16 +109,24 @@ public class ZipStorage extends Storage {
             archiver.setDestFile(new File(tempDirectory, currentArchiveFilePath));
         }
         else {
-            archiver.addFile(fileToStore, Util.getRelativePath(fileToStore, Hudson.getInstance().getRootDir()));
+            try {
+                archiver.addFile(fileToStore, Util.getRelativePath(fileToStore, Hudson.getInstance().getRootDir()));
+            } catch (ArchiverException e) {
+                LOGGER.warning("Could not add file to the archive. " + e.getMessage());
+            }
             currentArchiveFilesCount++;
             currentArchiveTotalFilesSize += fileToStore.length();
         }
     }
 
     @Override
-    public Iterable<File> backupStop() throws IOException, ArchiverException {
+    public Iterable<File> backupStop() throws PeriodicBackupException {
         if(!archiver.getFiles().isEmpty()) {
-            archiver.createArchive();
+            try {
+                archiver.createArchive();
+            } catch (Exception e) {
+                throw new PeriodicBackupException("Could not create archive " + archiver.getDestFile().getAbsolutePath() + " " + e.getMessage());
+            }
             archives.add(archiver.getDestFile());
         }
         return archives;
