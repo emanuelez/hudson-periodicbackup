@@ -38,7 +38,7 @@ public class ZipStorageTest extends HudsonTestCase {
     }
 
     @Test
-    public void testBackupStart() throws IOException, ArchiverException {
+    public void testBackupStart() throws IOException, ArchiverException, PeriodicBackupException {
         assertTrue(tempDirectory.getAbsolutePath() != null);
         zipStorage.backupStart(tempDirectory.getAbsolutePath(), baseFileName);
 

@@ -40,6 +40,12 @@
                 <f:entry title="${%tempDirectory.title}" field="tempDirectory">
                     <f:textbox/>
                 </f:entry>
+                <f:entry title="${%initialHourOfDay.title}" field="initialHourOfDay">
+                    <f:textbox/>
+                </f:entry>
+                <f:entry title="${%period.title}" field="period">
+                    <f:textbox/>
+                </f:entry>
 
                 <f:section title="${%fileManagementStrategy.title}">
                     <f:block>

@@ -43,15 +43,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @Extension
 public class PeriodicBackupLink extends ManagementLink implements Describable<PeriodicBackupLink>, Saveable {
 
-    private String tempDirectory;
     private FileManager fileManagerPlugin = null;
     private final DescribableList<FileManager, FileManagerDescriptor> fileManagerPlugins = new DescribableList<FileManager, FileManagerDescriptor>(this);
     private final DescribableList<Location, LocationDescriptor> locationPlugins = new DescribableList<Location, LocationDescriptor>(this);
     private final DescribableList<Storage, StorageDescriptor> storagePlugins = new DescribableList<Storage, StorageDescriptor>(this);
+    private static final transient Logger LOGGER = Logger.getLogger(ZipStorage.class.getName());
+
+    private String tempDirectory;
+    private long period;
+    private int initialHourOfDay;
 
     public PeriodicBackupLink() throws IOException {
         load();
@@ -65,6 +70,26 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     @SuppressWarnings("unused")
     public void setTempDirectory(String tempDirectory) {
         this.tempDirectory = tempDirectory;
+    }
+
+    @SuppressWarnings("unused")
+    public long getPeriod() {
+        return period;
+    }
+
+    @SuppressWarnings("unused")
+    public void setPeriod(long period) {
+        this.period = period;
+    }
+
+    @SuppressWarnings("unused")
+    public int getInitialHourOfDay() {
+        return initialHourOfDay;
+    }
+
+    @SuppressWarnings("unused")
+    public void setInitialHourOfDay(int initialHourOfDay) {
+        this.initialHourOfDay = initialHourOfDay;
     }
 
     public String getDisplayName() {
@@ -140,6 +165,8 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
             tempDirectory = form.getString("tempDirectory");
             JSONObject fileManagerDescribableJson = form.getJSONObject("fileManagerPlugin");
             fileManagerPlugin = (FileManager) req.bindJSON(Class.forName(fileManagerDescribableJson.getString("stapler-class")), fileManagerDescribableJson);
+            initialHourOfDay = form.getInt("initialHourOfDay");
+            period = form.getLong("period");
             locationPlugins.rebuildHetero(req, form, getLocationDescriptors(), "Location");
             storagePlugins.rebuildHetero(req, form, getStorageDescriptors(), "Storage");
 
