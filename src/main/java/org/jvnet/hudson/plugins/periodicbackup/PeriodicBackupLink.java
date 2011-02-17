@@ -27,8 +27,6 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import hudson.BulkChange;
 import hudson.Extension;
@@ -99,12 +97,7 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
 
     @SuppressWarnings("unused")
     public void doBackup(StaplerRequest req, StaplerResponse rsp) throws Exception {
-        Collection<PeriodicWork> periodicBackups = Collections2.filter(AsyncPeriodicWork.all(), Predicates.instanceOf(PeriodicBackup.class));
-        if (periodicBackups.size() != 1) {
-            throw new PeriodicBackupException("Number of PeriodicBackups(s) is not correct: " + periodicBackups.size());
-        }
-        PeriodicBackup periodicBackup = (PeriodicBackup) periodicBackups.toArray()[0];
-        periodicBackup.doRun();
+        PeriodicBackup.get().doRun();
     }
 
     @SuppressWarnings("unused")
@@ -225,6 +218,10 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     @SuppressWarnings("unused")
     public DescribableList<Location, LocationDescriptor> getLocations() {
         return locationPlugins;
+    }
+
+    public static PeriodicBackupLink get() {
+        return ManagementLink.all().get(PeriodicBackupLink.class);
     }
 
 

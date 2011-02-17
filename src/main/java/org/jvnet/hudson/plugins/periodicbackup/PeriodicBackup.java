@@ -24,12 +24,8 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
 import hudson.Extension;
-import hudson.ExtensionList;
 import hudson.model.AsyncPeriodicWork;
-import hudson.model.ManagementLink;
 import hudson.model.TaskListener;
 
 import java.io.IOException;
@@ -45,8 +41,7 @@ public class PeriodicBackup extends AsyncPeriodicWork {
     @Override
     protected void execute(TaskListener taskListener) throws IOException, InterruptedException {
         BackupExecutor executor = new BackupExecutor();
-        ExtensionList<ManagementLink> all = ManagementLink.all();
-        PeriodicBackupLink link = (PeriodicBackupLink) Iterables.find(all, Predicates.instanceOf(PeriodicBackupLink.class));
+        PeriodicBackupLink link = PeriodicBackupLink.get();
         try {
             executor.backup(link.getFileManagerPlugin(), link.getStorages(),  link.getLocations(), link.getTempDirectory());
         } catch (Exception e) {
@@ -56,8 +51,7 @@ public class PeriodicBackup extends AsyncPeriodicWork {
 
     @Override
     public long getRecurrencePeriod() {
-        ExtensionList<ManagementLink> all = ManagementLink.all();
-        PeriodicBackupLink link = (PeriodicBackupLink) Iterables.find(all, Predicates.instanceOf(PeriodicBackupLink.class));
+        PeriodicBackupLink link = PeriodicBackupLink.get();
         if (link != null && link.getPeriod() > 0) {
             return link.getPeriod() * HOUR/60; //TODO: /60 is for testing purpose (minutes instead of hours)
         } else {
@@ -67,8 +61,7 @@ public class PeriodicBackup extends AsyncPeriodicWork {
 
     @Override
     public long getInitialDelay() {
-        ExtensionList<ManagementLink> all = ManagementLink.all();
-        PeriodicBackupLink link = (PeriodicBackupLink) Iterables.find(all, Predicates.instanceOf(PeriodicBackupLink.class));
+        PeriodicBackupLink link = PeriodicBackupLink.get();
         int time = link.getInitialHourOfDay();
         // Find the current date
         Calendar calendar = Calendar.getInstance();
@@ -84,6 +77,10 @@ public class PeriodicBackup extends AsyncPeriodicWork {
         calendar.set(Calendar.MILLISECOND, 0);
 
         return calendar.getTimeInMillis() - currentTimeStamp;
+    }
+
+    public static PeriodicBackup get() {
+        return AsyncPeriodicWork.all().get(PeriodicBackup.class);
     }
 
 }

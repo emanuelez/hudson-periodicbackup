@@ -47,4 +47,8 @@ public class PeriodicBackupRestartListener extends RestartListener {
         //TODO check it in browser with some equivalent of System.out.println(periodicBackupReady && isAllReady());
         return periodicBackupReady && isAllReady();
     }
+
+    public static PeriodicBackupRestartListener get() {
+        return RestartListener.all().get(PeriodicBackupRestartListener.class);
+    }
 }

@@ -24,14 +24,10 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import hudson.model.RestartListener;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.logging.Logger;
 
 public class RestoreExecutor {
@@ -39,11 +35,7 @@ public class RestoreExecutor {
     private static final Logger LOGGER = Logger.getLogger(RestoreExecutor.class.getName());
 
     public void restore(BackupObject backupObject, String tempDirectoryPath) throws IOException, PeriodicBackupException {
-        Collection<RestartListener> restartListeners = Collections2.filter(RestartListener.all(), Predicates.instanceOf(PeriodicBackupRestartListener.class));
-        if (restartListeners.size() != 1) {
-            throw new PeriodicBackupException("Number of PeriodicBackupRestartListener(s) is not correct: " + restartListeners.size());
-        }
-        PeriodicBackupRestartListener restartListener = (PeriodicBackupRestartListener)restartListeners.toArray()[0];
+        PeriodicBackupRestartListener restartListener = PeriodicBackupRestartListener.get();
         restartListener.notReady();
         long start = System.currentTimeMillis();
         File tempDir = new File(tempDirectoryPath);
