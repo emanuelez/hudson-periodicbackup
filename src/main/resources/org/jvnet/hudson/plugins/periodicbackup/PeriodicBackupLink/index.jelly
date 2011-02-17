@@ -37,15 +37,20 @@
                     <ul>
                         Locations:
                         <f:form method="post" action="restore">
-                        <j:forEach var="location" items="${it.locations}">
-                            <li>
-                                <h3>${location.displayName}</h3>
-                                <j:forEach var="backup" items="${location.availableBackups}">
-                                    <f:radio name="backupHash" value="${backup.hashCode()}"/>${backup.displayName}<br/>
-                                </j:forEach>
-                             </li>
-                        </j:forEach>
-                        <f:submit value="${%restore.launch}"/>
+                            <j:set var="noBackups" value="true"/>
+                            <j:forEach var="location" items="${it.locations}">
+                                <li>
+                                    <h3>${location.displayName}</h3>
+                                    <j:forEach var="backup" items="${location.availableBackups}">
+                                        <f:radio name="backupHash" value="${backup.hashCode()}"/>${backup.displayName}
+                                        <br/>
+                                        <j:set var="noBackups" value="false"/>
+                                    </j:forEach>
+                                </li>
+                            </j:forEach>
+                            <j:if test="${noBackups == 'false'}">
+                                <f:submit value="${%restore.launch}"/>
+                            </j:if>
                         </f:form>
                     </ul>
                 </j:otherwise>
