@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jvnet.hudson.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.374</version>
+        <version>1.391</version>
     </parent>
 
     <groupId>org.jvnet.hudson.plugins.periodicbackup</groupId>
@@ -16,7 +16,7 @@
     <developers>
         <developer>
             <name>Tomasz Blaszczynski</name>
-            <email>tomasz.blaszczynski@nokia.com</email>
+            <email>tomasz.blaszczynski@gmail.com</email>
             <timezone>+1</timezone>
         </developer>
         <developer>
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>org.jvnet.hudson.main</groupId>
             <artifactId>hudson-test-harness</artifactId>
-            <version>1.374</version>
+            <version>1.391</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
