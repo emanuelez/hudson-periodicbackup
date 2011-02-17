@@ -51,7 +51,6 @@ import java.util.logging.Logger;
 public class PeriodicBackupLink extends ManagementLink implements Describable<PeriodicBackupLink>, Saveable {
 
     private FileManager fileManagerPlugin = null;
-    private final DescribableList<FileManager, FileManagerDescriptor> fileManagerPlugins = new DescribableList<FileManager, FileManagerDescriptor>(this);
     private final DescribableList<Location, LocationDescriptor> locationPlugins = new DescribableList<Location, LocationDescriptor>(this);
     private final DescribableList<Storage, StorageDescriptor> storagePlugins = new DescribableList<Storage, StorageDescriptor>(this);
     private static final transient Logger LOGGER = Logger.getLogger(ZipStorage.class.getName());
@@ -216,11 +215,6 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
 
     public void setFileManagerPlugin(FileManager fileManagerPlugin) {
         this.fileManagerPlugin = fileManagerPlugin;
-    }
-
-    @SuppressWarnings("unused")
-    public DescribableList<FileManager, FileManagerDescriptor> getFileManagers() {
-        return fileManagerPlugins;
     }
 
     @SuppressWarnings("unused")

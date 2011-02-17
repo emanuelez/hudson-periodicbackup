@@ -48,7 +48,7 @@ public class PeriodicBackup extends AsyncPeriodicWork {
         ExtensionList<ManagementLink> all = ManagementLink.all();
         PeriodicBackupLink link = (PeriodicBackupLink) Iterables.find(all, Predicates.instanceOf(PeriodicBackupLink.class));
         try {
-            executor.backup(link.getFileManagers(), link.getStorages(),  link.getLocations(), link.getTempDirectory());
+            executor.backup(link.getFileManagerPlugin(), link.getStorages(),  link.getLocations(), link.getTempDirectory());
         } catch (Exception e) {
             e.printStackTrace();  //TODO it
         }

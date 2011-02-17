@@ -39,19 +39,14 @@ public class BackupExecutor {
     private final Set<File> filesToBackup = Sets.newHashSet();
     private static final Logger LOGGER = Logger.getLogger(BackupExecutor.class.getName());
 
-    public void backup(DescribableList<FileManager, FileManagerDescriptor> fileManagers,
+    public void backup(FileManager fileManager,
                        DescribableList<Storage, StorageDescriptor> storages,
                        DescribableList<Location, LocationDescriptor> locations,
                        String tempDirectory) throws ArchiverException, PeriodicBackupException, IOException {
         long start = System.currentTimeMillis();
-        if(fileManagers.size() > 1) {
-            throw new PeriodicBackupException("More then one file manager is defined.");
-        }
         //collecting files for backup
-        for(FileManager fm: fileManagers) {
-            for(File f: fm.getFilesToBackup()) {
-                filesToBackup.add(f);
-            }
+        for(File f: fileManager.getFilesToBackup()) {
+            filesToBackup.add(f);
         }
         File backupObjectFile;
         //creating backup archives for each storage defined
@@ -67,7 +62,7 @@ public class BackupExecutor {
             for (Location location : locations) {
                 //sends all backup archives and backup files to all activated locations
                 if(location.enabled) {
-                    BackupObject backupObject = new BackupObject(fileManagers.iterator().next(), storage, location, timestamp);
+                    BackupObject backupObject = new BackupObject(fileManager, storage, location, timestamp);
                     backupObjectFile = Util.createBackupObjectFile(backupObject, tempDirectory, fileNameBase);
                     location.storeBackupInLocation(archives, backupObjectFile);
                     LOGGER.info("Deleting the temporary file " + backupObjectFile.getAbsolutePath());
