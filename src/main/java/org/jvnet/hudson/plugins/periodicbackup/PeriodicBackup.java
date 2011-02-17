@@ -83,8 +83,6 @@ public class PeriodicBackup extends AsyncPeriodicWork {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        System.out.println("minutes between now and then :" + ((calendar.getTimeInMillis() - currentTimeStamp)/(1000*60)));
-
         return calendar.getTimeInMillis() - currentTimeStamp;
     }
 

@@ -27,6 +27,8 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import hudson.BulkChange;
 import hudson.Extension;
@@ -98,8 +100,12 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
 
     @SuppressWarnings("unused")
     public void doBackup(StaplerRequest req, StaplerResponse rsp) throws Exception {
-        BackupExecutor backupExecutor = new BackupExecutor();
-        backupExecutor.backup(fileManagerPlugins, storagePlugins, locationPlugins, tempDirectory);
+        Collection<PeriodicWork> periodicBackups = Collections2.filter(AsyncPeriodicWork.all(), Predicates.instanceOf(PeriodicBackup.class));
+        if (periodicBackups.size() != 1) {
+            throw new PeriodicBackupException("Number of PeriodicBackups(s) is not correct: " + periodicBackups.size());
+        }
+        PeriodicBackup periodicBackup = (PeriodicBackup) periodicBackups.toArray()[0];
+        periodicBackup.doRun();
     }
 
     @SuppressWarnings("unused")
