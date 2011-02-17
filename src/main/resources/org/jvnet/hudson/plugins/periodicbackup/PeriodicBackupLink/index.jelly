@@ -28,7 +28,7 @@
         <st:include page="sidepanel.jelly"/>
         <l:main-panel>
             <j:choose>
-                <j:when test="${size(it.fileManagers)==0 or size(it.storages)==0 or size(it.locations)==0}">
+                <j:when test="${fileManagerPlugin!=null or size(it.storages)==0 or size(it.locations)==0}">
                     The Periodic Backup plugin has not been configured yet.
                     <a href="${rootURL}/periodicbackup/configure">Click here to configure it.</a>
                 </j:when>

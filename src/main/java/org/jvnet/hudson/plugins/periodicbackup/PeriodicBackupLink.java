@@ -47,11 +47,11 @@ import java.util.Map;
 @Extension
 public class PeriodicBackupLink extends ManagementLink implements Describable<PeriodicBackupLink>, Saveable {
 
+    private String tempDirectory;
+    private FileManager fileManagerPlugin = null;
     private final DescribableList<FileManager, FileManagerDescriptor> fileManagerPlugins = new DescribableList<FileManager, FileManagerDescriptor>(this);
     private final DescribableList<Location, LocationDescriptor> locationPlugins = new DescribableList<Location, LocationDescriptor>(this);
     private final DescribableList<Storage, StorageDescriptor> storagePlugins = new DescribableList<Storage, StorageDescriptor>(this);
-
-    private String tempDirectory;
 
     public PeriodicBackupLink() throws IOException {
         load();
@@ -131,14 +131,15 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     }
 
     @SuppressWarnings("unused")
-    public void doConfigSubmit(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException {
+    public void doConfigSubmit(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException, ClassNotFoundException {
         JSONObject form = req.getSubmittedForm();
 
         // persist the setting
         BulkChange bc = new BulkChange(this);
         try {
             tempDirectory = form.getString("tempDirectory");
-            fileManagerPlugins.rebuildHetero(req, form, getFileManagerDescriptors(), "FileManager");
+            JSONObject fileManagerDescribableJson = form.getJSONObject("fileManagerPlugin");
+            fileManagerPlugin = (FileManager) req.bindJSON(Class.forName(fileManagerDescribableJson.getString("stapler-class")), fileManagerDescribableJson);
             locationPlugins.rebuildHetero(req, form, getLocationDescriptors(), "Location");
             storagePlugins.rebuildHetero(req, form, getStorageDescriptors(), "Storage");
 
@@ -159,11 +160,11 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
      */
     @Extension
     public static final class DescriptorImpl extends Descriptor<PeriodicBackupLink> {
+
         public String getDisplayName() {
             return null; // unused
         }
     }
-
     public Collection<StorageDescriptor> getStorageDescriptors() {
         return Storage.all();
     }
@@ -174,6 +175,14 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
 
     public Collection<LocationDescriptor> getLocationDescriptors() {
         return Location.all();
+    }
+
+    public FileManager getFileManagerPlugin() {
+        return fileManagerPlugin;
+    }
+
+    public void setFileManagerPlugin(FileManager fileManagerPlugin) {
+        this.fileManagerPlugin = fileManagerPlugin;
     }
 
     @SuppressWarnings("unused")

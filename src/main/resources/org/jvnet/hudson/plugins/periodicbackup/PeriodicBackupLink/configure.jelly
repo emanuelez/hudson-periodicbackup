@@ -43,10 +43,8 @@
 
                 <f:section title="${%fileManagementStrategy.title}">
                     <f:block>
-                        <f:hetero-list name="FileManager" hasHeader="true"
-                                       descriptors="${it.fileManagerDescriptors}"
-                                       items="${it.fileManagers}"
-                                       addCaption="${%fileManager.addCaption}"/>
+                        <f:hetero-radio field="fileManagerPlugin"
+                                        descriptors="${it.fileManagerDescriptors}"/>
                     </f:block>
                 </f:section>
                 <f:section title="${%storageStrategy.title}">

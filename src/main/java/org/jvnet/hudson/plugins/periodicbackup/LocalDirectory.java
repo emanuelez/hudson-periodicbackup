@@ -33,7 +33,6 @@ import hudson.Extension;
 import hudson.util.FormValidation;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
-import sun.security.util.PendingException;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -108,7 +107,7 @@ public class LocalDirectory extends Location {
             if(copiedFile.exists()) {
                 LOGGER.warning(copiedFile.getAbsolutePath() + " already exists, deleting... ");
                 if(!copiedFile.delete()) {
-                    throw new PendingException("Could not delete " + copiedFile.getAbsolutePath());
+                    throw new PeriodicBackupException("Could not delete " + copiedFile.getAbsolutePath());
                 }
             }
             Files.copy(file, copiedFile);
