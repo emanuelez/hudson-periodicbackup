@@ -27,8 +27,8 @@
     <l:layout norefresh="true" title="${%periodicBackupConfiguration.title}">
         <st:include page="sidepanel.jelly"/>
         <l:main-panel>
-            <j:if test="${!it.message}">
-                <div id="message">${it.message}</div>
+            <j:if test="${it.message != null and size(it.message) != 0}">
+                <div id="message" style="border:solid 1px #99CCFF; background:#BDE5F8; color:#00529B;; padding:4px; text-align:center;">${it.message}</div>
             </j:if>
 
             <j:choose>
@@ -38,25 +38,29 @@
                 </j:when>
                 <j:otherwise>
                     <!-- TODO: it will change, so far I want to view Locations here for testing purposes -->
-                    <ul>
-                        Locations:
+                    <h3>Locations:</h3>
                         <f:form method="post" action="restore">
                             <j:set var="noBackups" value="true"/>
                             <j:forEach var="location" items="${it.locations}">
-                                <li>
-                                    <h3>${location.displayName}</h3>
-                                    <j:forEach var="backup" items="${location.availableBackups}">
-                                        <f:radio name="backupHash" value="${backup.hashCode()}"/>${backup.displayName}
-                                        <br/>
-                                        <j:set var="noBackups" value="false"/>
-                                    </j:forEach>
-                                </li>
+                                <div>
+                                    <h4>${location.displayName}</h4>
+                                        <table>
+                                            <j:forEach var="backup" items="${location.availableBackups}">
+                                                <tr>
+                                                    <td><f:radio name="backupHash" value="${backup.hashCode()}"/></td>
+                                                    <td>${backup.displayName}</td>
+                                                <j:set var="noBackups" value="false"/>
+                                                </tr>
+                                            </j:forEach>
+                                        </table>
+                                    </div>
                             </j:forEach>
-                            <j:if test="${noBackups == 'false'}">
-                                <f:submit value="${%restore.launch}"/>
-                            </j:if>
+                            <div style="padding:4px">
+                                <j:if test="${noBackups == 'false'}">
+                                    <f:submit value="${%restore.launch}"/>
+                                </j:if>
+                            </div>
                         </f:form>
-                    </ul>
                 </j:otherwise>
             </j:choose>
         </l:main-panel>
