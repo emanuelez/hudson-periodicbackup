@@ -48,6 +48,7 @@ public class RestoreExecutor implements Runnable {
         File tempDir = new File(tempDirectoryPath);
         if(!Util.isWritableDirectory(tempDir)) {
             LOGGER.warning("Restoration Failure! The temporary folder " + tempDir.getAbsolutePath() + " is not writable. ");
+            PeriodicBackupLink.get().setMessage("");
             return;
         }
         File[] tempDirFileList = tempDir.listFiles();
@@ -62,6 +63,7 @@ public class RestoreExecutor implements Runnable {
                 LOGGER.info(tempDir.getAbsolutePath() + " deleted, making new directory");
                 if(!tempDir.mkdir()) {
                     LOGGER.warning("Restoration Failure! Could not create " + tempDir.getAbsolutePath());
+                    PeriodicBackupLink.get().setMessage("");
                     return;
                 }
             }

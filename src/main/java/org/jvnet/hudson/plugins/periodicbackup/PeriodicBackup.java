@@ -27,25 +27,37 @@ package org.jvnet.hudson.plugins.periodicbackup;
 import hudson.Extension;
 import hudson.model.AsyncPeriodicWork;
 import hudson.model.TaskListener;
+import org.codehaus.plexus.archiver.ArchiverException;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.logging.Logger;
 
 @Extension
 public class PeriodicBackup extends AsyncPeriodicWork {
+
+    private static final Logger LOGGER = Logger.getLogger(BackupExecutor.class.getName());
 
     public PeriodicBackup() {
         super("PeriodicBackup");
     }
 
     @Override
-    protected void execute(TaskListener taskListener) throws IOException, InterruptedException {
+    protected void execute(TaskListener taskListener) {
         BackupExecutor executor = new BackupExecutor();
         PeriodicBackupLink link = PeriodicBackupLink.get();
         try {
             executor.backup(link.getFileManagerPlugin(), link.getStorages(),  link.getLocations(), link.getTempDirectory());
-        } catch (Exception e) {
-            e.printStackTrace();  //TODO it
+        } catch (PeriodicBackupException e) {
+            LOGGER.warning("Backup failure " + e.getMessage());
+
+        } catch (IOException e) {
+            LOGGER.warning("Backup failure " + e.getMessage());
+        } catch (ArchiverException e) {
+            LOGGER.warning("Backup failure " + e.getMessage());
+        }
+        finally {
+            PeriodicBackupLink.get().setMessage("");
         }
     }
 
