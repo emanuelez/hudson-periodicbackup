@@ -30,37 +30,57 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-public class RestoreExecutor {
+public class RestoreExecutor implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(RestoreExecutor.class.getName());
+    private BackupObject backupObject;
+    private String tempDirectoryPath;
 
-    public void restore(BackupObject backupObject, String tempDirectoryPath) throws IOException, PeriodicBackupException {
+    public RestoreExecutor(BackupObject backupObject, String tempDirectoryPath) {
+        this.backupObject = backupObject;
+        this.tempDirectoryPath = tempDirectoryPath;
+    }
+
+    public void run() {
         PeriodicBackupRestartListener restartListener = PeriodicBackupRestartListener.get();
         restartListener.notReady();
         long start = System.currentTimeMillis();
         File tempDir = new File(tempDirectoryPath);
         if(!Util.isWritableDirectory(tempDir)) {
-            throw new PeriodicBackupException("The temporary folder " + tempDir.getAbsolutePath() + " is not writable.");
+            LOGGER.warning("Restoration Failure! The temporary folder " + tempDir.getAbsolutePath() + " is not writable. ");
+            return;
         }
         File[] tempDirFileList = tempDir.listFiles();
         if(tempDirFileList.length > 0) {
             LOGGER.warning("The temporary directory " + tempDir.getAbsolutePath() + " is not empty, deleting...");
-            FileUtils.deleteDirectory(tempDir);
-            LOGGER.info(tempDir.getAbsolutePath() + " deleted, making new directory");
-            if(!tempDir.mkdir()) {
-                LOGGER.warning("Could not create " + tempDir.getAbsolutePath());
-                throw new PeriodicBackupException("Could not create " + tempDir.getAbsolutePath());
+            try {
+                FileUtils.deleteDirectory(tempDir);
+            } catch (IOException e) {
+                LOGGER.warning("Could not delete " + tempDir.getAbsolutePath() + " " + e.getMessage());
+            }
+            if(!tempDir.exists()) {
+                LOGGER.info(tempDir.getAbsolutePath() + " deleted, making new directory");
+                if(!tempDir.mkdir()) {
+                    LOGGER.warning("Restoration Failure! Could not create " + tempDir.getAbsolutePath());
+                    return;
+                }
             }
         }
-
-        Iterable<File> archives = backupObject.getLocation().retrieveBackupFromLocation(backupObject, tempDir);
-
+        Iterable<File> archives = null;
+        try {
+            archives = backupObject.getLocation().retrieveBackupFromLocation(backupObject, tempDir);
+        } catch (Exception e) {
+            LOGGER.warning("Could not retrieve backup from location. " + e.getMessage());
+        }
         backupObject.getStorage().unarchiveFiles(archives, tempDir);
         //assuming that now all the files in temp directory are the files to be restored
-        backupObject.getFileManager().restoreFiles(tempDir);
-
+        try {
+            backupObject.getFileManager().restoreFiles(tempDir);
+        } catch (Exception e) {
+            LOGGER.warning("Could not restore files. " + e.getMessage());
+        }
         LOGGER.info("Restoration finished successfully after " + (System.currentTimeMillis() - start) + " ms");
+        PeriodicBackupLink.get().setMessage("");
         restartListener.ready();
     }
-
 }

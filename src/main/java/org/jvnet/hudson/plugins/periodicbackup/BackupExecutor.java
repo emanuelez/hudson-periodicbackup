@@ -82,5 +82,6 @@ public class BackupExecutor {
             }
         }
         LOGGER.info("Backup finished successfully after " + (System.currentTimeMillis() - start) + " ms" );
+        PeriodicBackupLink.get().setMessage("");
     }
 }

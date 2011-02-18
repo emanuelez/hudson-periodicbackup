@@ -27,6 +27,10 @@
     <l:layout norefresh="true" title="${%periodicBackupConfiguration.title}">
         <st:include page="sidepanel.jelly"/>
         <l:main-panel>
+            <j:if test="${!it.message}">
+                <div id="message">${it.message}</div>
+            </j:if>
+
             <j:choose>
                 <j:when test="${fileManagerPlugin!=null or size(it.storages)==0 or size(it.locations)==0}">
                     The Periodic Backup plugin has not been configured yet.

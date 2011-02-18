@@ -53,6 +53,7 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     private final DescribableList<Storage, StorageDescriptor> storagePlugins = new DescribableList<Storage, StorageDescriptor>(this);
     private static final transient Logger LOGGER = Logger.getLogger(ZipStorage.class.getName());
 
+    private transient String message;
     private String tempDirectory;
     private long period;
     private int initialHourOfDay;
@@ -98,6 +99,8 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     @SuppressWarnings("unused")
     public void doBackup(StaplerRequest req, StaplerResponse rsp) throws Exception {
         PeriodicBackup.get().doRun();
+        message = "Creating backup...";
+        rsp.sendRedirect(".");
     }
 
     @SuppressWarnings("unused")
@@ -113,8 +116,11 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         if(!backupObjectMap.keySet().contains(backupHash)) {
             throw new PeriodicBackupException("The provided hash code was not found in the map");
         }
-        RestoreExecutor restoreExecutor = new RestoreExecutor();
-        restoreExecutor.restore(backupObjectMap.get(backupHash), tempDirectory);
+        RestoreExecutor restoreExecutor = new RestoreExecutor(backupObjectMap.get(backupHash), tempDirectory);
+        Thread t = new Thread(restoreExecutor);
+        t.start();
+        message = "Restoring backup...";
+        rsp.sendRedirect(".");
     }
 
     @Override
@@ -224,6 +230,12 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         return ManagementLink.all().get(PeriodicBackupLink.class);
     }
 
+    public String getMessage() {
+        return message;
+    }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }
 
