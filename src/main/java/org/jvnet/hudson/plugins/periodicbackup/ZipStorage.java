@@ -27,11 +27,13 @@ package org.jvnet.hudson.plugins.periodicbackup;
 import com.google.common.collect.Sets;
 import hudson.Extension;
 import hudson.model.Hudson;
+import net.sf.json.JSONObject;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.File;
 import java.util.Set;
@@ -41,7 +43,8 @@ public class ZipStorage extends Storage {
 
     public final static int MAX_FILES_PER_ARCHIVE = 65534;     //max allowed amount of files in zip archive is 65535
     public final static long MAX_SIZE_OF_FILES_PER_ARCHIVE = 3999999999l; //max allowed size of uncompressed/compressed size of files in zip archive is 4GiB
-
+    private long volumeSize;
+    private boolean multiVolume;
     private static final Logger LOGGER = Logger.getLogger(ZipStorage.class.getName());
     private transient long currentArchiveTotalFilesSize;
     private transient ZipArchiver archiver;
@@ -52,8 +55,10 @@ public class ZipStorage extends Storage {
     private transient Set<File> archives;
 
     @DataBoundConstructor
-    public ZipStorage() {
+    public ZipStorage(boolean multiVolume, long volumeSize) {
         super();
+        this.multiVolume = multiVolume;
+        this.volumeSize = volumeSize;
     }
 
     public long getCurrentArchiveTotalFilesSize() {
@@ -72,6 +77,29 @@ public class ZipStorage extends Storage {
         return archivesNumber;
     }
 
+    public String getTestString() {
+        return "test string";
+    }
+    @SuppressWarnings("unused")
+    public long getVolumeSize() {
+        return volumeSize;
+    }
+
+    @SuppressWarnings("unused")
+    public void setVolumeSize(long volumeSize) {
+        this.volumeSize = volumeSize;
+    }
+
+    @SuppressWarnings("unused")
+    public boolean isMultiVolume() {
+        return multiVolume;
+    }
+
+    @SuppressWarnings("unused")
+    public void setMultiVolume(boolean multiVolume) {
+        this.multiVolume = multiVolume;
+    }
+
     @Override
     public void backupStart(String tempDirectoryPath, String archiveFilenameBase) {
         archiver = new ZipArchiver();
@@ -84,38 +112,73 @@ public class ZipStorage extends Storage {
         String currentArchiveFilePath = archiveFilePathBase + "_" + archivesNumber;
         currentArchiveFilePath = Util.createFileName(currentArchiveFilePath, getDescriptor().getArchiveFileExtension());
         archiver.setDestFile(new File(tempDirectory, currentArchiveFilePath));
+        if(multiVolume && (volumeSize <= 0 || volumeSize > MAX_SIZE_OF_FILES_PER_ARCHIVE)) {
+            LOGGER.warning("Volume size " + volumeSize + " bytes is incorrect, setting to single volume.");
+            multiVolume = false;
+        }
     }
 
     @Override
     public void backupAddFile(File fileToStore) throws PeriodicBackupException {
+        System.out.println("current file " + fileToStore.getAbsolutePath());
         if(fileToStore.length() > MAX_SIZE_OF_FILES_PER_ARCHIVE) {
-            throw new PeriodicBackupException("Size of file " + fileToStore.getAbsolutePath() + " is bigger then maximum allowed size (" + MAX_SIZE_OF_FILES_PER_ARCHIVE/(1024l) + "kB). Cannot create archive.");
+            throw new PeriodicBackupException("Size of file " + fileToStore.getAbsolutePath() + " is bigger then maximum allowed size (" + MAX_SIZE_OF_FILES_PER_ARCHIVE / (1024l) + "kB). Cannot create archive.");
         }
-        if((currentArchiveFilesCount + 1) >= MAX_FILES_PER_ARCHIVE || (currentArchiveTotalFilesSize + fileToStore.length()) >= MAX_SIZE_OF_FILES_PER_ARCHIVE) {
-            LOGGER.info("Number of files in archive " + archiver.getDestFile().getAbsolutePath() + " exceeded " + MAX_FILES_PER_ARCHIVE + " or total size of file for this archive exceeded " + MAX_SIZE_OF_FILES_PER_ARCHIVE/(1024l) + " kB");
-            try {
-                archiver.createArchive();
-            } catch (Exception e) {
-                LOGGER.warning("Could not create archive " + archiver.getDestFile() + " " + e.getMessage());
+        if ((currentArchiveFilesCount + 1) >= MAX_FILES_PER_ARCHIVE || (currentArchiveTotalFilesSize + fileToStore.length()) >= MAX_SIZE_OF_FILES_PER_ARCHIVE) {
+            LOGGER.info("Number of files in archive " + archiver.getDestFile().getAbsolutePath() + " exceeded " + MAX_FILES_PER_ARCHIVE + " or total size of files for this archive exceeded " + MAX_SIZE_OF_FILES_PER_ARCHIVE / (1024l) + " kB");
+            createNewArchive();
+        } else {
+            //fileToStore is bigger then the limit and there are no other files in archive yet (add and create new)
+            if (multiVolume && fileToStore.length() >= volumeSize && currentArchiveFilesCount == 0) {
+                addFile(fileToStore);
+                LOGGER.info("Total size of files for this archive exceeded single volume size " + volumeSize + " B");
+                createNewArchive();
             }
-            archives.add(archiver.getDestFile());
-            archivesNumber++;
-            currentArchiveFilesCount = 0;
-            currentArchiveTotalFilesSize = 0;
-            LOGGER.info("Creating new archive");
-            archiver = new ZipArchiver();
-            String currentArchiveFilePath = archiveFilePathBase + "_" + archivesNumber;
-            currentArchiveFilePath = Util.createFileName(currentArchiveFilePath, getDescriptor().getArchiveFileExtension());
-            archiver.setDestFile(new File(tempDirectory, currentArchiveFilePath));
+            //fileToStore is bigger the limit and there are already some files in the archive (create new, add, create  new)
+            else if (multiVolume && fileToStore.length() >= volumeSize && currentArchiveFilesCount > 0) {
+                LOGGER.info("Total size of files for this archive exceeded single volume size " + volumeSize + " B");
+                createNewArchive();
+                addFile(fileToStore);
+                LOGGER.info("Total size of files for this archive exceeded single volume size " + volumeSize + " B");
+                createNewArchive();
+            }
+            //fileToStore is smaller then the limit but together with the files that are already in the archive the limit will be exceeded (create new, add)
+            else if (multiVolume && fileToStore.length() < volumeSize && currentArchiveTotalFilesSize + fileToStore.length() >= volumeSize) {
+                LOGGER.info("Total size of files for this archive exceeded single volume size " + volumeSize + " B");
+                createNewArchive();
+                addFile(fileToStore);
+            }
+            //otherwise (add)
+            else {
+                addFile(fileToStore);
+            }
         }
-        else {
-            try {
-                archiver.addFile(fileToStore, Util.getRelativePath(fileToStore, Hudson.getInstance().getRootDir()));
-            } catch (ArchiverException e) {
-                LOGGER.warning("Could not add file to the archive. " + e.getMessage());
-            }
+    }
+
+    public void createNewArchive() {
+        try {
+            archiver.createArchive();
+        } catch (Exception e) {
+            LOGGER.warning("Could not create archive " + archiver.getDestFile() + " " + e.getMessage());
+        }
+        archives.add(archiver.getDestFile());
+        archivesNumber++;
+        currentArchiveFilesCount = 0;
+        currentArchiveTotalFilesSize = 0;
+        LOGGER.info("Creating new archive");
+        archiver = new ZipArchiver();
+        String currentArchiveFilePath = archiveFilePathBase + "_" + archivesNumber;
+        currentArchiveFilePath = Util.createFileName(currentArchiveFilePath, getDescriptor().getArchiveFileExtension());
+        archiver.setDestFile(new File(tempDirectory, currentArchiveFilePath));
+    }
+
+    public void addFile(File fileToStore) {
+        try {
+            archiver.addFile(fileToStore, Util.getRelativePath(fileToStore, Hudson.getInstance().getRootDir()));
             currentArchiveFilesCount++;
             currentArchiveTotalFilesSize += fileToStore.length();
+        } catch (ArchiverException e) {
+            LOGGER.warning("Could not add file to the archive. " + e.getMessage());
         }
     }
 
@@ -171,6 +234,11 @@ public class ZipStorage extends Storage {
     public static class DescriptorImpl extends StorageDescriptor {
         public String getDisplayName() {
             return "ZipStorage";
+        }
+
+        @Override
+        public Storage newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+            return new ZipStorage("on".equals(req.getParameter("multiVolume")), Long.parseLong(req.getParameter("volumeSize")));
         }
 
         @Override

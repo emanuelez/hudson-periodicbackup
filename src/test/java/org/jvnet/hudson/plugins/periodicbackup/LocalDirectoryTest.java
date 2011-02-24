@@ -24,7 +24,7 @@ public class LocalDirectoryTest extends HudsonTestCase {
         Date expectedDate = new Date(123);
         BackupObject expected = new BackupObject(
                 new FullBackup(),
-                new ZipStorage(),
+                new ZipStorage(false, 0),
                 new LocalDirectory(new File("c:\\Temp"), true),
                 expectedDate);
 
@@ -63,7 +63,7 @@ public class LocalDirectoryTest extends HudsonTestCase {
         File tempDirectory = new File(Thread.currentThread().getContextClassLoader().getResource("data/temp").getFile());
         Date testDate = new Date(123);
         LocalDirectory localDirectory = new LocalDirectory(sourceDir, true);
-        BackupObject backupObject = new BackupObject(new FullBackup(), new ZipStorage(), localDirectory, testDate);
+        BackupObject backupObject = new BackupObject(new FullBackup(), new ZipStorage(false, 0), localDirectory, testDate);
 
         Iterable<File> result = localDirectory.retrieveBackupFromLocation(backupObject, tempDirectory);
         File expectedResult = new File(tempDirectory, Util.createFileName(Util.generateFileNameBase(testDate), "zip"));

@@ -30,7 +30,7 @@ public class ZipStorageTest extends HudsonTestCase {
         super.setUp();
         super.recipeLoadCurrentPlugin();
         baseFileName = "baseFileName";
-        zipStorage = new ZipStorage();
+        zipStorage = new ZipStorage(false, 0);
         tempDirectory = new File(Resources.getResource("data/temp/").getFile());
         archive1 = new File(Resources.getResource("data/archive1").getFile());
         archive2 = new File(Resources.getResource("data/archive2").getFile());

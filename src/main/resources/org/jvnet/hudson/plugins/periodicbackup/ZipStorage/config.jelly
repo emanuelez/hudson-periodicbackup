@@ -27,7 +27,11 @@
 -->
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <f:entry title="Test" field="test">
-        <!--TODO configuration, like multi/single archive -->
-    </f:entry>
+    <f:block>
+        <f:optionalBlock name="multiVolume" title="${%multiVolume.title}" field="multiVolume">
+            <f:entry title="${%volumeSize.title}" field="volumeSize">
+                <f:textbox name="volumeSize"/>
+            </f:entry>
+        </f:optionalBlock>
+    </f:block>
 </j:jelly>

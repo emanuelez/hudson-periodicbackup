@@ -65,7 +65,7 @@ public class PeriodicBackup extends AsyncPeriodicWork {
     public long getRecurrencePeriod() {
         PeriodicBackupLink link = PeriodicBackupLink.get();
         if (link != null && link.getPeriod() > 0) {
-            return link.getPeriod() * HOUR/60; //TODO: /60 is for testing purpose (minutes instead of hours)
+            return link.getPeriod() * HOUR;
         } else {
             return 365 * DAY;
         }
