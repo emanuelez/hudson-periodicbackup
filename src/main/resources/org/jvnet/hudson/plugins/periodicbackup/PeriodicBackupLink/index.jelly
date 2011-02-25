@@ -37,7 +37,6 @@
                     <a href="${rootURL}/periodicbackup/configure">Click here to configure it.</a>
                 </j:when>
                 <j:otherwise>
-                    <!-- TODO: it will change, so far I want to view Locations here for testing purposes -->
                     <h3>Locations:</h3>
                         <f:form method="post" action="restore">
                             <j:set var="noBackups" value="true"/>

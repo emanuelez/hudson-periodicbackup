@@ -31,6 +31,7 @@
         <f:optionalBlock name="multiVolume" title="${%multiVolume.title}" field="multiVolume">
             <f:entry title="${%volumeSize.title}" field="volumeSize">
                 <f:textbox name="volumeSize"/>
+                <div id="msg3"/>
             </f:entry>
         </f:optionalBlock>
     </f:block>

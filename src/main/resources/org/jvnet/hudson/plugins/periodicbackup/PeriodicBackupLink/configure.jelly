@@ -42,9 +42,11 @@
                 </f:entry>
                 <f:entry title="${%initialHourOfDay.title}" field="initialHourOfDay">
                     <f:textbox/>
+                    <div id="msg1"/>
                 </f:entry>
                 <f:entry title="${%period.title}" field="period">
                     <f:textbox/>
+                    <div id="msg2"/>
                 </f:entry>
 
                 <f:section title="${%fileManagementStrategy.title}">
@@ -78,4 +80,5 @@
             </f:form>
         </l:main-panel>
     </l:layout>
+    <script src="${rootURL}/plugin/periodicbackup/js/configure.js"/>
 </j:jelly>
