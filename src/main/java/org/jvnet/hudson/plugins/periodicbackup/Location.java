@@ -66,6 +66,12 @@ public abstract class Location extends AbstractModelObject implements Describabl
     public abstract Iterable<File>retrieveBackupFromLocation(BackupObject backup, File tempDir) throws IOException, PeriodicBackupException;
 
     /**
+     * This method deletes all files related to given BackupObject
+     * @param backupObject the backupObject of the backup we want to delete
+     */
+    public abstract void deleteBackupFile(BackupObject backupObject);
+
+    /**
      * This will allow to retrieve the list of plugins at runtime
      *
      * @return Collection of FileManager Descriptors

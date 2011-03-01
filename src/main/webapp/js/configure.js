@@ -7,6 +7,8 @@ function checkForm(event) {
     var initialHourOfDay = $$('input[name=_.initialHourOfDay]')[0];
     var period = $$('input[name=_.period]')[0];
     var volumeSize = $$('input[name=volumeSize]')[0];
+    var cycleQuantity= $$('input[name=_.cycleQuantity]')[0];
+    var cycleDays= $$('input[name=_.cycleDays]')[0];
 
     if(!(validatePositiveNum(initialHourOfDay.value)) || initialHourOfDay.value > 24) {
         Event.stop(event);
@@ -43,8 +45,28 @@ function checkForm(event) {
             setDivOpacity('msg3',0);
         }
     }
-
-
+    if(!validatePositiveNum(cycleQuantity.value)) {
+        Event.stop(event);
+        setDivOpacity('msg4',0);
+        $('msg4').style.display="block";
+        $('msg4').style.color="red";
+        $('msg4').innerHTML = "<strong>Error! Maximum number of backups is not correct, please correct.</strong>";
+        appear('msg4');
+    }
+    else {
+        setDivOpacity('msg4',0);
+    }
+    if(!validatePositiveNum(cycleDays.value)) {
+        Event.stop(event);
+        setDivOpacity('msg5',0);
+        $('msg5').style.display="block";
+        $('msg5').style.color="red";
+        $('msg5').innerHTML = "<strong>Error! Number of days is not correct, please correct.</strong>";
+        appear('msg5');
+    }
+    else {
+        setDivOpacity('msg5',0);
+    }
 }
 
 function setDivOpacity(divId, level) {

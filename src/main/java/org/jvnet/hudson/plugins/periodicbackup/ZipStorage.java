@@ -120,7 +120,6 @@ public class ZipStorage extends Storage {
 
     @Override
     public void backupAddFile(File fileToStore) throws PeriodicBackupException {
-        System.out.println("current file " + fileToStore.getAbsolutePath());
         if(fileToStore.length() > MAX_SIZE_OF_FILES_PER_ARCHIVE) {
             throw new PeriodicBackupException("Size of file " + fileToStore.getAbsolutePath() + " is bigger then maximum allowed size (" + MAX_SIZE_OF_FILES_PER_ARCHIVE / (1024l) + "kB). Cannot create archive.");
         }

@@ -48,6 +48,14 @@
                     <f:textbox/>
                     <div id="msg2"/>
                 </f:entry>
+                <f:entry title="${%cycleQuantity.title}" field="cycleQuantity">
+                    <f:textbox/>
+                    <div id="msg4"/>
+                </f:entry>
+                <f:entry title="${%cycleDays.title}" field="cycleDays">
+                    <f:textbox/>
+                    <div id="msg5"/>
+                </f:entry>
 
                 <f:section title="${%fileManagementStrategy.title}">
                     <f:block>

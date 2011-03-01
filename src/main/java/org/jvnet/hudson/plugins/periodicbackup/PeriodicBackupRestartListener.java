@@ -44,8 +44,7 @@ public class PeriodicBackupRestartListener extends RestartListener {
 
     @Override
     public boolean isReadyToRestart() throws IOException, InterruptedException {
-        //TODO check it in browser with some equivalent of System.out.println(periodicBackupReady && isAllReady());
-        return periodicBackupReady && isAllReady();
+        return periodicBackupReady;
     }
 
     public static PeriodicBackupRestartListener get() {

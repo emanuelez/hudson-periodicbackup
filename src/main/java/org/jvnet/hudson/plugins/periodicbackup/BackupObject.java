@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Date;
 
-public class BackupObject {
+public class BackupObject implements Comparable {
 
     private final FileManager fileManager;
     private final Storage storage;
@@ -111,5 +111,10 @@ public class BackupObject {
     @Override
     public int hashCode() {
         return Objects.hashCode(fileManager, storage, location, timestamp);
+    }
+
+    public int compareTo(Object o) {
+        BackupObject that = (BackupObject) o;
+        return this.timestamp.compareTo(that.getTimestamp());
     }
 }

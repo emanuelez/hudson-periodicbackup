@@ -24,13 +24,16 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import hudson.util.DescribableList;
 import org.codehaus.plexus.archiver.ArchiverException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -42,7 +45,9 @@ public class BackupExecutor {
     public void backup(FileManager fileManager,
                        DescribableList<Storage, StorageDescriptor> storages,
                        DescribableList<Location, LocationDescriptor> locations,
-                       String tempDirectory) throws ArchiverException, PeriodicBackupException, IOException {
+                       String tempDirectory,
+                       int cycleQuantity,
+                       int cycleDays) throws ArchiverException, PeriodicBackupException, IOException {
         long start = System.currentTimeMillis();
         //collecting files for backup
         for(File f: fileManager.getFilesToBackup()) {
@@ -52,6 +57,8 @@ public class BackupExecutor {
         //creating backup archives for each storage defined
         Date timestamp = new Date();
         String fileNameBase = Util.generateFileNameBase(timestamp);
+        Calendar timeThreshold = Calendar.getInstance();
+        timeThreshold.add(Calendar.DAY_OF_MONTH, (-1 * cycleDays));
 
         for (Storage storage : storages) {
             storage.backupStart(tempDirectory, fileNameBase);
@@ -65,10 +72,36 @@ public class BackupExecutor {
                     BackupObject backupObject = new BackupObject(fileManager, storage, location, timestamp);
                     backupObjectFile = Util.createBackupObjectFile(backupObject, tempDirectory, fileNameBase);
                     location.storeBackupInLocation(archives, backupObjectFile);
+
+                    // Delete the temporary files
                     LOGGER.info("Deleting the temporary file " + backupObjectFile.getAbsolutePath());
                     if (!backupObjectFile.delete()) {
                         LOGGER.warning("Could not delete " + backupObjectFile.getAbsolutePath());
                     }
+
+
+                    List<BackupObject> backupsInLocation = Lists.newArrayList(location.getAvailableBackups());
+                    LOGGER.info("Checking for redundant and old backups in the location.");
+
+                    int index1 = -1; // index in backupsInLocation if the number of backups exceeds the allowed one
+                    int index2 = -1; // index in backupsInLocation if the backups are older than allowed
+
+                    if (backupsInLocation.size() > cycleQuantity) {
+                        index1 = backupsInLocation.size() - cycleQuantity;
+                    }
+
+                    for (BackupObject backupObj : backupsInLocation) {
+                        if(backupObj.getTimestamp().before(timeThreshold.getTime())) {
+                            index2++;
+                        }
+                    }
+
+                    if(index1 != -1 || index2 != -1) {
+                        for (int index = 0; index <= Math.max(index1, index2); index++) {
+                            location.deleteBackupFile(backupsInLocation.get(index));
+                        }
+                    }
+
                 }
                 else {
                     LOGGER.info(location.getDisplayName() + " is disabled, ignoring.");

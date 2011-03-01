@@ -116,6 +116,20 @@ public class LocalDirectory extends Location {
         return archivesInTemp;
     }
 
+    @Override
+    public void deleteBackupFile(BackupObject backupObject) {
+        String filenamePart = Util.generateFileNameBase(backupObject.getTimestamp());
+        File[] files = path.listFiles();
+        for(File file : files) {
+            if (file.getAbsolutePath().contains(filenamePart)) {
+                LOGGER.info("Deleting old/redundant backup file " + file.getAbsolutePath());
+                if(!file.delete()) {
+                    LOGGER.warning("Could not delete file " + file.getAbsolutePath());
+                }
+            }
+        }
+    }
+
     public String getDisplayName() {
         return "LocalDirectory: " + path;
     }

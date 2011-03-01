@@ -47,7 +47,7 @@ public class PeriodicBackup extends AsyncPeriodicWork {
         BackupExecutor executor = new BackupExecutor();
         PeriodicBackupLink link = PeriodicBackupLink.get();
         try {
-            executor.backup(link.getFileManagerPlugin(), link.getStorages(),  link.getLocations(), link.getTempDirectory());
+            executor.backup(link.getFileManagerPlugin(), link.getStorages(),  link.getLocations(), link.getTempDirectory(), link.getCycleQuantity(), link.getCycleDays());
         } catch (PeriodicBackupException e) {
             LOGGER.warning("Backup failure " + e.getMessage());
 

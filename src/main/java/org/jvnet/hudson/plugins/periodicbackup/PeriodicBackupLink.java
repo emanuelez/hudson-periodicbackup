@@ -56,6 +56,8 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     private transient String message;
     private String tempDirectory;
     private long period;
+    private int cycleQuantity;
+    private int cycleDays;
     private int initialHourOfDay;
 
     public PeriodicBackupLink() throws IOException {
@@ -91,6 +93,27 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     public void setInitialHourOfDay(int initialHourOfDay) {
         this.initialHourOfDay = initialHourOfDay;
     }
+
+    @SuppressWarnings("unused")
+    public int getCycleQuantity() {
+        return cycleQuantity;
+    }
+
+    @SuppressWarnings("unused")
+    public void setCycleQuantity(int cycleQuantity) {
+        this.cycleQuantity = cycleQuantity;
+    }
+
+    @SuppressWarnings("unused")
+    public int getCycleDays() {
+        return cycleDays;
+    }
+
+    @SuppressWarnings("unused")
+    public void setCycleDays(int cycleDays) {
+        this.cycleDays = cycleDays;
+    }
+
 
     public String getDisplayName() {
         return Messages.displayName();
@@ -171,6 +194,8 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
             fileManagerPlugin = (FileManager) req.bindJSON(Class.forName(fileManagerDescribableJson.getString("stapler-class")), fileManagerDescribableJson);
             initialHourOfDay = form.getInt("initialHourOfDay");
             period = form.getLong("period");
+            cycleQuantity = form.getInt("cycleQuantity");
+            cycleDays = form.getInt("cycleDays");
             locationPlugins.rebuildHetero(req, form, getLocationDescriptors(), "Location");
             storagePlugins.rebuildHetero(req, form, getStorageDescriptors(), "Storage");
 
