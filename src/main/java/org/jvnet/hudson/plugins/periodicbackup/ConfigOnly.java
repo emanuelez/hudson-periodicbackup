@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +37,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ *
+ * This implementation of FileManager will only select the .xml files from the Jenkins homedir
+ * and the config.xml files of all the jobs during backup.
+ * During restore it will try to overwrite the existing files.
+ */
 public class ConfigOnly extends FileManager {
 
     private static final Logger LOGGER = Logger.getLogger(ConfigOnly.class.getName());
@@ -55,10 +61,12 @@ public class ConfigOnly extends FileManager {
     public Iterable<File> getFilesToBackup() throws PeriodicBackupException {
         File rootDir = Hudson.getInstance().getRootDir();
         List<File> filesToBackup = Lists.newArrayList();
+        // First find the xml files in the home directory
         File[] xmlsInRoot = rootDir.listFiles(Util.extensionFileFilter("xml"));
         filesToBackup.addAll(Arrays.asList(xmlsInRoot));
         File jobsDir = new File(rootDir, "jobs");
         if(jobsDir.exists() && jobsDir.isDirectory()) {
+            // Each job directory should have a config.xml file
             File[] dirsInJobs = jobsDir.listFiles((FileFilter) FileFilterUtils.directoryFileFilter());
             for(File job : dirsInJobs) {
                 File jobConfig = new File(job, "config.xml");

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,10 @@ import hudson.model.RestartListener;
 
 import java.io.IOException;
 
+/**
+ *
+ * This RestartListener will veto the restart of Hudson (via safeRestart) while a restore is ongoing.
+ */
 @Extension
 public class PeriodicBackupRestartListener extends RestartListener {
 

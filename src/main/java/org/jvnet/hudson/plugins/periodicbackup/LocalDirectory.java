@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+/**
+ *
+ * LocalDirectory defines the local folder to store the backup files
+ */
 public class LocalDirectory extends Location {
 
     private File path;
@@ -64,6 +68,7 @@ public class LocalDirectory extends Location {
         }
         File[] files = path.listFiles(Util.extensionFileFilter(BackupObject.EXTENSION));
         List<File> backupObjectFiles = Lists.newArrayList(files);
+        // The sorting will be performed according to the timestamp
         Collections.sort(backupObjectFiles);
 
         return Iterables.transform(backupObjectFiles, BackupObject.getFromFile());
@@ -72,23 +77,23 @@ public class LocalDirectory extends Location {
     @Override
     public void storeBackupInLocation(Iterable<File> archives, File backupObjectFile) throws IOException {
         if (this.enabled && path.exists()) {
-            for (File f : archives) {
-                File destination = new File(path, f.getName());
-                Files.copy(f, destination);
-                LOGGER.info(f.getName() + " copied to " + destination.getAbsolutePath());
+            for (File archive : archives) {
+                File destination = new File(path, archive.getName());
+                Files.copy(archive, destination);
+                LOGGER.info(archive.getName() + " copied to " + destination.getAbsolutePath());
             }
             File backupObjectFileDestination = new File(path, backupObjectFile.getName());
             Files.copy(backupObjectFile, backupObjectFileDestination);
             LOGGER.info(backupObjectFile.getName() + " copied to " + backupObjectFileDestination.getAbsolutePath());
         }
         else {
-            LOGGER.warning("skipping location " + this.path + " since it is disabled or it doesn't exist.");
+            LOGGER.warning("skipping location " + this.path + " since it is disabled or it does not exist.");
         }
-
     }
 
     @Override
     public Iterable<File> retrieveBackupFromLocation(final BackupObject backup, File tempDir) throws IOException, PeriodicBackupException {
+        // Get the list of archive files related to the given BackupObject
         File[] files = path.listFiles(new FileFilter() {
             public boolean accept(File pathname) {
                 return (pathname.getName().contains( Util.getFormattedDate(BackupObject.FILE_TIMESTAMP_PATTERN, backup.getTimestamp())) &&
@@ -97,10 +102,11 @@ public class LocalDirectory extends Location {
             }
         });
         if(files.length <= 0) {
-            throw new PeriodicBackupException("Archive files do not exist in " + path.getAbsolutePath());
+            throw new PeriodicBackupException("Backup archives do not exist in " + path.getAbsolutePath());
         }
         Set<File> archivesInTemp = Sets.newHashSet();
 
+        // Copy every archive to the temp dir
         for(File file : files) {
             File copiedFile = new File(tempDir, file.getName());
             if(copiedFile.exists()) {
@@ -117,9 +123,11 @@ public class LocalDirectory extends Location {
     }
 
     @Override
-    public void deleteBackupFile(BackupObject backupObject) {
+    public void deleteBackupFiles(BackupObject backupObject) {
         String filenamePart = Util.generateFileNameBase(backupObject.getTimestamp());
         File[] files = path.listFiles();
+
+        // Delete all the files containing the timestamp of the given BackupObject in their names
         for(File file : files) {
             if (file.getAbsolutePath().contains(filenamePart)) {
                 LOGGER.info("Deleting old/redundant backup file " + file.getAbsolutePath());

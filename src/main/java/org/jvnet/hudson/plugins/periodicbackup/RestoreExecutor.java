@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,15 +42,20 @@ public class RestoreExecutor implements Runnable {
     }
 
     public void run() {
+        // RestoreExecutor thread is not handled by Jenkins therefore we need to be sure that the safeRestart will not be performed during the restore execution
         PeriodicBackupRestartListener restartListener = PeriodicBackupRestartListener.get();
         restartListener.notReady();
-        long start = System.currentTimeMillis();
+
+        long start = System.currentTimeMillis(); // Measure the duration of the restore
         File tempDir = new File(tempDirectoryPath);
         if(!Util.isWritableDirectory(tempDir)) {
             LOGGER.warning("Restoration Failure! The temporary folder " + tempDir.getAbsolutePath() + " is not writable. ");
+            // Setting message to an empty String will make the "Creating backup..." message disappear in the UI
             PeriodicBackupLink.get().setMessage("");
             return;
         }
+
+        // The temp directory should be empty at this point
         File[] tempDirFileList = tempDir.listFiles();
         if(tempDirFileList.length > 0) {
             LOGGER.warning("The temporary directory " + tempDir.getAbsolutePath() + " is not empty, deleting...");
@@ -63,25 +68,31 @@ public class RestoreExecutor implements Runnable {
                 LOGGER.info(tempDir.getAbsolutePath() + " deleted, making new directory");
                 if(!tempDir.mkdir()) {
                     LOGGER.warning("Restoration Failure! Could not create " + tempDir.getAbsolutePath());
+                    // Setting message to an empty String will make the "Creating backup..." message disappear in the UI
                     PeriodicBackupLink.get().setMessage("");
                     return;
                 }
             }
         }
+
+        // Retrieving archive files related to the given BackupObject
         Iterable<File> archives = null;
         try {
             archives = backupObject.getLocation().retrieveBackupFromLocation(backupObject, tempDir);
         } catch (Exception e) {
             LOGGER.warning("Could not retrieve backup from location. " + e.getMessage());
         }
+
+        // Extracting the backup archives to the temp directory
         backupObject.getStorage().unarchiveFiles(archives, tempDir);
-        //assuming that now all the files in temp directory are the files to be restored
+        // At this point in the temp directory should be only the extracted backup archives
         try {
             backupObject.getFileManager().restoreFiles(tempDir);
         } catch (Exception e) {
             LOGGER.warning("Could not restore files. " + e.getMessage());
         }
         LOGGER.info("Restoration finished successfully after " + (System.currentTimeMillis() - start) + " ms");
+        // Setting message to an empty String will make the "Creating backup..." message disappear in the UI
         PeriodicBackupLink.get().setMessage("");
         restartListener.ready();
     }

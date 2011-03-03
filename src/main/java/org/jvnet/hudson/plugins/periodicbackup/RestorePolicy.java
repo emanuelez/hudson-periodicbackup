@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,8 +27,20 @@ package org.jvnet.hudson.plugins.periodicbackup;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ *
+ * RestorePolicy implementation will determine how FileManager should handle files during restore execution
+ */
 public interface RestorePolicy {
 
+    /**
+     *
+     * Restores content of the tempDir
+     *
+     * @param tempDir temporary directory, at this point only unpacked content of the backup archives should be inside
+     * @throws IOException If an IO problem occurs
+     * @throws PeriodicBackupException If other problem occurs
+     */
     void restore(File tempDir) throws IOException, PeriodicBackupException;
 
 }

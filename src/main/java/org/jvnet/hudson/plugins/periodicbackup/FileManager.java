@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,11 +33,16 @@ import hudson.model.Hudson;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ *
+ * FileManager determines the files selection for backup and restore policies
+ */
 public abstract class FileManager extends AbstractModelObject implements Describable<FileManager> {
 
     RestorePolicy restorePolicy;
 
     /**
+     *
      * This method determines files and folders for Storage
      *
      * @return Files to be included in the backup
@@ -46,6 +51,7 @@ public abstract class FileManager extends AbstractModelObject implements Describ
     public abstract Iterable<File> getFilesToBackup() throws PeriodicBackupException;
 
     /**
+     *
      * This will restore files to their right place in the HUDSON directory
      *
      * @param tempDir The temporary directory where the files for restoring are (and ONLY those files at this point)

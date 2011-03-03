@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,12 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import java.io.File;
 import java.util.List;
 
+/**
+ *
+ * FullBackup will choose all the files in the Jenkins homedir during the backup.
+ * During the restore it will delete all the deletable files in the Jenkins homedir
+ * and then it will write with files in the selected backup.
+ */
 public class FullBackup extends FileManager {
 
     @DataBoundConstructor
@@ -48,7 +54,7 @@ public class FullBackup extends FileManager {
 
     @Override
     public Iterable<File> getFilesToBackup() {
-        DirectoryScanner directoryScanner = new DirectoryScanner();
+        DirectoryScanner directoryScanner = new DirectoryScanner(); // It will scan all files inside the root directory
         directoryScanner.setBasedir(Hudson.getInstance().getRootDir());
         directoryScanner.scan();
         List<File> files = Lists.newArrayList();

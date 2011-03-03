@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,10 @@ import hudson.model.Hudson;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ *
+ * Location determines where to store backup files and is responsible for accessing the backup files once stored
+ */
 public abstract class Location extends AbstractModelObject implements Describable<Location> {
 
     public final boolean enabled;
@@ -41,6 +45,7 @@ public abstract class Location extends AbstractModelObject implements Describabl
     }
 
     /**
+     *
      * This method returns Iterable of BackupObject(s) in this location
      *
      * @return BackupObject(s) in location
@@ -48,7 +53,9 @@ public abstract class Location extends AbstractModelObject implements Describabl
     public abstract Iterable<BackupObject> getAvailableBackups();
 
     /**
+     *
      * This method puts archived backup file(s) in location
+     *
      * @param archives archive file(s)
      * @param backupObjectFile File with serialized backupObject
      * @throws java.io.IOException IO error
@@ -56,6 +63,8 @@ public abstract class Location extends AbstractModelObject implements Describabl
     public abstract void storeBackupInLocation(Iterable<File> archives, File backupObjectFile) throws IOException;
 
     /**
+     *
+     * Retrieves backup archive files from this location
      *
      * @param backup BackupObject related to the backup
      * @param tempDir temporary directory to store archived backup file(s)
@@ -69,9 +78,10 @@ public abstract class Location extends AbstractModelObject implements Describabl
      * This method deletes all files related to given BackupObject
      * @param backupObject the backupObject of the backup we want to delete
      */
-    public abstract void deleteBackupFile(BackupObject backupObject);
+    public abstract void deleteBackupFiles(BackupObject backupObject);
 
     /**
+     *
      * This will allow to retrieve the list of plugins at runtime
      *
      * @return Collection of FileManager Descriptors

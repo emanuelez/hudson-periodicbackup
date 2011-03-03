@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -66,6 +66,10 @@ public class BackupObject implements Comparable {
         return location;
     }
 
+    /**
+     *
+     * @return transformation function to convert BackupObject file into BackupObject
+     */
     public static Function<File, BackupObject> getFromFile() {
         return new Function<File, BackupObject>() {
             public BackupObject apply(File file) {

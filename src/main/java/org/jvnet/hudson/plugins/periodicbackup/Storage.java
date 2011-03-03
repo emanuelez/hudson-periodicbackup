@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,12 +31,17 @@ import hudson.model.Hudson;
 
 import java.io.File;
 
+/**
+ *
+ * Storage is responsible for operating on backup archives
+ */
 public abstract class Storage extends AbstractModelObject implements Describable<Storage> {
+
     /**
      *
-     * This method initialize Storage for archiving process, it must be called before calling backupAddFile()
+     * Initializes Storage for the archiving process
      *
-     * @param tempDirectoryPath String with a path to temporary directory, where the archive(s) will be created
+     * @param tempDirectoryPath String with a path to the temporary directory, where the archive(s) will be created
      * @param archiveFilenameBase first part of the archive filename
      * @throws PeriodicBackupException if something goes wrong
      */
@@ -44,26 +49,29 @@ public abstract class Storage extends AbstractModelObject implements Describable
 
     /**
      *
-     * This method adds a file to an archive.
+     * Adds a file to an archive.
      *
      * @param fileToStore The file that will be added to the archive
-     * @throws PeriodicBackupException If something goes wrong
+     * @throws PeriodicBackupException if something goes wrong
      */
     public abstract void backupAddFile(File fileToStore) throws PeriodicBackupException;
 
     /**
      *
-     * This method finalize process of archiving, it must be called after backupAddFile() is called
+     * Finalizes the archiving process
      *
-     * @return all archive files
+     * @return Archive files
      * @throws PeriodicBackupException if something goes wrong
      */
     public abstract Iterable<File> backupStop() throws PeriodicBackupException;
 
     /**
-     * This method is extracts backup files from given archives into temporary directory
-     * @param archives Archive files with backup files, after succesfull extraction archives will be deleted
-     * @param tempDir Directory where files will be extracted to, it should be empty before calling the method
+     *
+     * Extracts backup files from given archives into the temporary directory
+     * after successful extraction the archives will be deleted
+     *
+     * @param archives backup archives
+     * @param tempDir Directory where the files will be extracted to, it should be empty at this point
      */
     public abstract void unarchiveFiles(Iterable<File> archives, File tempDir);
 
@@ -76,6 +84,7 @@ public abstract class Storage extends AbstractModelObject implements Describable
     }
 
     /**
+     *
      * This will allow to retrieve the list of plugins at runtime
      *
      * @return Collection of FileManager Descriptors

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ *
+ * This RestorePolicy tries to delete all the files inside the Jenkins home directory.
+ * Non writable files will be kept as they are.
+ */
 public class ReplaceRestorePolicy implements RestorePolicy {
 
     private static final Logger LOGGER = Logger.getLogger(ReplaceRestorePolicy.class.getName());
@@ -58,7 +63,13 @@ public class ReplaceRestorePolicy implements RestorePolicy {
                 + filesKept + " files have been kept.");
     }
 
-    public void deleteAccessible(File[] files) throws PeriodicBackupException {
+    /**
+     *
+     * Attempt to recursively delete all accessible files from the given files array.
+     *
+     * @param files array of File objects given in order to be deleted
+     */
+    public void deleteAccessible(File[] files) {
         String relativePath;
         for(File file : files) {
             if(!file.isDirectory()) {
@@ -84,15 +95,24 @@ public class ReplaceRestorePolicy implements RestorePolicy {
         }
     }
 
+    /**
+     *
+     * Copy all the files that whose relative paths is not in autoExclusionList
+     * (successfully deleted or not existing in the home directory)
+     *
+     * @param files to copy
+     * @param tempDir temporary directory where @files are placed
+     * @throws IOException If an IO problem occurs
+     */
     public void replaceAccessible(File[] files, File tempDir) throws IOException {
         String relativePath;
         File destinationFile;
         for(File file : files) {
-            //empty directories will not be created
+            // Empty directories will not be created
             if(!file.isDirectory()) {
                 relativePath = Util.getRelativePath(file, tempDir);
-                if(     autoExclusionList.size() == 0 ||
-                        autoExclusionList == null ||
+                if(     autoExclusionList == null ||
+                        autoExclusionList.size() == 0 ||
                         (autoExclusionList.size() > 0 && !autoExclusionList.contains(relativePath))) {
                     LOGGER.info("Copying " + file.getAbsolutePath() + " to " + hudsonRoot.getAbsolutePath());
                     destinationFile = new File(hudsonRoot, relativePath);

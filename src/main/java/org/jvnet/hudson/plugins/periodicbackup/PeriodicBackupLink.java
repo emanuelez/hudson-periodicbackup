@@ -1,10 +1,8 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
- * This plugin is based on and inspired by the "backup" plugin developed by:
- * Vincent Sellier, Manufacture Fran�aise des Pneumatiques Michelin, Romain Seguy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,6 +43,14 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.logging.Logger;
 
+/**
+ *
+ * Main class of the plugin
+ *
+ * This plugin is based on and inspired by
+ * the backup plugin developed by: Vincent Sellier, Manufacture Franï¿½aise des Pneumatiques Michelin, Romain Seguy
+ * and the PXE plugin developed by: Kohsuke Kawaguchi
+ */
 @Extension
 public class PeriodicBackupLink extends ManagementLink implements Describable<PeriodicBackupLink>, Saveable {
 
@@ -53,12 +59,12 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     private final DescribableList<Storage, StorageDescriptor> storagePlugins = new DescribableList<Storage, StorageDescriptor>(this);
     private static final transient Logger LOGGER = Logger.getLogger(ZipStorage.class.getName());
 
-    private transient String message;
-    private String tempDirectory;
-    private long period;
-    private int cycleQuantity;
-    private int cycleDays;
-    private int initialHourOfDay;
+    private transient String message;   // Message shown on the web page when the backup/restore is performed
+    private String tempDirectory;       // Temporary directory for local storage of files, it should not be placed anywhere inside the Jenkins homedir
+    private long period;                // Backup frequency
+    private int cycleQuantity;          // Maximum amount of backups allowed
+    private int cycleDays;              // Maximum number of days to keep the backup for
+    private int initialHourOfDay;       // Hour of the day of the first backup after Jenkins is started
 
     public PeriodicBackupLink() throws IOException {
         load();
@@ -126,9 +132,20 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         rsp.sendRedirect(".");
     }
 
+    /**
+     *
+     * Performing restore when triggered form restore web page, backupHash of selected backup is passed to determine which backup in this location should be chosen
+     *
+     * @param req StaplerRequest
+     * @param rsp StaplerResponse
+     * @param backupHash hash code of the selected BackupObject set to be restored
+     * @throws IOException If an IO problem occurs
+     * @throws PeriodicBackupException If other problem occurs
+     */
     @SuppressWarnings("unused")
     public void doRestore(StaplerRequest req, StaplerResponse rsp, @QueryParameter("backupHash") int backupHash) throws IOException, PeriodicBackupException {
         Map<Integer, BackupObject> backupObjectMap = Maps.newHashMap();
+        // Populate the map with key=hashcode of value
         for (Location location : locationPlugins) {
             if (location.getAvailableBackups() != null) {
                 for (BackupObject backupObject : location.getAvailableBackups()) {
@@ -139,6 +156,7 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         if(!backupObjectMap.keySet().contains(backupHash)) {
             throw new PeriodicBackupException("The provided hash code was not found in the map");
         }
+        // Perform the restore of the matching BackupObject
         RestoreExecutor restoreExecutor = new RestoreExecutor(backupObjectMap.get(backupHash), tempDirectory);
         Thread t = new Thread(restoreExecutor);
         t.start();
@@ -164,7 +182,7 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     protected void load() throws IOException {
         XmlFile xml = getConfigXml();
         if (xml.exists())
-            xml.unmarshal(this);  //Loads the contents of this file into an existing object.
+            xml.unmarshal(this);  // Loads the contents of this file into an existing object.
     }
 
     public void save() throws IOException {
@@ -184,9 +202,9 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
 
     @SuppressWarnings("unused")
     public void doConfigSubmit(StaplerRequest req, StaplerResponse rsp) throws ServletException, IOException, ClassNotFoundException {
-        JSONObject form = req.getSubmittedForm();
+        JSONObject form = req.getSubmittedForm(); // Submitted configuration form
 
-        // persist the setting
+        // Persist the setting
         BulkChange bc = new BulkChange(this);
         try {
             tempDirectory = form.getString("tempDirectory");
@@ -212,6 +230,7 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     }
 
     /**
+     *
      * Descriptor is only used for UI form bindings
      */
     @Extension

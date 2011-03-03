@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,11 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.logging.Logger;
 
+/**
+ *
+ * PeriodicBackup is responsible for performing backups periodically
+ * according to configured first backup time and backup frequency
+ */
 @Extension
 public class PeriodicBackup extends AsyncPeriodicWork {
 
@@ -57,12 +62,15 @@ public class PeriodicBackup extends AsyncPeriodicWork {
             LOGGER.warning("Backup failure " + e.getMessage());
         }
         finally {
-            PeriodicBackupLink.get().setMessage("");
+            // Setting message to an empty String will make the "Creating backup..." message disappear in the UI
+            link.setMessage("");
         }
     }
 
     @Override
     public long getRecurrencePeriod() {
+        // Setting the backup frequency to the amount of hours given in the configuration page.
+        // If the value is not correct the frequency will be set to one year.
         PeriodicBackupLink link = PeriodicBackupLink.get();
         if (link != null && link.getPeriod() > 0) {
             return link.getPeriod() * HOUR;
@@ -75,6 +83,7 @@ public class PeriodicBackup extends AsyncPeriodicWork {
     public long getInitialDelay() {
         PeriodicBackupLink link = PeriodicBackupLink.get();
         int time = link.getInitialHourOfDay();
+
         // Find the current date
         Calendar calendar = Calendar.getInstance();
         long currentTimeStamp = System.currentTimeMillis();
@@ -88,6 +97,7 @@ public class PeriodicBackup extends AsyncPeriodicWork {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
+        // The time of the first backup is set to the hour of the day in configuration page
         return calendar.getTimeInMillis() - currentTimeStamp;
     }
 

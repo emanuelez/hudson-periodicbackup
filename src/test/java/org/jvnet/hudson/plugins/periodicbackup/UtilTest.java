@@ -1,13 +1,11 @@
 package org.jvnet.hudson.plugins.periodicbackup;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,23 +38,6 @@ public class UtilTest extends TestCase {
         String filename = Util.createFileName(filenameBase, extension);
 
         assertTrue(filename.length() == (filenameBase.length() + extension.length() + 1));
-    }
-
-    @Test
-    public void testCreateFileNameMulti() throws Exception {
-        String filenameBase = "backup";
-        String extension = "pbobj";
-        String filename = null;
-        List<String> filenames = Lists.newArrayList();
-        long totalNumberOfArchives = 4;
-
-        for(long archiveNo = 1; archiveNo <= totalNumberOfArchives; archiveNo++) {
-            filename = Util.createFileName(filenameBase, extension, archiveNo, totalNumberOfArchives);
-            filenames.add(filename);
-        }
-
-        assertTrue(filenames.size() == 4);
-        assertEquals(filename,"backup_4OF4.pbobj");
     }
 
     @Test

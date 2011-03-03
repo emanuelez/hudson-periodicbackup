@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,18 +48,22 @@ public class BackupExecutor {
                        String tempDirectory,
                        int cycleQuantity,
                        int cycleDays) throws ArchiverException, PeriodicBackupException, IOException {
-        long start = System.currentTimeMillis();
-        //collecting files for backup
+        long start = System.currentTimeMillis(); // Measure the duration of the backup
+        // Collecting files for backup
         for(File f: fileManager.getFilesToBackup()) {
             filesToBackup.add(f);
         }
+
         File backupObjectFile;
-        //creating backup archives for each storage defined
-        Date timestamp = new Date();
+        Date timestamp = new Date(); // Timestamp for the BackupObject
         String fileNameBase = Util.generateFileNameBase(timestamp);
+
+        // timeThreshold is used to compare timestamps of backups in each location.
+        // Older backups will be deleted after creating the backup.
         Calendar timeThreshold = Calendar.getInstance();
         timeThreshold.add(Calendar.DAY_OF_MONTH, (-1 * cycleDays));
 
+        // Creating backup archives for each storage defined
         for (Storage storage : storages) {
             storage.backupStart(tempDirectory, fileNameBase);
             for (File fileToBackup : filesToBackup) {
@@ -67,18 +71,17 @@ public class BackupExecutor {
             }
             Iterable<File> archives = storage.backupStop();
             for (Location location : locations) {
-                //sends all backup archives and backup files to all activated locations
+                // Sends all the backup archives and backup files to all the active locations
                 if(location.enabled) {
                     BackupObject backupObject = new BackupObject(fileManager, storage, location, timestamp);
                     backupObjectFile = Util.createBackupObjectFile(backupObject, tempDirectory, fileNameBase);
                     location.storeBackupInLocation(archives, backupObjectFile);
 
-                    // Delete the temporary files
+                    // Delete the temporary BackupObject file
                     LOGGER.info("Deleting the temporary file " + backupObjectFile.getAbsolutePath());
                     if (!backupObjectFile.delete()) {
                         LOGGER.warning("Could not delete " + backupObjectFile.getAbsolutePath());
                     }
-
 
                     List<BackupObject> backupsInLocation = Lists.newArrayList(location.getAvailableBackups());
                     LOGGER.info("Checking for redundant and old backups in the location.");
@@ -89,24 +92,23 @@ public class BackupExecutor {
                     if (backupsInLocation.size() > cycleQuantity) {
                         index1 = backupsInLocation.size() - cycleQuantity;
                     }
-
                     for (BackupObject backupObj : backupsInLocation) {
                         if(backupObj.getTimestamp().before(timeThreshold.getTime())) {
                             index2++;
                         }
                     }
-
                     if(index1 != -1 || index2 != -1) {
                         for (int index = 0; index <= Math.max(index1, index2); index++) {
-                            location.deleteBackupFile(backupsInLocation.get(index));
+                            location.deleteBackupFiles(backupsInLocation.get(index));
                         }
                     }
-
                 }
                 else {
                     LOGGER.info(location.getDisplayName() + " is disabled, ignoring.");
                 }
             }
+
+            // Delete the temporary archive files
             for (File f : archives) {
                 LOGGER.info("Deleting temporary file " + f.getAbsolutePath());
                 if (!f.delete()) {

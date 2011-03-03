@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2010 Tomasz Blaszczynski, Emanuele Zattin
+ * Copyright (c) 2010 - 2011, Tomasz Blaszczynski, Emanuele Zattin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+/**
+ *
+ * This RestorePolicy assumes that at this stage all the files in tempDir are the files to be restored.
+ * The whole content of the tempDir will be copied to the home directory and the existing files will be overwritten.
+ */
 public class OverwriteRestorePolicy implements RestorePolicy {
 
     private static final Logger LOGGER = Logger.getLogger(ReplaceRestorePolicy.class.getName());
