@@ -41,8 +41,8 @@ import java.util.logging.Logger;
 
 public class ZipStorage extends Storage {
 
-    public final static int MAX_FILES_PER_ARCHIVE = 65534;                  // Max allowed amount of files in a zip archive is 65535
-    public final static long MAX_SIZE_OF_FILES_PER_ARCHIVE = 3999999999l;   // Max allowed size of uncompressed/compressed files in a zip archive is 4GiB
+    private final static int MAX_FILES_PER_ARCHIVE = 65534;                  // Max allowed amount of files in a zip archive is 65535
+    private final static long MAX_SIZE_OF_FILES_PER_ARCHIVE = 3999999999l;   // Max allowed size of uncompressed/compressed files in a zip archive is 4GiB
     private boolean multiVolume;                                            // Determines if the backup should be divided into few archives
     private long volumeSize;                                                // Determines maximum size of files inside single archive file
     private static final Logger LOGGER = Logger.getLogger(ZipStorage.class.getName());
@@ -158,7 +158,7 @@ public class ZipStorage extends Storage {
      *
      * This method creates archive file from current ZipArchiver object and then creates new instance of ZipArchiver
      */
-    public void createNewArchive() {
+    private void createNewArchive() {
         try {
             archiver.createArchive();
         } catch (Exception e) {
@@ -181,7 +181,7 @@ public class ZipStorage extends Storage {
      *
      * @param fileToStore file that will be add to the archive
      */
-    public void addFile(File fileToStore) {
+    private void addFile(File fileToStore) {
         try {
             archiver.addFile(fileToStore, Util.getRelativePath(fileToStore, Hudson.getInstance().getRootDir()));
             currentArchiveFilesCount++;

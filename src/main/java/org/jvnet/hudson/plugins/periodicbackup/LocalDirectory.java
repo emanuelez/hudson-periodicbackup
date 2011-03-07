@@ -183,7 +183,7 @@ public class LocalDirectory extends Location {
             }
         }
 
-        public String validatePath(String path) throws FormValidation {
+        private String validatePath(String path) throws FormValidation {
             File fileFromString = new File(path);
             if ( ! Util.isWritableDirectory(fileFromString))
                 throw FormValidation.error(path + " doesn't exists or is not a writable directory");

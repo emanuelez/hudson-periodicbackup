@@ -69,7 +69,7 @@ public class ReplaceRestorePolicy implements RestorePolicy {
      *
      * @param files array of File objects given in order to be deleted
      */
-    public void deleteAccessible(File[] files) {
+    private void deleteAccessible(File[] files) {
         String relativePath;
         for(File file : files) {
             if(!file.isDirectory()) {
@@ -104,7 +104,7 @@ public class ReplaceRestorePolicy implements RestorePolicy {
      * @param tempDir temporary directory where @files are placed
      * @throws IOException If an IO problem occurs
      */
-    public void replaceAccessible(File[] files, File tempDir) throws IOException {
+    private void replaceAccessible(File[] files, File tempDir) throws IOException {
         String relativePath;
         File destinationFile;
         for(File file : files) {
