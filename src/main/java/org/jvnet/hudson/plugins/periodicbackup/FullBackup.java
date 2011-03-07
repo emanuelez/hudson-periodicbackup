@@ -79,7 +79,7 @@ public class FullBackup extends FileManager {
         return 73;
     }
 
-
+    @SuppressWarnings("unused")
     @Extension
     public static class DescriptorImpl extends FileManagerDescriptor {
         public String getDisplayName() {

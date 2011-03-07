@@ -24,7 +24,7 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
-public class PeriodicBackupException extends Exception {
+class PeriodicBackupException extends Exception {
     public PeriodicBackupException(String msg) {
         super(msg);
     }

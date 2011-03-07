@@ -33,8 +33,8 @@ import java.util.logging.Logger;
 public class RestoreExecutor implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(RestoreExecutor.class.getName());
-    private BackupObject backupObject;
-    private String tempDirectoryPath;
+    private final BackupObject backupObject;
+    private final String tempDirectoryPath;
 
     public RestoreExecutor(BackupObject backupObject, String tempDirectoryPath) {
         this.backupObject = backupObject;

@@ -41,8 +41,8 @@ import java.util.logging.Logger;
 
 public class ZipStorage extends Storage {
 
-    private final static int MAX_FILES_PER_ARCHIVE = 65534;                  // Max allowed amount of files in a zip archive is 65535
-    private final static long MAX_SIZE_OF_FILES_PER_ARCHIVE = 3999999999l;   // Max allowed size of uncompressed/compressed files in a zip archive is 4GiB
+    private final static int MAX_FILES_PER_ARCHIVE = 65534;                 // Max allowed amount of files in a zip archive is 65535
+    private final static long MAX_SIZE_OF_FILES_PER_ARCHIVE = 3999999999l;  // Max allowed size of uncompressed/compressed files in a zip archive is 4GiB
     private boolean multiVolume;                                            // Determines if the backup should be divided into few archives
     private long volumeSize;                                                // Determines maximum size of files inside single archive file
     private static final Logger LOGGER = Logger.getLogger(ZipStorage.class.getName());
@@ -77,9 +77,6 @@ public class ZipStorage extends Storage {
         return archivesNumber;
     }
 
-    public String getTestString() {
-        return "test string";
-    }
     @SuppressWarnings("unused")
     public long getVolumeSize() {
         return volumeSize;

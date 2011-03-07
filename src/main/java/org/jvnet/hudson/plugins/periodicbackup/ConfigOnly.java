@@ -96,7 +96,7 @@ public class ConfigOnly extends FileManager {
         return 97;
     }
 
-
+    @SuppressWarnings("unused")
     @Extension
     public static class DescriptorImpl extends FileManagerDescriptor {
         public String getDisplayName() {

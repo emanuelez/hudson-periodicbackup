@@ -46,7 +46,7 @@ public abstract class FileManager extends AbstractModelObject implements Describ
      * This method determines files and folders for Storage
      *
      * @return Files to be included in the backup
-     * @throws PeriodicBackupException if anything else bad happens
+     * @throws PeriodicBackupException if anything bad happens
      */
     public abstract Iterable<File> getFilesToBackup() throws PeriodicBackupException;
 

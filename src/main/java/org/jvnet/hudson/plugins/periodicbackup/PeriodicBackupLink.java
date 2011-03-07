@@ -41,7 +41,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  *
@@ -57,7 +56,6 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
     private FileManager fileManagerPlugin = null;
     private final DescribableList<Location, LocationDescriptor> locationPlugins = new DescribableList<Location, LocationDescriptor>(this);
     private final DescribableList<Storage, StorageDescriptor> storagePlugins = new DescribableList<Storage, StorageDescriptor>(this);
-    private static final transient Logger LOGGER = Logger.getLogger(ZipStorage.class.getName());
 
     private transient String message;   // Message shown on the web page when the backup/restore is performed
     private String tempDirectory;       // Temporary directory for local storage of files, it should not be placed anywhere inside the Jenkins homedir
@@ -244,10 +242,6 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         return Storage.all();
     }
 
-    public Collection<FileManagerDescriptor> getFileManagerDescriptors() {
-        return FileManager.all();
-    }
-
     public Collection<LocationDescriptor> getLocationDescriptors() {
         return Location.all();
     }
@@ -256,6 +250,7 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         return fileManagerPlugin;
     }
 
+    @SuppressWarnings("unused")
     public void setFileManagerPlugin(FileManager fileManagerPlugin) {
         this.fileManagerPlugin = fileManagerPlugin;
     }
@@ -274,6 +269,7 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
         return ManagementLink.all().get(PeriodicBackupLink.class);
     }
 
+    @SuppressWarnings("unused")
     public String getMessage() {
         return message;
     }
