@@ -32,7 +32,7 @@ function checkForm(event) {
     else {
         setDivOpacity('msg2',0);
     }
-    if(volumeSize != null) {
+    if($$('input[name=multiVolume]')[0].checked) {
         if(!validatePositiveNum(volumeSize.value)) {
             Event.stop(event);
             setDivOpacity('msg3',0);

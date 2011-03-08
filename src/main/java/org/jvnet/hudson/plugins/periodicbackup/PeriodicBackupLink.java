@@ -238,6 +238,11 @@ public class PeriodicBackupLink extends ManagementLink implements Describable<Pe
             return null; // unused
         }
     }
+
+    public Collection<FileManagerDescriptor> getFileManagerDescriptors() {
+        return FileManager.all();
+    }
+
     public Collection<StorageDescriptor> getStorageDescriptors() {
         return Storage.all();
     }
