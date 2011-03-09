@@ -247,7 +247,7 @@ public class ZipStorage extends Storage {
         }
 
         @Override
-        public Storage newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+        public Storage newInstance(StaplerRequest req, JSONObject formData) {
             long size = MAX_SIZE_OF_FILES_PER_ARCHIVE;
             try {
                 size = Long.parseLong(req.getParameter("volumeSize"));

@@ -24,6 +24,7 @@
 
 package org.jvnet.hudson.plugins.periodicbackup;
 
+import hudson.model.Hudson;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -90,6 +91,12 @@ public class RestoreExecutor implements Runnable {
             backupObject.getFileManager().restoreFiles(tempDir);
         } catch (Exception e) {
             LOGGER.warning("Could not restore files. " + e.getMessage());
+        }
+        LOGGER.info("Reloading configuration...");
+        try {
+            Hudson.getInstance().doReload();
+        } catch (IOException e) {
+            LOGGER.warning("Error reloading config files from disk.");
         }
         LOGGER.info("Restoration finished successfully after " + (System.currentTimeMillis() - start) + " ms");
         // Setting message to an empty String will make the "Creating backup..." message disappear in the UI
